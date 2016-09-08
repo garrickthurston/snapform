@@ -50,9 +50,9 @@
 
 				if (cHeight > cellHeight && cWidth > cellWidth) {
 
-					var ii = 0;
-					for (var i = 0; (i * cellWidth) < cWidth; i++) {
-						for (j = 0; (j * cellHeight) < cHeight; j++) {
+					var i =0, j = 0, ii = 0;
+					while ((i * cellWidth) < cWidth) {
+						while ((j * cellWidth) < cHeight) {
 							model.rects.push({
 								i: i,
 								j: j,
@@ -61,7 +61,10 @@
 								w: cellWidth,
 								h: cellHeight
 							});
+							j++;
 						}
+						j = 0;
+						i++;
 					}
 
 					while (r = model.rects[ii++]) {

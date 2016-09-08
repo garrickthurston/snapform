@@ -1,17 +1,122 @@
 <html>
 <head>
 	<title>SNAPFORM</title>
-	<script src="../js/jquery-2.2.4.min.js" ></script>
+	<script src="../js/index.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/index.css">
 </head>
 <body>
-	<span class="snapform">SNAP FORM</span>
+	<div id="width"></div>
+	<div id="height"></div>
+	<div id="rectIndex">0,0</div>
+	
+
+	<style type="text/css">
+		.tmpl {
+			display: none !important;
+		}
+
+		#c {
+			border: 1px solid #787878;
+		}
+	</style>
 
 	<script>
 
-		$(document).ready(function () {
-			$(".snapform").append("FROM JS");
-		});
+		var model = {
+			rects: [],
+			init: function () {
+				var c = document.getElementById('c');
+				if (c) c.parentNode.removeChild(c);
+				var t = document.createElement("canvas");
+				t.setAttribute("id", "c");
+				document.getElementsByTagName("body")[0].appendChild(t);
+
+				model.rects.length = 0;
+
+				var canvas = document.getElementById("c");
+				canvas.height = document.body.clientHeight;
+				canvas.width = document.body.clientWidth - 20;
+				var context = canvas.getContext('2d');
+				document.getElementById("width").innerHTML = canvas.width;
+				document.getElementById("height").innerHTML = canvas.height;
+
+				// compensate for canvas counting half pixels as pizel (i.e. width: 1px = width: 2px)
+				context.translate(0.5, 0.5);
+
+
+				context.strokeStyle = '#787878';
+
+				var cHeight = canvas.height;
+				var cWidth = canvas.width;
+
+				var cellWidth = 20;
+				var cellHeight = 20;
+
+				if (cHeight > cellHeight && cWidth > cellWidth) {
+
+					var ii = 0;
+					for (var i = 0; (i * cellWidth) < cWidth; i++) {
+						for (j = 0; (j * cellHeight) < cHeight; j++) {
+							model.rects.push({
+								i: i,
+								j: j,
+								x: i * cellWidth,
+								y: j * cellHeight,
+								w: cellWidth,
+								h: cellHeight
+							});
+						}
+					}
+
+					while (r = model.rects[ii++]) {
+						context.beginPath();
+						context.rect(r.x, r.y, r.w, r.h);
+						context.stroke();
+					}
+				}
+
+				// cause mouseover to fire every 50 ms for performance
+				var enableHandler = false;
+				timer = window.setInterval(function(){
+				    enableHandler = true;
+				}, 50);
+
+				canvas.onmousemove = function (e) {
+					if (enableHandler) {
+						var that = this;
+						// important: correct mouse position:
+			            var rect = that.getBoundingClientRect(),
+						    x = e.clientX - rect.left,
+						    y = e.clientY - rect.top,
+						    i = 0, r;
+						   
+						while(r = model.rects[i++]) {
+							context.beginPath();
+						    context.rect(r.x, r.y, r.w, r.h);
+						    if (context.isPointInPath(x, y)) {
+						    	document.getElementById("rectIndex").innerHTML = r.x + "," + r.y;
+						    	context.fillStyle = "green";
+						    } else {
+						    	context.fillStyle = "white";
+						    }
+						    context.fill();
+						    context.stroke();
+						}
+			            enableHandler = false;
+			        }
+				};
+
+			}
+		
+		};
+
+		(function () {
+			model.init();
+		})();
+
+		window.addEventListener('resize',function () {
+			model.init();
+		}, false);
 	</script>
 </body>
 </html>

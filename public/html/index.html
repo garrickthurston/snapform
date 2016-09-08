@@ -105,6 +105,20 @@
 			       }
 				};
 
+				canvas.onmouseleave = function (e) {
+				    document.getElementById("rectIndex").innerHTML = "0,0"
+				    var r = model.rects[0], ii = 0;
+			    	while (r = model.rects[ii++]) {
+						context.beginPath();
+						context.rect(r.x, r.y, r.w, r.h);
+						context.fillStyle = "#fff";
+						context.fill();
+						context.stroke();
+					}
+					
+		            enableHandler = false;
+				}
+
 			}
 		
 		};

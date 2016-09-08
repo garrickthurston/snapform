@@ -21,6 +21,7 @@
 
 		// POTENTIAL ENHANCEMENTS:
 		// -instead of on giant canvas, make each cell a canvas so as to not restroke on mouseover, but perhaps addclass or something else?
+		// -OOOO canvas's in CHUNKS. like 200px pieces? the smaller the screen gets (the lest there is to re-render) the more response we get
 
 
 		var model = {
@@ -85,7 +86,7 @@
 				var enableHandler = false;
 				timer = window.setInterval(function(){
 				    enableHandler = true;
-				}, 1);
+				}, 50);
 
 				canvas.onmousemove = function (e) {
 					if (enableHandler) {
@@ -113,8 +114,8 @@
 				};
 
 				canvas.onmouseleave = function (e) {
-				    document.getElementById("rectIndex").innerHTML = "0,0"
-				    var r = model.rects[0], ii = 0;
+				    document.getElementById("rectIndex").innerHTML = "0,0";
+				    var ii = 0, r;
 			    	while (r = model.rects[ii++]) {
 						context.beginPath();
 						context.rect(r.x, r.y, r.w, r.h);

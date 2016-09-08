@@ -78,7 +78,7 @@
 				var enableHandler = false;
 				timer = window.setInterval(function(){
 				    enableHandler = true;
-				}, 200);
+				}, 1);
 
 				canvas.onmousemove = function (e) {
 					if (enableHandler) {
@@ -102,7 +102,7 @@
 						    context.stroke();
 						}
 			            enableHandler = false;
-			        }
+			       }
 				};
 
 			}

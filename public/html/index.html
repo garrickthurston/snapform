@@ -71,11 +71,11 @@
 					}
 				}
 
-				// cause mouseover to fire every 80 ms to avoid lag
+				// cause mouseover to fire every 120 ms to avoid lag
 				var enableHandler = false;
 				timer = window.setInterval(function(){
 				    enableHandler = true;
-				}, 80);
+				}, 120);
 
 				canvas.onmousemove = function (e) {
 					if (enableHandler) {

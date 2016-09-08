@@ -22,6 +22,8 @@
 		// POTENTIAL ENHANCEMENTS:
 		// -instead of on giant canvas, make each cell a canvas so as to not restroke on mouseover, but perhaps addclass or something else?
 		// -OOOO canvas's in CHUNKS. like 200px pieces? the smaller the screen gets (the lest there is to re-render) the more response we get
+		// 	or even btter 5 or 10 times cellwidth/cellheight
+		// -also give option to set cellWidth/cellHeight - chances are doggies dont need as small as youre going
 
 
 		var model = {
@@ -53,14 +55,14 @@
 				var cHeight = canvas.height;
 				var cWidth = canvas.width;
 
-				var cellWidth = 20;
-				var cellHeight = 20;
+				var cellWidth =  32;
+				var cellHeight = 32;
 
 				if (cHeight > cellHeight && cWidth > cellWidth) {
 
 					var i =0, j = 0, ii = 0;
 					while ((i * cellWidth) < cWidth) {
-						while ((j * cellWidth) < cHeight) {
+						while ((j * cellHeight) < cHeight) {
 							model.rects.push({
 								i: i,
 								j: j,

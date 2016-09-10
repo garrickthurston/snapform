@@ -60,10 +60,13 @@
 	  	</div>
 
 	  	<div id="inpTmpl" class="inpTmpl tmpl" draggable="true">
-	  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
-	  		<div class="inp" style="clear:both;">
-	  			<input class="inputDiv" name="snapField" />
-	  		</div>
+	  		<div class="onpDrag">
+		  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
+		  		<div class="inp" style="clear:both;">
+		  			<input class="inputDiv" name="snapField" />
+		  		</div>
+	  		<div>
+	  		<div class="dragDiv"></div>
 	  	</div>
 		
 	</div>
@@ -143,11 +146,22 @@
 			background:#FFF;
 			padding:6px;
 			border:1px solid #787878;
-			cursor: move;
 		}
 
 		.inpTmpl.over {
 			 border: 2px dashed #000;
+		}
+
+		.onpDrag {
+			cursor:move;
+		}
+		div.dragDiv {
+			position: absolute;
+		    right: -4px;
+		    top: 0;
+		    bottom: 0;
+		    width: 8px;
+		    cursor: w-resize;
 		}
 	</style>
 
@@ -164,7 +178,8 @@
 			}],
 			offsetX: 0,
 			offsetY: 0,
-			formEls: new ObservableArray([]),
+			formEls: new observableArray([]),
+			resizingTmpl: null,
 			buildSvg: function () {
 
 				model.formInputs.length = 0;
@@ -298,7 +313,7 @@
 			init: function () {
 				model.buildSvg();
 
-				model.formEls.addEventListener("itemadded", function(e) {
+				model.formEls.addEventListener("itemAdded", function(e) {
 					var rect = document.getElementById('rect').getBoundingClientRect(),
 						inpTmpl = document.getElementById('inpTmpl').cloneNode(true);
 					document.getElementById("gid").classList.remove("clicked");
@@ -316,7 +331,6 @@
 					    e.dataTransfer.setData('text/html', this.innerHTML);
 					    model.offsetX = e.offsetX;
 					    model.offsetY = e.offsetY;
-
 					}
 
 					function handleDragOver(e) {
@@ -328,11 +342,11 @@
 					}
 
 					function handleDragEnter(e) {
-					  	this.classList.add('over');
+			  			this.classList.add('over');
 					}
 
 					function handleDragLeave(e) {
-					  	this.classList.remove('over');
+				  		this.classList.remove('over');
 					}
 
 					function handleDrop(e) {
@@ -360,17 +374,48 @@
 					inpTmpl.addEventListener('dragend', handleDragEnd, false);
 
 
+
+					var startX, startWidth;
+
+					inpTmpl.querySelector('.dragDiv').addEventListener('mousedown', function (e) {
+						//debugger;
+						model.resizingTmpl = closest(this, function (el) {
+					    	return el.classList.contains('inpTmpl');
+					    });
+					    model.resizingTmpl.setAttribute("draggable", "false");
+						startX = e.clientX;
+					    startY = e.clientY;
+					    startWidth = parseInt(document.defaultView.getComputedStyle(model.resizingTmpl).width, 10);
+					    document.documentElement.addEventListener('mousemove', doDrag, false);
+					    document.documentElement.addEventListener('mouseup', stopDrag, false);
+					}, false);
+
+					function doDrag(e) {
+					    model.resizingTmpl.style.width = (startWidth + e.clientX - startX) + 'px';
+					}
+
+					function stopDrag(e) {
+						model.resizingTmpl = null;
+					    document.querySelectorAll('.inpTmpl.on').forEach(function (el) {
+					    	el.setAttribute("draggable", "true");
+					    });
+					    document.documentElement.removeEventListener('mousemove', doDrag, false);    
+					    document.documentElement.removeEventListener('mouseup', stopDrag, false);
+					}
+
 					var inp = document.querySelector(".in");
 					inp.parentNode.removeChild(inp);
 				});
 
-				model.formEls.addEventListener("itemset", function(e) {
+				model.formEls.addEventListener("itemSet", function(e) {
 
 				});
 
-				model.formEls.addEventListener("itemremoved", function(e) {
+				model.formEls.addEventListener("itemRemoved", function(e) {
 
 				});
+
+
 			},
 			addInp: function (e) {
 				var valid = true,
@@ -431,6 +476,32 @@
 		        fn(el) ? el : closest(el.parentNode, fn)
 		    );
 		}
+
+		// $(function () {
+		//     var container = $('#container'),
+		//         left = $('#left_panel'),
+		//         right = $('#right_panel'),
+		//         handle = $('#drag');
+
+		//     handle.on('mousedown', function (e) {
+		//         isResizing = true;
+		//         lastDownX = e.clientX;
+		//     });
+
+		//     $(document).on('mousemove', function (e) {
+		//         // we don't want to do anything if we aren't resizing.
+		//         if (!isResizing) 
+		//             return;
+		        
+		//         var offsetRight = container.width() - (e.clientX - container.offset().left);
+
+		//         left.css('right', offsetRight);
+		//         right.css('width', offsetRight);
+		//     }).on('mouseup', function (e) {
+		//         // stop resizing
+		//         isResizing = false;
+		//     });
+		// });
 	</script>
 
 </body>

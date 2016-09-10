@@ -1,0 +1,139 @@
+<html>
+<head>
+	<title>SNAPFORM</title>
+	<script src="../js/index.js"></script>
+	<link rel="stylesheet" type="text/css" href="../css/index.css">
+</head>
+<body>
+	<div id="width"></div>
+	<div id="height"></div>
+	<div id="rectIndex">0,0</div>
+	
+	<!-- <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    	<defs>
+      		<pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+        		<path d="M 8 0 L 0 0 0 8" fill="none" stroke="gray" stroke-width="0.5"/>
+      		</pattern>
+      		<pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+        		<rect width="80" height="80" fill="url(#smallGrid)"/>
+        		<path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1"/>
+      		</pattern>
+    	</defs>
+
+    	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
+  	</svg> -->
+	
+
+	<style type="text/css">
+		.tmpl {
+			display: none !important;
+		}
+	</style>
+
+	<script>
+
+		var model = {
+			defaultWidth: 8,
+			defaultHeight: 8,
+			currentX: 0,
+			currentY: 0,
+			buildSvg: function () {
+
+				var svgns = "http://www.w3.org/2000/svg";
+				var svg = document.createElementNS(svgns, "svg");
+				svg.setAttribute("width", "100%");
+				svg.setAttribute("height", "100%");
+				svg.setAttribute("position", "relative");
+ 				
+ 				var defs = document.createElementNS(svgns, "defs");
+
+ 				var pattern = document.createElementNS(svgns, "pattern");
+				pattern.setAttribute('id', 'smallGrid');
+				pattern.setAttribute('width', model.defaultWidth),
+				pattern.setAttribute('height', model.defaultHeight);
+				pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+				var path = document.createElementNS(svgns, "path");
+				path.setAttribute('d', 'M ' + model.defaultWidth +' 0 L 0 0 0 ' + model.defaultHeight);
+				path.setAttribute('fill', 'none');
+				path.setAttribute('stroke', 'gray');
+				path.setAttribute('stroke-width', '0.5');
+				pattern.appendChild(path);
+				defs.appendChild(pattern);
+				pattern = document.createElementNS(svgns, "pattern");
+				pattern.setAttribute('id', 'grid');
+				pattern.setAttribute('width', model.defaultWidth * 10),
+				pattern.setAttribute('height', model.defaultHeight * 10);
+				pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+				var rect = document.createElementNS(svgns, "rect");
+				rect.setAttribute('width', model.defaultWidth * 10);
+				rect.setAttribute('height', model.defaultHeight * 10);
+				rect.setAttribute('fill', 'url(#smallGrid)');
+				pattern.appendChild(rect);
+				path = document.createElementNS(svgns, "path");
+				path.setAttribute('d', 'M ' + model.defaultWidth * 10 +' 0 L 0 0 0 ' + model.defaultHeight * 10);
+				path.setAttribute('fill', 'none');
+				path.setAttribute('stroke', 'gray');
+				path.setAttribute('stroke-width', '1');
+				pattern.appendChild(path);
+				defs.appendChild(pattern);
+ 				svg.appendChild(defs);
+ 				rect = document.createElementNS(svgns, "rect");
+ 				rect.setAttribute('id', 'rect');
+				rect.setAttribute('width', '100%');
+				rect.setAttribute('height', '100%');
+				rect.setAttribute('fill', 'url(#grid)');
+				svg.appendChild(rect);
+
+				var g = document.createElementNS(svgns, "g");
+				g.setAttribute('transform', 'translate(0,0)')
+				var hoverRect = document.createElementNS(svgns, "rect");
+				hoverRect.setAttribute('id', 'hoverRect');
+				hoverRect.setAttribute('width', model.defaultWidth);
+				hoverRect.setAttribute('height', model.defaultHeight);
+				hoverRect.setAttribute('fill', 'green');
+				hoverRect.setAttribute('display', 'none');
+				g.appendChild(hoverRect);
+				svg.appendChild(g);
+ 				document.body.appendChild(svg);
+
+ 				rect.onmouseover = function (e) {
+ 					//debugger;
+					hoverRect.setAttribute('display', 'block');
+ 				};
+ 				rect.onmousemove = function (e) {
+ 					if (!g.classList.contains('clicked')) {
+	 					var x = Math.floor(e.offsetX / model.defaultWidth) * model.defaultWidth;
+	 					var y = Math.floor(e.offsetY / model.defaultHeight) * model.defaultHeight;
+	 					var transform = 'translate(' + x + ',' + y + ')';
+	 					if (g.getAttribute('transform') != transform) {
+		 					g.setAttribute('transform', transform);
+		 					//document.getElementById('rectIndex').innerText = transform;
+		 				}
+		 			}		 			
+ 				};
+ 				g.onclick = function (e) {
+ 					if (this.classList.contains('clicked')) {
+ 						this.classList.remove('clicked');
+ 					} else {
+ 						this.classList.add('clicked');
+ 					}
+ 				};
+ 				rect.onclick = function (e) {
+ 					if (g.classList.contains('clicked')) g.classList.remove('clicked');
+ 				}
+ 				svg.onmouseleave = function (e) {
+					if (!g.classList.contains('clicked')) hoverRect.setAttribute('display', 'none');
+ 				};
+
+			},
+			init: function () {
+				model.buildSvg();
+			}
+		};
+		(function () {
+			model.init();
+		})();
+	</script>
+
+</body>
+</html>

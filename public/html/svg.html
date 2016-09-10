@@ -2,6 +2,7 @@
 <head>
 	<title>SNAPFORM</title>
 	<script src="../js/index.js"></script>
+	<script src="../js/ObservableArray.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/index.css">
 	<link rel="stylesheet" type="text/css" href="../css/closeicon.css">
 	<link rel="stylesheet" type="text/css" href="../css/editicon.css">
@@ -34,28 +35,34 @@
 		  		<div class="pencil"></div>
 		  		<div class="formDiv">
 			  		<label>Field Name</label>
-			  		<div style="margin:3px 0 0 0;">
+			  		<div class="inp" style="margin:3px 0 0 0;">
 			  			<input name="fieldName" class="inputDiv" />
 			  		</div>
 			  		<div class="errorDiv">
-			  			
+			  			<span class="changeError fieldNameError"></span>
 			  		</div>
 		  		</div>
 		  		<div class="formDiv">
 			  		<label>Input Type</label>
-			  		<div style="margin:3px 0 0 0;">
+			  		<div class="inp" style="margin:3px 0 0 0;">
 			  			<select class="inputDiv" name="inputType">
-			  				<option>Select...</option>
-			  				<option value="text">Text Input</option>
+			  				<option value="">Select...</option>
 			  			</select>
 			  		</div>
 			  		<div class="errorDiv">
-			  			
+			  			<span class="changeError inputTypeError"></span>
 			  		</div>
 		  		</div>
 		  		<div style="text-align:center;">
 		  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
 		  		</div>
+	  		</div>
+	  	</div>
+
+	  	<div id="inpTmpl" class="inpTmpl tmpl">
+	  		<label class="snapInpLabel" style="padding:0 0 6px 0;"></label>
+	  		<div class="inp" margin="3px 0 0 0;">
+	  			<input class="inputDiv" name="snapField" />
 	  		</div>
 	  	</div>
 		
@@ -113,6 +120,30 @@
 			border: 1px solid #787878;
 			padding:8px 12px;
 		}
+
+		select {
+			cursor: pointer;
+		}
+
+		option: {
+			padding: 4px 2px;
+		}
+
+		.errorDiv {
+			display: none;
+		}
+
+		span.changeError {
+			color:red;
+		}
+
+		.inpTmpl {
+			position:absolute;
+			z-index:100000;
+			background:#FFF;
+			padding:6px;
+			border:1px solid #787878;
+		}
 	</style>
 
 	<script>
@@ -123,6 +154,10 @@
 			currentX: 0,
 			currentY: 0,
 			formInputs: [],
+			inpTypes: [{
+				value: "text", text: "Text"
+			}],
+			formEls: new ObservableArray([]),
 			buildSvg: function () {
 
 				model.formInputs.length = 0;
@@ -185,6 +220,13 @@
 				svg.appendChild(g);
  				document.body.appendChild(svg);
 
+ 				[].forEach.call(model.inpTypes, function (item) {
+ 					var option = document.createElement("option");
+ 					option.setAttribute("value", item.value);
+ 					option.innerText = item.text;
+ 					document.querySelector('#addInpTmpl [name="inputType"]').appendChild(option);
+ 				});
+
  				rect.onmouseover = function (e) {
 					hoverRect.setAttribute('display', 'block');
  				};
@@ -205,7 +247,8 @@
 						y = t.top - f.top;
  					document.getElementById('topIndex').innerText = g.getAttribute('transform');
  					document.getElementById('rectIndex').innerText = x + "," + y;
-
+ 					model.currentX = x;
+ 					model.currentY = y;
  					if (this.classList.contains('clicked')) {
  						this.classList.remove('clicked');
  					} else {
@@ -220,6 +263,8 @@
  						addInpTmpl.classList.add("in");
  						addInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
  						addInpTmpl.querySelector('.close').addEventListener('click', model.addInpClose, false);
+ 						addInpTmpl.querySelector('[name="fieldName"]').addEventListener('keyup', model.inpOnKeyUp, false);
+ 						addInpTmpl.querySelector('[name="inputType"]').addEventListener('change', model.inpOnKeyUp, false);
  						document.body.appendChild(addInpTmpl);
  					}
  				};
@@ -245,9 +290,68 @@
 			},
 			init: function () {
 				model.buildSvg();
+
+				model.formEls.addEventListener("itemadded", function(e) {
+					var rect = document.getElementById('rect').getBoundingClientRect(),
+						inpTmpl = document.getElementById('inpTmpl').cloneNode(true);
+					document.getElementById("gid").classList.remove("clicked");
+					inpTmpl.style.top = e.item.y + rect.top;
+					inpTmpl.style.left = e.item.x + rect.left;
+					inpTmpl.removeAttribute("id");
+					inpTmpl.classList.remove("tmpl");
+					inpTmpl.classList.add("on");
+					inpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
+					document.body.appendChild(inpTmpl);
+					var inp = document.querySelector(".in");
+
+					inp.parentNode.removeChild(inp);
+				});
+
+				model.formEls.addEventListener("itemset", function(e) {
+
+				});
+
+				model.formEls.addEventListener("itemremoved", function(e) {
+
+				});
+
+				// model.formEls.unshift(x.pop());
+				// model.formEls.splice(1, 2, "x");
+				// model.formEls[2] = "foo";
+				// model.formEls.length = 10;
+				// model.formEls.length = 2;
 			},
 			addInp: function (e) {
-				alert("");
+				var valid = true,
+					errors = [];
+//debugger;
+				[].forEach.call(document.querySelectorAll('.in .changeError'), function (item) {
+					item.innerText = "";
+					item.parentNode.style.display = "none;"
+				});
+
+				var fieldName = document.querySelector('.in [name="fieldName"]').value;
+				var inputType = document.querySelector('.in [name="inputType"]').value;
+
+				if (fieldName == "") errors.push({ field: "fieldName", message: "Required" });
+				if (inputType == "") errors.push({ field: "inputType", message: "Required" });
+
+				if (errors.length) {
+					[].forEach.call(errors, function (item) {
+						var t = document.querySelector('.in .' + item.field + 'Error');
+						t.innerText = item.message;
+						t.parentNode.style.display = "block";
+					});
+					valid = false;
+				}
+				if (valid) {
+					model.formEls.push({
+						fieldName: fieldName,
+						inputType: inputType,
+						x: model.currentX,
+						y: model.currentY
+					});
+				}
 			},
 			addInpClose: function (e) {
 				var inp = document.getElementsByClassName('in');
@@ -255,11 +359,27 @@
 					document.getElementById('gid').classList.remove('clicked');
 					inp[0].parentNode.removeChild(inp[0]);
 				} 
+			},
+			inpOnKeyUp: function (e) {
+				if (this.value.length) {
+					var formDiv = closest(this, function (el) {
+					    return el.className === 'formDiv';
+					});
+					var errorDiv = formDiv.querySelector('.errorDiv');
+					errorDiv.style.display = "none";
+					errorDiv.querySelector('.changeError').innerText = "";
+				}
 			}
 		};
 		(function () {
 			model.init();
 		})();
+
+		function closest(el, fn) {
+		    return el && (
+		        fn(el) ? el : closest(el.parentNode, fn)
+		    );
+		}
 	</script>
 
 </body>

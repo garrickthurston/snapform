@@ -347,6 +347,7 @@
 	 					var y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight;
 						this.style.top = Math.floor((y + rect.top - model.offsetY) / model.defaultHeight) * model.defaultHeight;
 						this.style.left = Math.floor((x + rect.left - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+
 						model.offsetX = 0;
 						model.offsetY = 0;
 					}
@@ -370,17 +371,10 @@
 				model.formEls.addEventListener("itemremoved", function(e) {
 
 				});
-
-				// model.formEls.unshift(x.pop());
-				// model.formEls.splice(1, 2, "x");
-				// model.formEls[2] = "foo";
-				// model.formEls.length = 10;
-				// model.formEls.length = 2;
 			},
 			addInp: function (e) {
 				var valid = true,
 					errors = [];
-//debugger;
 				[].forEach.call(document.querySelectorAll('.in .changeError'), function (item) {
 					item.innerText = "";
 					item.parentNode.style.display = "none;"

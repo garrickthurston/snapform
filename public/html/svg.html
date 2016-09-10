@@ -59,9 +59,9 @@
 	  		</div>
 	  	</div>
 
-	  	<div id="inpTmpl" class="inpTmpl tmpl">
-	  		<label class="snapInpLabel" style="padding:0 0 6px 0;"></label>
-	  		<div class="inp" margin="3px 0 0 0;">
+	  	<div id="inpTmpl" class="inpTmpl tmpl" draggable="true">
+	  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
+	  		<div class="inp" style="clear:both;">
 	  			<input class="inputDiv" name="snapField" />
 	  		</div>
 	  	</div>
@@ -143,6 +143,11 @@
 			background:#FFF;
 			padding:6px;
 			border:1px solid #787878;
+			cursor: move;
+		}
+
+		.inpTmpl.over {
+			 border: 2px dashed #000;
 		}
 	</style>
 
@@ -157,6 +162,8 @@
 			inpTypes: [{
 				value: "text", text: "Text"
 			}],
+			offsetX: 0,
+			offsetY: 0,
 			formEls: new ObservableArray([]),
 			buildSvg: function () {
 
@@ -301,9 +308,58 @@
 					inpTmpl.classList.remove("tmpl");
 					inpTmpl.classList.add("on");
 					inpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
-					document.body.appendChild(inpTmpl);
-					var inp = document.querySelector(".in");
+					document.body.appendChild(inpTmpl)
 
+					function handleDragStart(e) {
+					    this.style.opacity = '0.4';
+					    e.dataTransfer.effectAllowed = 'move';
+					    e.dataTransfer.setData('text/html', this.innerHTML);
+					    model.offsetX = e.offsetX;
+					    model.offsetY = e.offsetY;
+
+					}
+
+					function handleDragOver(e) {
+					  	if (e.preventDefault) {
+					    	e.preventDefault();
+					  	}
+					 	e.dataTransfer.dropEffect = 'move';
+					  	return false;
+					}
+
+					function handleDragEnter(e) {
+					  	this.classList.add('over');
+					}
+
+					function handleDragLeave(e) {
+					  	this.classList.remove('over');
+					}
+
+					function handleDrop(e) {
+					  	return false;
+					}
+
+					function handleDragEnd(e) {
+					    this.classList.remove('over');
+						this.style.opacity = '1.0';
+						var rect = document.getElementById('rect').getBoundingClientRect();
+						var x = Math.floor((e.x - rect.left) / model.defaultWidth) * model.defaultWidth;
+	 					var y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight;
+						this.style.top = Math.floor((y + rect.top - model.offsetY) / model.defaultHeight) * model.defaultHeight;
+						this.style.left = Math.floor((x + rect.left - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+						model.offsetX = 0;
+						model.offsetY = 0;
+					}
+
+					inpTmpl.addEventListener('dragstart', handleDragStart, false);
+					inpTmpl.addEventListener('dragenter', handleDragEnter, false)
+					inpTmpl.addEventListener('dragover', handleDragOver, false);
+					inpTmpl.addEventListener('dragleave', handleDragLeave, false);
+					inpTmpl.addEventListener('drop', handleDrop, false);
+					inpTmpl.addEventListener('dragend', handleDragEnd, false);
+
+
+					var inp = document.querySelector(".in");
 					inp.parentNode.removeChild(inp);
 				});
 
@@ -369,7 +425,8 @@
 					errorDiv.style.display = "none";
 					errorDiv.querySelector('.changeError').innerText = "";
 				}
-			}
+			},
+
 		};
 		(function () {
 			model.init();

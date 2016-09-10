@@ -3,16 +3,16 @@
 	<title>SNAPFORM</title>
 	<script src="../js/index.js"></script>
 	<script src="../js/ObservableArray.js"></script>
+	<script src="../js/util.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/index.css">
 	<link rel="stylesheet" type="text/css" href="../css/closeicon.css">
 	<link rel="stylesheet" type="text/css" href="../css/editicon.css">
 </head>
 <body>
-	<div style="position:relative;" id="main">
-		<div id="width"></div>
-		<div id="height"></div>
-		<div id="topIndex">0,0</div>
-		<div id="rectIndex">0,0</div>
+	<div style="position:relative;">
+		<div id="inpEls"></div>
+
+		
 		
 		<!-- THIS IS THE OUTPUT HTML FROM BUILDSVG() -->
 		<!-- <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -28,7 +28,7 @@
 
 	    	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
 	  	</svg> -->
-
+	  	<div id="snapGrid" style="position:relative;width:100%;height:100%;">
 	  	<div id="addInpTmpl" class="addInpTmpl tmpl">
 	  		<div style="position:relative;">
 		  		<span class="close hairline" style="position:absolute;top:0;right:0;"></span>
@@ -63,7 +63,7 @@
 	  		<div class="onpDrag">
 		  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
 		  		<div class="inp" style="clear:both;">
-		  			<input class="inputDiv" name="snapField" />
+		  			<input class="snapField inputDiv" />
 		  		</div>
 	  		<div>
 	  		<div class="dragDiv"></div>
@@ -183,12 +183,16 @@
 			buildSvg: function () {
 
 				model.formInputs.length = 0;
+				//debugger;
+				var pSvg = document.querySelector('svg');
+				if (pSvg) pSvg.parentNode.removeChild(pSvg);
 
 				var svgns = "http://www.w3.org/2000/svg";
 				var svg = document.createElementNS(svgns, "svg");
 				svg.setAttribute("width", "100%");
 				svg.setAttribute("height", "100%");
 				svg.setAttribute("position", "relative");
+				svg.setAttribute("id", "snapGrid")
  				
  				var defs = document.createElementNS(svgns, "defs");
 
@@ -240,7 +244,7 @@
 				hoverRect.setAttribute('display', 'none');
 				g.appendChild(hoverRect);
 				svg.appendChild(g);
- 				document.body.appendChild(svg);
+ 				document.querySelector('#snapGrid').appendChild(svg);
 
  				[].forEach.call(model.inpTypes, function (item) {
  					var option = document.createElement("option");
@@ -267,8 +271,6 @@
  						f = rect.getBoundingClientRect(),
  						x = t.left - f.left,
 						y = t.top - f.top;
- 					document.getElementById('topIndex').innerText = g.getAttribute('transform');
- 					document.getElementById('rectIndex').innerText = x + "," + y;
  					model.currentX = x;
  					model.currentY = y;
  					if (this.classList.contains('clicked')) {
@@ -293,8 +295,6 @@
  				rect.onclick = function (e) {
  					if (g.classList.contains('clicked')) {
  					    g.classList.remove('clicked');
- 					    document.getElementById('topIndex').innerText = g.getAttribute('transform');
- 						document.getElementById('rectIndex').innerText = 0 + "," + 0;
  					}
  				}
  				window.onclick = function (e) {
@@ -313,88 +313,126 @@
 			init: function () {
 				model.buildSvg();
 
-				model.formEls.addEventListener("itemAdded", function(e) {
-					var rect = document.getElementById('rect').getBoundingClientRect(),
-						inpTmpl = document.getElementById('inpTmpl').cloneNode(true);
-					document.getElementById("gid").classList.remove("clicked");
-					inpTmpl.style.top = e.item.y + rect.top;
-					inpTmpl.style.left = e.item.x + rect.left;
-					inpTmpl.removeAttribute("id");
-					inpTmpl.classList.remove("tmpl");
-					inpTmpl.classList.add("on");
-					inpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
-					document.body.appendChild(inpTmpl)
+				model.updateFormElsText();
 
-					function handleDragStart(e) {
-					    this.style.opacity = '0.4';
-					    e.dataTransfer.effectAllowed = 'move';
-					    e.dataTransfer.setData('text/html', this.innerHTML);
-					    model.offsetX = e.offsetX;
-					    model.offsetY = e.offsetY;
+				model.formEls.addEventListener("itemAdded", model.formElsAdded);
+
+				model.formEls.addEventListener("itemSet", model.formElsSet);
+
+				model.formEls.addEventListener("itemRemoved", model.formElsRemoved);
+
+
+			},
+			formElsAdded: function (e) {
+				var rect = document.getElementById('rect').getBoundingClientRect(),
+					inpTmpl = document.getElementById('inpTmpl').cloneNode(true);
+				document.getElementById("gid").classList.remove("clicked");
+				inpTmpl.style.top = e.item.y;
+				inpTmpl.style.left = e.item.x;
+				inpTmpl.removeAttribute("id");
+				inpTmpl.classList.remove("tmpl");
+				inpTmpl.classList.add("on");
+				inpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
+				inpTmpl.querySelector("input.snapField").setAttribute("name", e.item.fieldName);
+				document.querySelector('#snapGrid').appendChild(inpTmpl)
+
+				document.addEventListener('mousemove', mousemove, false)
+				var mousedown = false;
+				function handleDragStart(e) {
+				    //e.dataTransfer.effectAllowed = 'move';
+				    e.dataTransfer.setData('text/html', this.innerHTML);
+				    //this.style.opacity = '0.4';
+				    model.offsetX = e.offsetX;
+				    model.offsetY = e.offsetY;
+				    e.target.style.cursor = "move";
+				    mousedown = true;
+				}
+
+				function mousemove (e) {
+					if (mousedown) {
+					//	debugger;
+				    	e.target.style.cursor = "move";
 					}
+				}
 
-					function handleDragOver(e) {
-					  	if (e.preventDefault) {
-					    	e.preventDefault();
-					  	}
-					 	e.dataTransfer.dropEffect = 'move';
-					  	return false;
+				function handleDragOver(e) {
+				  	if (e.preventDefault) {
+				    	e.preventDefault();
+				  	}
+				 	e.dataTransfer.dropEffect = 'move';
+				  	return false;
+				}
+
+				function handleDragEnter(e) {
+		  			//this.classList.add('over');
+				}
+
+				function handleDragLeave(e) {
+			  		//this.classList.remove('over');
+				}
+
+				function handleDrop(e) {
+				  	return false;
+				}
+
+				function handleDragEnd(e) {
+					var that = this;
+				    this.classList.remove('over');
+					this.style.opacity = '1.0';
+					var rect = document.getElementById('rect').getBoundingClientRect();
+					//debugger;
+					var x = Math.floor((e.x - rect.left) / model.defaultWidth) * model.defaultWidth;
+ 					var y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight;
+					this.style.top = Math.floor((y - model.offsetY) / model.defaultHeight) * model.defaultHeight;
+					this.style.left = Math.floor((x  - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+
+					model.offsetX = 0;
+					model.offsetY = 0;
+					mousedown = false;
+					var t = grep(model.formEls, function (item) {
+						return that.querySelector("input[name='" + item.fieldName +"']");
+					});
+					if (t.length > 0) {
+						t[0].y = Math.floor((y + rect.top - model.offsetY) / model.defaultHeight) * model.defaultHeight;
+						t[0].y = Math.floor((x + rect.left - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+
+						model.updateFormElsText();
 					}
+				}
 
-					function handleDragEnter(e) {
-			  			this.classList.add('over');
-					}
+				inpTmpl.addEventListener('dragstart', handleDragStart, false);
+				inpTmpl.addEventListener('dragenter', handleDragEnter, false)
+				inpTmpl.addEventListener('dragover', handleDragOver, false);
+				inpTmpl.addEventListener('dragleave', handleDragLeave, false);
+				inpTmpl.addEventListener('drop', handleDrop, false);
+				inpTmpl.addEventListener('dragend', handleDragEnd, false);
+				
+				var startX, startWidth;
 
-					function handleDragLeave(e) {
-				  		this.classList.remove('over');
-					}
+				inpTmpl.querySelector('.dragDiv').addEventListener('mousedown', function (e) {
+					//debugger;
+					model.resizingTmpl = closest(this, function (el) {
+				    	return el.classList.contains('inpTmpl');
+				    });
+				    model.resizingTmpl.setAttribute("draggable", "false");
+					startX = e.clientX;
+				    startY = e.clientY;
+				    startWidth = parseInt(document.defaultView.getComputedStyle(model.resizingTmpl).width, 10);
+				    document.documentElement.addEventListener('mousemove', doDrag, false);
+				    document.documentElement.addEventListener('mouseup', stopDrag, false);
+				}, false);
 
-					function handleDrop(e) {
-					  	return false;
-					}
+				function doDrag(e) {
+				    model.resizingTmpl.style.width = (startWidth + e.clientX - startX) + 'px';
+				}
 
-					function handleDragEnd(e) {
-					    this.classList.remove('over');
-						this.style.opacity = '1.0';
-						var rect = document.getElementById('rect').getBoundingClientRect();
-						var x = Math.floor((e.x - rect.left) / model.defaultWidth) * model.defaultWidth;
-	 					var y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight;
-						this.style.top = Math.floor((y + rect.top - model.offsetY) / model.defaultHeight) * model.defaultHeight;
-						this.style.left = Math.floor((x + rect.left - model.offsetX) / model.defaultWidth) * model.defaultWidth;
-
-						model.offsetX = 0;
-						model.offsetY = 0;
-					}
-
-					inpTmpl.addEventListener('dragstart', handleDragStart, false);
-					inpTmpl.addEventListener('dragenter', handleDragEnter, false)
-					inpTmpl.addEventListener('dragover', handleDragOver, false);
-					inpTmpl.addEventListener('dragleave', handleDragLeave, false);
-					inpTmpl.addEventListener('drop', handleDrop, false);
-					inpTmpl.addEventListener('dragend', handleDragEnd, false);
-
-
-
-					var startX, startWidth;
-
-					inpTmpl.querySelector('.dragDiv').addEventListener('mousedown', function (e) {
-						//debugger;
-						model.resizingTmpl = closest(this, function (el) {
-					    	return el.classList.contains('inpTmpl');
-					    });
-					    model.resizingTmpl.setAttribute("draggable", "false");
-						startX = e.clientX;
-					    startY = e.clientY;
-					    startWidth = parseInt(document.defaultView.getComputedStyle(model.resizingTmpl).width, 10);
-					    document.documentElement.addEventListener('mousemove', doDrag, false);
-					    document.documentElement.addEventListener('mouseup', stopDrag, false);
-					}, false);
-
-					function doDrag(e) {
-					    model.resizingTmpl.style.width = (startWidth + e.clientX - startX) + 'px';
-					}
-
-					function stopDrag(e) {
+				function stopDrag(e) {
+					var t = grep(model.formEls, function (item) {
+						return model.resizingTmpl.querySelector("input[name='" + item.fieldName +"']");
+					});
+					if (t.length > 0) {
+						t[0].w = (startWidth + e.clientX - startX);
+						model.updateFormElsText();
 						model.resizingTmpl = null;
 					    document.querySelectorAll('.inpTmpl.on').forEach(function (el) {
 					    	el.setAttribute("draggable", "true");
@@ -402,20 +440,21 @@
 					    document.documentElement.removeEventListener('mousemove', doDrag, false);    
 					    document.documentElement.removeEventListener('mouseup', stopDrag, false);
 					}
+				}
 
-					var inp = document.querySelector(".in");
-					inp.parentNode.removeChild(inp);
-				});
+				var inp = document.querySelector(".in");
+				inp.parentNode.removeChild(inp);
 
-				model.formEls.addEventListener("itemSet", function(e) {
+				model.updateFormElsText();
+			},
+			formElsSet: function (e) {
 
-				});
+			},
+			formElsRemoved: function (e) {
 
-				model.formEls.addEventListener("itemRemoved", function(e) {
-
-				});
-
-
+			},
+			updateFormElsText: function () {
+				document.querySelector("#inpEls").innerText = JSON.stringify(model.formEls.slice());
 			},
 			addInp: function (e) {
 				var valid = true,
@@ -440,11 +479,13 @@
 					valid = false;
 				}
 				if (valid) {
+
 					model.formEls.push({
 						fieldName: fieldName,
 						inputType: inputType,
 						x: model.currentX,
-						y: model.currentY
+						y: model.currentY,
+						w: 200
 					});
 				}
 			},
@@ -471,37 +512,7 @@
 			model.init();
 		})();
 
-		function closest(el, fn) {
-		    return el && (
-		        fn(el) ? el : closest(el.parentNode, fn)
-		    );
-		}
-
-		// $(function () {
-		//     var container = $('#container'),
-		//         left = $('#left_panel'),
-		//         right = $('#right_panel'),
-		//         handle = $('#drag');
-
-		//     handle.on('mousedown', function (e) {
-		//         isResizing = true;
-		//         lastDownX = e.clientX;
-		//     });
-
-		//     $(document).on('mousemove', function (e) {
-		//         // we don't want to do anything if we aren't resizing.
-		//         if (!isResizing) 
-		//             return;
-		        
-		//         var offsetRight = container.width() - (e.clientX - container.offset().left);
-
-		//         left.css('right', offsetRight);
-		//         right.css('width', offsetRight);
-		//     }).on('mouseup', function (e) {
-		//         // stop resizing
-		//         isResizing = false;
-		//     });
-		// });
+		
 	</script>
 
 </body>

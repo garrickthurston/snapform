@@ -4,9 +4,10 @@
 	<script src="../js/index.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/index.css">
 </head>
-<body>
+<body style="position:relative;">
 	<div id="width"></div>
 	<div id="height"></div>
+	<div id="topIndex">0,0</div>
 	<div id="rectIndex">0,0</div>
 	
 	<!-- <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -22,11 +23,19 @@
 
     	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
   	</svg> -->
+
+  	<div id="addInpTmpl" class="addInpTmpl tmpl">
+
+  	</div>
 	
 
 	<style type="text/css">
 		.tmpl {
 			display: none !important;
+		}
+
+		.addInpTmpl {
+			position: absolute;
 		}
 	</style>
 
@@ -97,7 +106,6 @@
  				document.body.appendChild(svg);
 
  				rect.onmouseover = function (e) {
- 					//debugger;
 					hoverRect.setAttribute('display', 'block');
  				};
  				rect.onmousemove = function (e) {
@@ -107,7 +115,6 @@
 	 					var transform = 'translate(' + x + ',' + y + ')';
 	 					if (g.getAttribute('transform') != transform) {
 		 					g.setAttribute('transform', transform);
-		 					//document.getElementById('rectIndex').innerText = transform;
 		 				}
 		 			}		 			
  				};
@@ -116,11 +123,25 @@
  						this.classList.remove('clicked');
  					} else {
  						this.classList.add('clicked');
+
+
  					}
+ 					var t = g.getBoundingClientRect(),
+ 						f = rect.getBoundingClientRect(),
+ 						x = t.left - f.left,
+						y = t.top - f.top;
+ 					document.getElementById('topIndex').innerText = g.getAttribute('transform');
+ 					document.getElementById('rectIndex').innerText = x + "," + y;
+
  				};
  				rect.onclick = function (e) {
- 					if (g.classList.contains('clicked')) g.classList.remove('clicked');
+ 					if (g.classList.contains('clicked')) {
+ 					    g.classList.remove('clicked');
+ 					    document.getElementById('topIndex').innerText = g.getAttribute('transform');
+ 						document.getElementById('rectIndex').innerText = 0 + "," + 0;
+ 					}
  				}
+
  				svg.onmouseleave = function (e) {
 					if (!g.classList.contains('clicked')) hoverRect.setAttribute('display', 'none');
  				};

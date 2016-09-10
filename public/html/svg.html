@@ -3,39 +3,115 @@
 	<title>SNAPFORM</title>
 	<script src="../js/index.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/index.css">
+	<link rel="stylesheet" type="text/css" href="../css/closeicon.css">
+	<link rel="stylesheet" type="text/css" href="../css/editicon.css">
 </head>
-<body style="position:relative;">
-	<div id="width"></div>
-	<div id="height"></div>
-	<div id="topIndex">0,0</div>
-	<div id="rectIndex">0,0</div>
-	
-	<!-- <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    	<defs>
-      		<pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
-        		<path d="M 8 0 L 0 0 0 8" fill="none" stroke="gray" stroke-width="0.5"/>
-      		</pattern>
-      		<pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-        		<rect width="80" height="80" fill="url(#smallGrid)"/>
-        		<path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1"/>
-      		</pattern>
-    	</defs>
+<body>
+	<div style="position:relative;" id="main">
+		<div id="width"></div>
+		<div id="height"></div>
+		<div id="topIndex">0,0</div>
+		<div id="rectIndex">0,0</div>
+		
+		<!-- THIS IS THE OUTPUT HTML FROM BUILDSVG() -->
+		<!-- <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+	    	<defs>
+	      		<pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+	        		<path d="M 8 0 L 0 0 0 8" fill="none" stroke="gray" stroke-width="0.5"/>
+	      		</pattern>
+	      		<pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+	        		<rect width="80" height="80" fill="url(#smallGrid)"/>
+	        		<path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1"/>
+	      		</pattern>
+	    	</defs>
 
-    	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
-  	</svg> -->
+	    	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
+	  	</svg> -->
 
-  	<div id="addInpTmpl" class="addInpTmpl tmpl">
-
-  	</div>
-	
-
+	  	<div id="addInpTmpl" class="addInpTmpl tmpl">
+	  		<div style="position:relative;">
+		  		<span class="close hairline" style="position:absolute;top:0;right:0;"></span>
+		  		<div class="pencil"></div>
+		  		<div class="formDiv">
+			  		<label>Field Name</label>
+			  		<div style="margin:3px 0 0 0;">
+			  			<input name="fieldName" class="inputDiv" />
+			  		</div>
+			  		<div class="errorDiv">
+			  			
+			  		</div>
+		  		</div>
+		  		<div class="formDiv">
+			  		<label>Input Type</label>
+			  		<div style="margin:3px 0 0 0;">
+			  			<select class="inputDiv" name="inputType">
+			  				<option>Select...</option>
+			  				<option value="text">Text Input</option>
+			  			</select>
+			  		</div>
+			  		<div class="errorDiv">
+			  			
+			  		</div>
+		  		</div>
+		  		<div style="text-align:center;">
+		  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
+		  		</div>
+	  		</div>
+	  	</div>
+		
+	</div>
 	<style type="text/css">
+		html, body {
+			font: 14px VistaSansReg,Arial,Helvetica,sans-serif;
+		}
+
 		.tmpl {
 			display: none !important;
 		}
 
+		label {
+			display:block;
+			font-weight: bold;
+			color:#787878;
+		}
+
+		button {
+			background-color: #FFF;
+		    border: 1px solid #787878;
+		    color: #787878;
+		    padding: 6px;
+		    text-align: center;
+		    text-decoration: none;
+		    display: inline-block;
+		    cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #25a0da;
+			color:#FFF;
+		}
+
+		.inputDiv {
+			box-sizing: border-box;
+			width:100%;
+			padding:4px 2px;
+			color:#787878;
+		}
+
+		.formDiv {
+			margin: 0 0 4px 0;
+		}
+
 		.addInpTmpl {
 			position: absolute;
+			width:300px;
+			display:none;
+			top:0;
+			left:0;
+			z-index: 10000;
+			background:#eee;
+			border: 1px solid #787878;
+			padding:8px 12px;
 		}
 	</style>
 
@@ -46,7 +122,10 @@
 			defaultHeight: 8,
 			currentX: 0,
 			currentY: 0,
+			formInputs: [],
 			buildSvg: function () {
+
+				model.formInputs.length = 0;
 
 				var svgns = "http://www.w3.org/2000/svg";
 				var svg = document.createElementNS(svgns, "svg");
@@ -64,7 +143,7 @@
 				var path = document.createElementNS(svgns, "path");
 				path.setAttribute('d', 'M ' + model.defaultWidth +' 0 L 0 0 0 ' + model.defaultHeight);
 				path.setAttribute('fill', 'none');
-				path.setAttribute('stroke', 'gray');
+				path.setAttribute('stroke', '#858585');
 				path.setAttribute('stroke-width', '0.5');
 				pattern.appendChild(path);
 				defs.appendChild(pattern);
@@ -81,7 +160,7 @@
 				path = document.createElementNS(svgns, "path");
 				path.setAttribute('d', 'M ' + model.defaultWidth * 10 +' 0 L 0 0 0 ' + model.defaultHeight * 10);
 				path.setAttribute('fill', 'none');
-				path.setAttribute('stroke', 'gray');
+				path.setAttribute('stroke', '#858585');
 				path.setAttribute('stroke-width', '1');
 				pattern.appendChild(path);
 				defs.appendChild(pattern);
@@ -94,6 +173,7 @@
 				svg.appendChild(rect);
 
 				var g = document.createElementNS(svgns, "g");
+				g.setAttribute("id", "gid")
 				g.setAttribute('transform', 'translate(0,0)')
 				var hoverRect = document.createElementNS(svgns, "rect");
 				hoverRect.setAttribute('id', 'hoverRect');
@@ -109,7 +189,7 @@
 					hoverRect.setAttribute('display', 'block');
  				};
  				rect.onmousemove = function (e) {
- 					if (!g.classList.contains('clicked')) {
+ 					if (!g.classList.contains('clicked') || !document.getElementsByClassName('in').length) {
 	 					var x = Math.floor(e.offsetX / model.defaultWidth) * model.defaultWidth;
 	 					var y = Math.floor(e.offsetY / model.defaultHeight) * model.defaultHeight;
 	 					var transform = 'translate(' + x + ',' + y + ')';
@@ -119,13 +199,6 @@
 		 			}		 			
  				};
  				g.onclick = function (e) {
- 					if (this.classList.contains('clicked')) {
- 						this.classList.remove('clicked');
- 					} else {
- 						this.classList.add('clicked');
-
-
- 					}
  					var t = g.getBoundingClientRect(),
  						f = rect.getBoundingClientRect(),
  						x = t.left - f.left,
@@ -133,6 +206,22 @@
  					document.getElementById('topIndex').innerText = g.getAttribute('transform');
  					document.getElementById('rectIndex').innerText = x + "," + y;
 
+ 					if (this.classList.contains('clicked')) {
+ 						this.classList.remove('clicked');
+ 					} else {
+ 						this.classList.add('clicked');
+
+ 						var addInpTmpl = document.getElementById('addInpTmpl').cloneNode(true);
+ 						addInpTmpl.style.top = t.top + (model.defaultHeight / 2);
+ 						addInpTmpl.style.left = t.left + (model.defaultWidth / 2);
+ 						addInpTmpl.style.display = "block";
+ 						addInpTmpl.removeAttribute("id");
+ 						addInpTmpl.classList.remove("tmpl");
+ 						addInpTmpl.classList.add("in");
+ 						addInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
+ 						addInpTmpl.querySelector('.close').addEventListener('click', model.addInpClose, false);
+ 						document.body.appendChild(addInpTmpl);
+ 					}
  				};
  				rect.onclick = function (e) {
  					if (g.classList.contains('clicked')) {
@@ -141,7 +230,14 @@
  						document.getElementById('rectIndex').innerText = 0 + "," + 0;
  					}
  				}
-
+ 				window.onclick = function (e) {
+ 					if (!g.classList.contains('clicked')) {
+	 					var inp = document.getElementsByClassName('in');
+	 					if (inp.length && !e.target.classList.contains("in")) {
+	 						inp[0].parentNode.removeChild(inp[0]);
+	 					} 
+	 				}
+ 				};
  				svg.onmouseleave = function (e) {
 					if (!g.classList.contains('clicked')) hoverRect.setAttribute('display', 'none');
  				};
@@ -149,6 +245,16 @@
 			},
 			init: function () {
 				model.buildSvg();
+			},
+			addInp: function (e) {
+				alert("");
+			},
+			addInpClose: function (e) {
+				var inp = document.getElementsByClassName('in');
+				if (inp.length && !e.target.classList.contains("in")) {
+					document.getElementById('gid').classList.remove('clicked');
+					inp[0].parentNode.removeChild(inp[0]);
+				} 
 			}
 		};
 		(function () {

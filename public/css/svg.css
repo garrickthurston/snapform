@@ -1,0 +1,92 @@
+html, body {
+	font: 14px VistaSansReg,Arial,Helvetica,sans-serif;
+}
+
+.tmpl {
+	display: none !important;
+}
+
+label {
+	display:block;
+	font-weight: bold;
+	color:#787878;
+}
+
+button {
+	background-color: #FFF;
+    border: 1px solid #787878;
+    color: #787878;
+    padding: 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+button:hover {
+	background-color: #25a0da;
+	color:#FFF;
+}
+
+.inputDiv {
+	box-sizing: border-box;
+	width:100%;
+	padding:4px 2px;
+	color:#787878;
+}
+
+.formDiv {
+	margin: 0 0 4px 0;
+}
+
+.addInpTmpl {
+	position: absolute;
+	width:300px;
+	display:none;
+	top:0;
+	left:0;
+	z-index: 100000;
+	background:#eee;
+	border: 1px solid #787878;
+	padding:8px 12px;
+}
+
+select {
+	cursor: pointer;
+}
+
+option: {
+	padding: 4px 2px;
+}
+
+.errorDiv {
+	display: none;
+}
+
+span.changeError {
+	color:red;
+}
+
+.inpTmpl {
+	position:absolute;
+	z-index:10000;
+	background:#FFF;
+	padding:6px;
+	border:1px solid #787878;
+}
+
+.inpTmpl.over {
+	 border: 2px dashed #000;
+}
+
+.onpDrag {
+	cursor:move;
+}
+div.dragDiv {
+	position: absolute;
+    right: -4px;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    cursor: w-resize;
+}

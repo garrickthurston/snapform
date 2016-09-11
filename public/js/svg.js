@@ -211,6 +211,7 @@ var model = {
 		inpTmpl.classList.add("on");
 		inpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
 		inpTmpl.querySelector("input.snapField").setAttribute("name", e.item.fieldName);
+		inpTmpl.querySelector("a.closeAnchor").addEventListener('click', model.closeAnchor, false);
 		document.querySelector('#snapGrid').appendChild(inpTmpl)
 
 		document.addEventListener('mousemove', mousemove, false)
@@ -438,8 +439,26 @@ var model = {
 	formElsSet: function (e) {
 
 	},
-	formElsRemoved: function (e) {
+	closeAnchor: function (e) {
+		var el = closest(this, function (el) {
+			return el.classList.contains("inpTmpl");
+		});
 
+		if (el) {
+			var m = grep(model.formEls, function (item) {
+				return item.fieldName == el.querySelector('input.snapField').getAttribute("name");
+			});
+			if (m.length > 0) {
+				var i = model.formEls.indexOf(m[0]);
+				model.formEls.splice(i, 1);
+
+				el.parentNode.removeChild(el);
+
+			}
+		}
+	},
+	formElsRemoved: function (e) {
+		model.updateFormElsText();
 	},
 	updateFormElsText: function () {
 		document.querySelector("#inpEls").innerText = JSON.stringify(model.formEls.slice());

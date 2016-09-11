@@ -145,39 +145,41 @@ function observableArray(items) {
 
 	Object.defineProperty(_self, "splice", {
 		configurable: false,
-		enumerable: false,
-		writable: false,
-		value: function (index, howMany /*, elementI, element2, ...*/) {
-			var removed = [],
-				item,
-				pos;
+    	enumerable: false,
+    	writable: false,
+    	value: function(index, howMany /*, element1, element2, ... */ ) {
+      		var removed = [],
+        	item,
+        	pos;
 
-			index = !~index ? _array.length - index : index;
-			howMany = (howMany == null ? _array.length - index : howMany) || 0;
+      		index = !~index ? _array.length - index : index;
 
-			while (howMany--) {
-				item = _array.splice(index, i)[0];
-				removed.push(item);
-				delete _self[_array.length];
-				raiseEvent({
-					type: "itemRemoved",
-					index: index + removed.length - 1,
-					item: item
-				});
-			}
+      		howMany = (howMany == null ? _array.length - index : howMany) || 0;
 
-			for (var i = 2, ln = arguments.length; i < ln; i++) {
-				_array.splice(index, 0, arguments[i]);
-				defineIndexProperty(_array.length - 1);
-				raiseEvent({
-					type: "itemAdded",
-					index: i,
-					item: arguments[i]
-				});
-				index++;
-			}
-			return removed;
-		}
+      		while (howMany--) {
+        		item = _array.splice(index, 1)[0];
+        		removed.push(item);
+        		delete _self[_array.length];
+        		raiseEvent({
+          			type: "itemRemoved",
+          			index: index + removed.length - 1,
+          			item: item
+        		});
+      		}
+
+      		for (var i = 2, ln = arguments.length; i < ln; i++) {
+        		_array.splice(index, 0, arguments[i]);
+        		defineIndexProperty(_array.length - 1);
+        		raiseEvent({
+          			type: "itemAdded",
+          			index: i,
+          			item: arguments[i]
+    			});
+        		index++;
+      		}
+
+      		return removed;
+    	}
 	});
 
 	Object.defineProperty(_self, "length", {

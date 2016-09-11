@@ -84,9 +84,14 @@ span.changeError {
 }
 div.dragDiv {
 	position: absolute;
-    right: -4px;
     top: 0;
     bottom: 0;
     width: 8px;
     cursor: w-resize;
 }
+	div.dragDiv.right {
+	    right: -4px;
+	}
+	div.dragDiv.left {
+	    left: -4px;
+	}

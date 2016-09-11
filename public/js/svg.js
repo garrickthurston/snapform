@@ -13,6 +13,7 @@ var model = {
 	resizingTmpl: null,
 	focusedInpEl: {},
 	addInpOpen: false,
+	minInpWidth: 80,
 	buildSvg: function () {
 
 		model.formInputs.length = 0;
@@ -76,72 +77,72 @@ var model = {
 		hoverRect.setAttribute('display', 'none');
 		g.appendChild(hoverRect);
 		svg.appendChild(g);
-			document.querySelector('#snapGrid').appendChild(svg);
+		document.querySelector('#snapGrid').appendChild(svg);
 
-			[].forEach.call(model.inpTypes, function (item) {
-				var option = document.createElement("option");
-				option.setAttribute("value", item.value);
-				option.innerText = item.text;
-				document.querySelector('#addInpTmpl [name="inputType"]').appendChild(option);
-			});
+		[].forEach.call(model.inpTypes, function (item) {
+			var option = document.createElement("option");
+			option.setAttribute("value", item.value);
+			option.innerText = item.text;
+			document.querySelector('#addInpTmpl [name="inputType"]').appendChild(option);
+		});
 
-			rect.onmouseover = function (e) {
-			hoverRect.setAttribute('display', 'block');
-			};
-			rect.onmousemove = function (e) {
-				if (!g.classList.contains('clicked') || !document.getElementsByClassName('in').length) {
-					var x = Math.floor(e.offsetX / model.defaultWidth) * model.defaultWidth;
-					var y = Math.floor(e.offsetY / model.defaultHeight) * model.defaultHeight;
-					var transform = 'translate(' + x + ',' + y + ')';
-					if (g.getAttribute('transform') != transform) {
- 					g.setAttribute('transform', transform);
- 				}
- 			}		 			
-			};
-			g.onclick = function (e) {
-				//model.addInpOpen = false;
-				var t = g.getBoundingClientRect(),
-					f = rect.getBoundingClientRect(),
-					x = t.left - f.left,
-				y = t.top - f.top;
-				model.currentX = x;
-				model.currentY = y;
-				if (this.classList.contains('clicked')) {
-					this.classList.remove('clicked');
-				} else {
-					this.classList.add('clicked');
-
-					var addInpTmpl = document.getElementById('addInpTmpl').cloneNode(true);
-					addInpTmpl.style.top = t.top + (model.defaultHeight / 2);
-					addInpTmpl.style.left = t.left + (model.defaultWidth / 2);
-					addInpTmpl.style.display = "block";
-					addInpTmpl.removeAttribute("id");
-					addInpTmpl.classList.remove("tmpl");
-					addInpTmpl.classList.add("in");
-					addInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
-					addInpTmpl.querySelector('.close').addEventListener('click', model.addInpClose, false);
-					addInpTmpl.querySelector('[name="fieldName"]').addEventListener('keyup', model.inpOnKeyUp, false);
-					addInpTmpl.querySelector('[name="inputType"]').addEventListener('change', model.inpOnKeyUp, false);
-					document.body.appendChild(addInpTmpl);
-					//model.addInpOpen = true;
+		rect.onmouseover = function (e) {
+		hoverRect.setAttribute('display', 'block');
+		};
+		rect.onmousemove = function (e) {
+			if (!g.classList.contains('clicked') || !document.getElementsByClassName('in').length) {
+				var x = Math.floor(e.offsetX / model.defaultWidth) * model.defaultWidth;
+				var y = Math.floor(e.offsetY / model.defaultHeight) * model.defaultHeight;
+				var transform = 'translate(' + x + ',' + y + ')';
+				if (g.getAttribute('transform') != transform) {
+					g.setAttribute('transform', transform);
 				}
-			};
-			rect.onclick = function (e) {
-				if (g.classList.contains('clicked')) {
-				    g.classList.remove('clicked');
-				}
+			}		 			
+		};
+		g.onclick = function (e) {
+			//model.addInpOpen = false;
+			var t = g.getBoundingClientRect(),
+				f = rect.getBoundingClientRect(),
+				x = t.left - f.left,
+			y = t.top - f.top;
+			model.currentX = x;
+			model.currentY = y;
+			if (this.classList.contains('clicked')) {
+				this.classList.remove('clicked');
+			} else {
+				this.classList.add('clicked');
+
+				var addInpTmpl = document.getElementById('addInpTmpl').cloneNode(true);
+				addInpTmpl.style.top = t.top + (model.defaultHeight / 2);
+				addInpTmpl.style.left = t.left + (model.defaultWidth / 2);
+				addInpTmpl.style.display = "block";
+				addInpTmpl.removeAttribute("id");
+				addInpTmpl.classList.remove("tmpl");
+				addInpTmpl.classList.add("in");
+				addInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
+				addInpTmpl.querySelector('.close').addEventListener('click', model.addInpClose, false);
+				addInpTmpl.querySelector('[name="fieldName"]').addEventListener('keyup', model.inpOnKeyUp, false);
+				addInpTmpl.querySelector('[name="inputType"]').addEventListener('change', model.inpOnKeyUp, false);
+				document.body.appendChild(addInpTmpl);
+				//model.addInpOpen = true;
 			}
-			window.onclick = function (e) {
-				if (!g.classList.contains('clicked')) {
-					var inp = document.getElementsByClassName('in');
-					if (inp.length && !e.target.classList.contains("in")) {
-						inp[0].parentNode.removeChild(inp[0]);
-					} 
-				}
-			};
-			svg.onmouseleave = function (e) {
-			if (!g.classList.contains('clicked')) hoverRect.setAttribute('display', 'none');
-			};
+		};
+		rect.onclick = function (e) {
+			if (g.classList.contains('clicked')) {
+			    g.classList.remove('clicked');
+			}
+		}
+		window.onclick = function (e) {
+			if (!g.classList.contains('clicked')) {
+				var inp = document.getElementsByClassName('in');
+				if (inp.length && !e.target.classList.contains("in")) {
+					inp[0].parentNode.removeChild(inp[0]);
+				} 
+			}
+		};
+		svg.onmouseleave = function (e) {
+		if (!g.classList.contains('clicked')) hoverRect.setAttribute('display', 'none');
+		};
 
 	},
 	init: function () {
@@ -309,7 +310,7 @@ var model = {
 
 		var startX, startWidth;
 
-		inpTmpl.querySelector('.dragDiv').addEventListener('mousedown', function (e) {
+		inpTmpl.querySelector('.dragDiv.right').addEventListener('mousedown', function (e) {
 			handleFocusClick(e);
 			model.resizingTmpl = closest(this, function (el) {
 		    	return el.classList.contains('inpTmpl');
@@ -318,27 +319,78 @@ var model = {
 			startX = e.clientX;
 		    startY = e.clientY;
 		    startWidth = parseInt(document.defaultView.getComputedStyle(model.resizingTmpl).width, 10);
-		    document.documentElement.addEventListener('mousemove', doDrag, false);
-		    document.documentElement.addEventListener('mouseup', stopDrag, false);
+		    document.documentElement.addEventListener('mousemove', doDragRight, false);
+		    document.documentElement.addEventListener('mouseup', stopDragRight, false);
 		}, false);
 
-		function doDrag(e) {
-		    model.resizingTmpl.style.width = (startWidth + e.clientX - startX) + 'px';
+		inpTmpl.querySelector('.dragDiv.left').addEventListener('mousedown', function (e) {
+			handleFocusClick(e);
+			model.resizingTmpl = closest(this, function (el) {
+		    	return el.classList.contains('inpTmpl');
+		    });
+		    model.resizingTmpl.setAttribute("draggable", "false");
+			startX = e.clientX;
+		    startY = e.clientY;
+		    startWidth = parseInt(document.defaultView.getComputedStyle(model.resizingTmpl).width, 10);
+		    document.documentElement.addEventListener('mousemove', doDragLeft, false);
+		    document.documentElement.addEventListener('mouseup', stopDragLeft, false);
+		}, false);
+
+		function doDragRight(e) {
+			var newWidth = (startWidth + e.clientX - startX)
+			if (newWidth > model.minInpWidth) {
+			    model.resizingTmpl.style.width =  newWidth + 'px';
+			}
 		}
 
-		function stopDrag(e) {
+		function doDragLeft(e) {
+			var newWidth = (startWidth - e.clientX + startX),
+			oldWidth = parseInt(model.resizingTmpl.style.width, 10);
+			if (newWidth > model.minInpWidth) {
+			    model.resizingTmpl.style.width = newWidth + 'px';
+			    // debugger;
+			    var p = parseInt(model.resizingTmpl.style.left, 10) - (newWidth - oldWidth);
+			    model.resizingTmpl.style.left = p;
+			}
+		}
+
+		function stopDragRight(e) {
 			var t = grep(model.formEls, function (item) {
 				return model.resizingTmpl.querySelector("input[name='" + item.fieldName +"']");
 			});
 			if (t.length > 0) {
-				t[0].w = (startWidth + e.clientX - startX);
+				//debugger;
+				var w = parseInt(model.resizingTmpl.style.width, 10);
+				t[0].w = closestFloorOrCeil(w, model.defaultWidth);
+				model.resizingTmpl.style.width = t[0].w;
 				model.updateFormElsText();
 				model.resizingTmpl = null;
 			    document.querySelectorAll('.inpTmpl.on').forEach(function (el) {
 			    	el.setAttribute("draggable", "true");
 			    });
-			    document.documentElement.removeEventListener('mousemove', doDrag, false);    
-			    document.documentElement.removeEventListener('mouseup', stopDrag, false);
+			    document.documentElement.removeEventListener('mousemove', doDragRight, false);    
+			    document.documentElement.removeEventListener('mouseup', stopDragRight, false);
+			}
+		}
+
+		function stopDragLeft(e) {
+			var t = grep(model.formEls, function (item) {
+				return model.resizingTmpl.querySelector("input[name='" + item.fieldName +"']");
+			});
+			if (t.length > 0) {
+				var w = parseInt(model.resizingTmpl.style.width, 10);
+				var x = parseInt(model.resizingTmpl.style.left, 10);
+				t[0].w = closestFloorOrCeil(w, model.defaultWidth);
+				t[0].x = closestFloorOrCeil(x, model.defaultWidth);
+				model.resizingTmpl.style.width = t[0].w;
+				model.resizingTmpl.style.left = t[0].x;
+				model.updateFormElsText();
+				model.resizingTmpl = null;
+			    document.querySelectorAll('.inpTmpl.on').forEach(function (el) {
+			    	el.setAttribute("draggable", "true");
+			    });
+			    document.documentElement.removeEventListener('mousemove', doDragLeft, false);    
+			    document.documentElement.removeEventListener('mouseup', stopDragLeft, false);
 			}
 		}
 

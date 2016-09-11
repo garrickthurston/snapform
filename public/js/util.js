@@ -18,3 +18,7 @@ var grep = function(items, callback) {
 
     return filtered;
 };
+
+var closestFloorOrCeil = function (num, interval) {
+	return Math.round(num / interval) * interval;
+};

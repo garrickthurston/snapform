@@ -32,7 +32,6 @@
 	  	<div id="addInpTmpl" class="addInpTmpl tmpl">
 	  		<div style="position:relative;">
 		  		<span class="close hairline" style="position:absolute;top:0;right:0;"></span>
-		  		<div class="pencil"></div>
 		  		<div class="formDiv">
 			  		<label>Field Name</label>
 			  		<div class="inp" style="margin:3px 0 0 0;">
@@ -60,6 +59,12 @@
 	  	</div>
 
 	  	<div id="inpTmpl" class="inpTmpl tmpl" draggable="true">
+	  		<a style="cursor:pointer;position:absolute;top:4px;right:4px;width:12px;height:12px;">
+	  			<span class="close hairline"></span>
+	  		</a>
+	  		<a style="position:absolute;cursor:pointer;top:4px;right:16px">
+		  		<div class="pencil"></div>
+		  	</a>
 	  		<div class="onpDrag">
 		  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
 		  		<div class="inp" style="clear:both;">
@@ -180,10 +185,10 @@
 			offsetY: 0,
 			formEls: new observableArray([]),
 			resizingTmpl: null,
+			focusedInpEl: {},
 			buildSvg: function () {
 
 				model.formInputs.length = 0;
-				//debugger;
 				var pSvg = document.querySelector('svg');
 				if (pSvg) pSvg.parentNode.removeChild(pSvg);
 
@@ -267,6 +272,7 @@
 		 			}		 			
  				};
  				g.onclick = function (e) {
+ 					//model.addInpOpen = false;
  					var t = g.getBoundingClientRect(),
  						f = rect.getBoundingClientRect(),
  						x = t.left - f.left,
@@ -290,6 +296,7 @@
  						addInpTmpl.querySelector('[name="fieldName"]').addEventListener('keyup', model.inpOnKeyUp, false);
  						addInpTmpl.querySelector('[name="inputType"]').addEventListener('change', model.inpOnKeyUp, false);
  						document.body.appendChild(addInpTmpl);
+ 						//model.addInpOpen = true;
  					}
  				};
  				rect.onclick = function (e) {
@@ -310,6 +317,7 @@
  				};
 
 			},
+			addInpOpen: false,
 			init: function () {
 				model.buildSvg();
 
@@ -320,6 +328,48 @@
 				model.formEls.addEventListener("itemSet", model.formElsSet);
 
 				model.formEls.addEventListener("itemRemoved", model.formElsRemoved);
+
+			document.addEventListener('click', function (e) {
+					if (!e.target.classList.contains("inpTmpl") &&
+						closest(e.target, function (el) {
+							return el && el.classList && el.classList.contains('inpTmpl')
+						}) == null) {
+
+							//debugger;
+						model.focusedInpEl = {};
+						document.querySelectorAll('.inpTmpl.on').forEach(function (item) {
+							item.style.background = "#FFF";
+						});
+					} else {
+						document.querySelectorAll('.addInpTmpl.in').forEach(function (item) {
+							item.parentNode.removeChild(item);
+						});
+						document.querySelector("#gid").classList.remove("clicked");
+						document.querySelector("#hoverRect").setAttribute('display', 'none');
+					}
+
+					if (e.target.classList.contains("addInpTmpl") ||
+						closest(e.target, function (el) {
+							return el && el.classList && el.classList.contains('addInpTmpl')
+						}) != null) {
+						return;
+					}
+
+					if (!(e.target.tagName == "svg") &&
+						closest(e.target, function (el) {
+							return el && el.tagName && el.tagName == "svg";
+						}) == null) {
+						document.querySelectorAll('.addInpTmpl.in').forEach(function (item) {
+							item.parentNode.removeChild(item);
+						});
+						document.querySelector("#gid").classList.remove("clicked");
+						document.querySelector("#hoverRect").setAttribute('display', 'none');
+					}
+
+					
+				});
+
+				document.addEventListener('keydown', model.handleKeyboardMove, false);
 
 
 			},
@@ -339,6 +389,12 @@
 				document.addEventListener('mousemove', mousemove, false)
 				var mousedown = false;
 				function handleDragStart(e) {
+					handleFocusClick(e);
+					document.querySelectorAll('.addInpTmpl.in').forEach(function (item) {
+						item.parentNode.removeChild(item);
+					});
+					document.querySelector("#gid").classList.remove("clicked");
+					document.querySelector("#hoverRect").setAttribute('display', 'none');
 				    //e.dataTransfer.effectAllowed = 'move';
 				    e.dataTransfer.setData('text/html', this.innerHTML);
 				    //this.style.opacity = '0.4';
@@ -350,7 +406,6 @@
 
 				function mousemove (e) {
 					if (mousedown) {
-					//	debugger;
 				    	e.target.style.cursor = "move";
 					}
 				}
@@ -380,11 +435,12 @@
 				    this.classList.remove('over');
 					this.style.opacity = '1.0';
 					var rect = document.getElementById('rect').getBoundingClientRect();
-					//debugger;
-					var x = Math.floor((e.x - rect.left) / model.defaultWidth) * model.defaultWidth;
- 					var y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight;
-					this.style.top = Math.floor((y - model.offsetY) / model.defaultHeight) * model.defaultHeight;
-					this.style.left = Math.floor((x  - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+					var x = Math.floor((e.x - rect.left) / model.defaultWidth) * model.defaultWidth,
+ 						y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight,
+ 						top = Math.floor((y - model.offsetY) / model.defaultHeight) * model.defaultHeight,
+ 						left = Math.floor((x  - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+					this.style.top = top;
+					this.style.left = left;
 
 					model.offsetX = 0;
 					model.offsetY = 0;
@@ -393,12 +449,29 @@
 						return that.querySelector("input[name='" + item.fieldName +"']");
 					});
 					if (t.length > 0) {
-						t[0].y = Math.floor((y + rect.top - model.offsetY) / model.defaultHeight) * model.defaultHeight;
-						t[0].y = Math.floor((x + rect.left - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+						t[0].y = top //- rect.top;
+						t[0].x = left//- rect.left;
 
 						model.updateFormElsText();
 					}
 				}
+
+				function handleFocusClick (e) {
+					var el = e.target.classList.contains("inpTmpl") ? e.target : closest(e.target, function (el) { return el.classList.contains("inpTmpl") });
+					model.focusedInpEl["domElement"] = el ? el : {};
+					if (el) {
+						var t = el.querySelector("input.snapField").getAttribute("name");
+						var y = grep(model.formEls, function (item) {
+							return item.fieldName == t;
+						});
+						if (y.length > 0) model.focusedInpEl["arrayElement"] = y[0];
+						document.querySelectorAll('.inpTmpl.on').forEach(function (item) {
+							item.style.background = "#FFF";
+						});
+						el.style.background = "#eee";
+					}
+				}
+
 
 				inpTmpl.addEventListener('dragstart', handleDragStart, false);
 				inpTmpl.addEventListener('dragenter', handleDragEnter, false)
@@ -406,11 +479,12 @@
 				inpTmpl.addEventListener('dragleave', handleDragLeave, false);
 				inpTmpl.addEventListener('drop', handleDrop, false);
 				inpTmpl.addEventListener('dragend', handleDragEnd, false);
-				
+				inpTmpl.addEventListener('click', handleFocusClick, false);
+
 				var startX, startWidth;
 
 				inpTmpl.querySelector('.dragDiv').addEventListener('mousedown', function (e) {
-					//debugger;
+					handleFocusClick(e);
 					model.resizingTmpl = closest(this, function (el) {
 				    	return el.classList.contains('inpTmpl');
 				    });
@@ -445,7 +519,43 @@
 				var inp = document.querySelector(".in");
 				inp.parentNode.removeChild(inp);
 
+				model.focusedInpEl["domElement"] = inpTmpl;
+				var t = inpTmpl.querySelector("input.snapField").getAttribute("name");
+				var y = grep(model.formEls, function (item) {
+					return item.fieldName == t;
+				});
+				if (y.length > 0) model.focusedInpEl["arrayElement"] = y[0];
+
 				model.updateFormElsText();
+			},
+			handleKeyboardMove (e) {
+				if (model.focusedInpEl["domElement"] && model.focusedInpEl["arrayElement"]) {
+					//debugger;
+					var rect = document.getElementById('rect').getBoundingClientRect();
+					if (e.keyCode == 37) {
+						var t = parseInt(model.focusedInpEl["domElement"].style.left, 10) - model.defaultWidth; 
+						if (t >= 0) {
+							model.focusedInpEl["domElement"].style.left = t;
+							model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10)
+						}
+					}
+					if (e.keyCode == 38) {
+						var t = parseInt(model.focusedInpEl["domElement"].style.top, 10) - model.defaultHeight;
+						if (t >= 0) {
+							model.focusedInpEl["domElement"].style.top = t;
+							model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10)
+						}
+					}
+					if (e.keyCode == 39) {
+						model.focusedInpEl["domElement"].style.left = parseInt(model.focusedInpEl["domElement"].style.left, 10) + model.defaultWidth;
+						model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10)
+					}
+					if (e.keyCode == 40) {
+						model.focusedInpEl["domElement"].style.top = parseInt(model.focusedInpEl["domElement"].style.top, 10) + model.defaultHeight;
+						model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10)
+					}
+					model.updateFormElsText();
+				}
 			},
 			formElsSet: function (e) {
 

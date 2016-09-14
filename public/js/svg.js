@@ -22,8 +22,14 @@ var model = {
 
 		var svgns = "http://www.w3.org/2000/svg";
 		var svg = document.createElementNS(svgns, "svg");
-		svg.setAttribute("width", "100%");
-		svg.setAttribute("height", "100%");
+		var dsg = document.querySelector("div#snapGrid");
+		var width = window.innerWidth - 12; //- findPosX(dsg);
+		var height = window.innerHeight - 32; //- findPosY(dsg);
+		//debugger;
+		dsg.style.width = width;
+		dsg.style.height = height;
+		svg.setAttribute("width", width);
+		svg.setAttribute("height", height);
 		svg.setAttribute("position", "relative");
 		svg.setAttribute("id", "snapGrid")
 			
@@ -61,8 +67,8 @@ var model = {
 			svg.appendChild(defs);
 			rect = document.createElementNS(svgns, "rect");
 			rect.setAttribute('id', 'rect');
-		rect.setAttribute('width', '100%');
-		rect.setAttribute('height', '100%');
+		rect.setAttribute('width', width);
+		rect.setAttribute('height', height);
 		rect.setAttribute('fill', 'url(#grid)');
 		svg.appendChild(rect);
 
@@ -87,7 +93,7 @@ var model = {
 		});
 
 		rect.onmouseover = function (e) {
-		hoverRect.setAttribute('display', 'block');
+			hoverRect.setAttribute('display', 'block');
 		};
 		rect.onmousemove = function (e) {
 			if (!g.classList.contains('clicked') || !document.getElementsByClassName('in').length) {
@@ -141,7 +147,7 @@ var model = {
 			}
 		};
 		svg.onmouseleave = function (e) {
-		if (!g.classList.contains('clicked')) hoverRect.setAttribute('display', 'none');
+			if (!g.classList.contains('clicked')) hoverRect.setAttribute('display', 'none');
 		};
 
 	},
@@ -230,6 +236,10 @@ var model = {
 		    model.offsetY = e.offsetY;
 		    e.target.style.cursor = "move";
 		    mousedown = true;
+		    dragID = setInterval(function () {
+				//debugger;
+				dragTimeout = true;
+			}, 100);
 		}
 
 		function mousemove (e) {
@@ -267,6 +277,8 @@ var model = {
 					y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight,
 					top = Math.floor((y - model.offsetY) / model.defaultHeight) * model.defaultHeight,
 					left = Math.floor((x  - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+			top = top > 0 ? top : 0;
+			left = left > 0 ? left: 0;
 			this.style.top = top;
 			this.style.left = left;
 
@@ -282,6 +294,8 @@ var model = {
 
 				model.updateFormElsText();
 			}
+
+			if (dragID) clearInterval(dragID);
 		}
 
 		function handleFocusClick (e) {
@@ -300,12 +314,40 @@ var model = {
 			}
 		}
 
+		var dragTimeout = false;
+		var dragID = null;
+		function handleDrag (e) {
+			if (dragTimeout) {
+				dragTimeout = false;
+				var that = this;
+				//debugger;
+				var snapGrid = document.querySelector("div#snapGrid");
+				var width = parseInt(snapGrid.style.width, 10);
+				var p = (e.pageX + that.clientWidth);
+				if (p > width) {
+					//debugger;
+					snapGrid.style.width = (p + width) / 2;
+					snapGrid.querySelector("svg").style.width = (p + width) / 2;
+					snapGrid.querySelector("#rect").style.width = (p + width) / 2;
+					window.scroll((p + width) / 2, window.scrollY);
+				}
+				var height = parseInt(snapGrid.style.height, 10);
+				var t = (e.pageY + that.clientHeight);
+				if (t > height) {
+					snapGrid.style.height = t;
+					snapGrid.querySelector("svg").style.height = t;
+					snapGrid.querySelector("#rect").style.height = t;
+					window.scroll(window.scrollX, t);
+				}
+			}
+		}
 
 		inpTmpl.addEventListener('dragstart', handleDragStart, false);
 		inpTmpl.addEventListener('dragenter', handleDragEnter, false)
 		inpTmpl.addEventListener('dragover', handleDragOver, false);
 		inpTmpl.addEventListener('dragleave', handleDragLeave, false);
 		inpTmpl.addEventListener('drop', handleDrop, false);
+		inpTmpl.addEventListener('drag', handleDrag, false);
 		inpTmpl.addEventListener('dragend', handleDragEnd, false);
 		inpTmpl.addEventListener('click', handleFocusClick, false);
 
@@ -340,17 +382,24 @@ var model = {
 		function doDragRight(e) {
 			var newWidth = (startWidth + e.clientX - startX)
 			if (newWidth > model.minInpWidth) {
+				var p = parseInt(model.resizingTmpl.style.left, 10);
 			    model.resizingTmpl.style.width =  newWidth + 'px';
+			 //  var windowWidth = window.
+			 //   if (p + newWidth > )
 			}
 		}
 
 		function doDragLeft(e) {
 			var newWidth = (startWidth - e.clientX + startX),
 			oldWidth = parseInt(model.resizingTmpl.style.width, 10);
+			var p = parseInt(model.resizingTmpl.style.left, 10) - (newWidth - oldWidth);
+			if (p < 0) {
+				newWidth += p;
+				p = 0;
+			}
 			if (newWidth > model.minInpWidth) {
 			    model.resizingTmpl.style.width = newWidth + 'px';
 			    // debugger;
-			    var p = parseInt(model.resizingTmpl.style.left, 10) - (newWidth - oldWidth);
 			    model.resizingTmpl.style.left = p;
 			}
 		}
@@ -411,27 +460,70 @@ var model = {
 		if (model.focusedInpEl["domElement"] && model.focusedInpEl["arrayElement"]) {
 			//debugger;
 			var rect = document.getElementById('rect').getBoundingClientRect();
+			//West
 			if (e.keyCode == 37) {
 				var t = parseInt(model.focusedInpEl["domElement"].style.left, 10) - model.defaultWidth; 
 				if (t >= 0) {
 					model.focusedInpEl["domElement"].style.left = t;
-					model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10)
+					model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10);
+					var snapGrid = document.querySelector("div#snapGrid");
+					if (parseInt(snapGrid.style.width, 10) > window.innerWidth && model.focusedInpEl["arrayElement"].x < (parseInt(snapGrid.style.width, 10) - window.innerWidth)) {
+					//debugger;
+						window.scroll(model.focusedInpEl["arrayElement"].x, window.scrollY);
+					}
 				}
 			}
+			//North
 			if (e.keyCode == 38) {
 				var t = parseInt(model.focusedInpEl["domElement"].style.top, 10) - model.defaultHeight;
 				if (t >= 0) {
 					model.focusedInpEl["domElement"].style.top = t;
-					model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10)
+					model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10);
+					var snapGrid = document.querySelector("div#snapGrid");
+					if (parseInt(snapGrid.style.height, 10) > window.innerHeight && model.focusedInpEl["arrayElement"].y < (parseInt(snapGrid.style.height, 10) - window.innerHeight)) {
+						window.scroll(window.scrollX, model.focusedInpEl["arrayElement"].y);
+					}
 				}
 			}
+			//East
 			if (e.keyCode == 39) {
 				model.focusedInpEl["domElement"].style.left = parseInt(model.focusedInpEl["domElement"].style.left, 10) + model.defaultWidth;
+				model.focusedInpEl["domElement"].style.width = +model.focusedInpEl["arrayElement"].w;
 				model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10)
+				//debugger;
+
+				var p = +findPosX(model.focusedInpEl["domElement"]) + +model.focusedInpEl["arrayElement"].w;
+				var snapGrid = document.querySelector("div#snapGrid");
+				if (p > parseInt(snapGrid.style.width, 10)) {
+					//debugger;
+					snapGrid.style.width = p;
+					snapGrid.querySelector("svg").style.width = p;
+					snapGrid.querySelector("#rect").style.width = p;
+					window.scroll(p, window.scrollY);
+				}
+				// } else if (parseInt(snapGrid.style.width, 10) > window.innerWidth && (model.focusedInpEl["arrayElement"].x + model.focusedInpEl["arrayElement"].w) > (parseInt(snapGrid.style.width, 10) - window.innerWidth)) {
+				// 	//debugger;
+				// 	window.scroll((model.focusedInpEl["arrayElement"].x + model.focusedInpEl["arrayElement"].w), window.scrollY);
+				// }
+
 			}
+			//South
 			if (e.keyCode == 40) {
 				model.focusedInpEl["domElement"].style.top = parseInt(model.focusedInpEl["domElement"].style.top, 10) + model.defaultHeight;
 				model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10)
+
+				var p = +findPosY(model.focusedInpEl["domElement"]) + +model.focusedInpEl["domElement"].offsetHeight;
+				var snapGrid = document.querySelector("div#snapGrid");
+				if (p > parseInt(snapGrid.style.height, 10)) {
+					//debugger;
+					snapGrid.style.height = p;
+					snapGrid.querySelector("svg").style.height = p;
+					snapGrid.querySelector("#rect").style.height = p;
+					window.scroll(window.scrollX, p);
+				}
+				// } else if (parseInt(snapGrid.style.height, 10) > window.innerHeight && (model.focusedInpEl["arrayElement"].y + +model.focusedInpEl["domElement"].offsetHeight) > (parseInt(snapGrid.style.height, 10) - window.innerHeight)) {
+				// 	window.scroll(window.scrollX, (model.focusedInpEl["arrayElement"].y + +model.focusedInpEl["domElement"].offsetHeight));
+				// }
 			}
 			model.updateFormElsText();
 		}

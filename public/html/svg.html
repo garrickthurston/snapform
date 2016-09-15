@@ -10,7 +10,33 @@
 </head>
 <body>
 	<div style="position:relative;">
-		<div id="inpEls"></div><div id="debugger1"></div><div id="debugger2"></div>
+		<div id="inpEls" style="margin:0 0 12px 0;"></div>
+		<div style="margin: 0 0 12px 0;">
+			<div class="formDiv" style="float:left;">
+		  		<label>Form Width</label>
+		  		<div class="inp" style="margin:3px 0 0 0;width:88px;">
+		  			<input id="gridWidth" class="inputDiv" type="number" />
+		  		</div>
+		  		<div class="errorDiv">
+		  			<span class="changeError gridWidthError"></span>
+		  		</div>
+	  		</div>
+	  		<div class="formDiv" style="float:left;margin:0 0 0 6px;">
+		  		<label>Form Height</label>
+		  		<div class="inp" style="margin:3px 0 0 0; width:88px;">
+		  			<input id="gridHeight" class="inputDiv" type="number" />
+		  		</div>
+		  		<div class="errorDiv">
+		  			<span class="changeError gridHeightError"></span>
+		  		</div>
+	  		</div>
+	  		<div style="text-align:center; float:left; margin:0 0 0 6px;">
+	  			<label>&nbsp;</label>
+	  			<button style="margin: 3px 0 0 0;">OK</button>
+	  		</div>
+	  		<div style="clear:both;"></div>
+		</div>
+		
 		
 		
 		<!-- THIS IS THE OUTPUT HTML FROM BUILDSVG() -->
@@ -27,7 +53,7 @@
 
 	    	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
 	  	</svg> -->
-	  	<div id="snapGrid" style="position:relative;">
+	  	<div id="snapGrid" style="position:relative;border-right:1px solid #b0b0b0;border-bottom:1px solid #b0b0b0;">
 	  	<div id="addInpTmpl" class="addInpTmpl tmpl">
 	  		<div style="position:relative;">
 		  		<span class="close hairline" style="position:absolute;top:0;right:0;"></span>
@@ -80,6 +106,8 @@
 
 		(function () {
 			if (typeof model != 'undefined') model.init();
+
+
 		})();
 
 		window.onresize = function (e) {

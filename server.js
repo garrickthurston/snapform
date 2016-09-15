@@ -8,7 +8,7 @@ var express = require('express'),
 	fs = require('fs');
 
 //connect to database
-//mongoose.connect("mongodb://localhost/snapform");
+mongoose.connect("mongodb://localhost/snapform");
 
 //serve static files
 app.use(express.static('./public'));

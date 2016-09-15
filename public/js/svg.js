@@ -14,6 +14,8 @@ var model = {
 	focusedInpEl: {},
 	addInpOpen: false,
 	minInpWidth: 80,
+	gridWidth: 1200,
+	gridHeight: 800,
 	buildSvg: function () {
 
 		model.formInputs.length = 0;
@@ -23,8 +25,8 @@ var model = {
 		var svgns = "http://www.w3.org/2000/svg";
 		var svg = document.createElementNS(svgns, "svg");
 		var dsg = document.querySelector("div#snapGrid");
-		var width = window.innerWidth - 12; //- findPosX(dsg);
-		var height = window.innerHeight - 32; //- findPosY(dsg);
+		var width = model.gridWidth;
+		var height = model.gridHeight;
 		//debugger;
 		dsg.style.width = width;
 		dsg.style.height = height;
@@ -204,6 +206,24 @@ var model = {
 
 		document.addEventListener('keydown', model.handleKeyboardMove, false);
 
+		var gridWidth = document.querySelector("#gridWidth");
+		var gridHeight = document.querySelector("#gridHeight");
+		gridWidth.value = model.gridWidth;
+		gridHeight.value = model.gridHeight;
+		gridWidth.addEventListener('change', function (e) {
+			model.gridWidth = this.value;
+			var snapGrid = document.querySelector("div#snapGrid");
+			snapGrid.style.width = this.value;
+			snapGrid.querySelector("svg").style.width = this.value;
+			snapGrid.querySelector("#rect").style.width = this.value;
+		}, false);
+		gridHeight.addEventListener('change', function (e) {
+			model.gridHeight = this.value;
+			var snapGrid = document.querySelector("div#snapGrid");
+			snapGrid.style.height = this.value;
+			snapGrid.querySelector("svg").style.height = this.value;
+			snapGrid.querySelector("#rect").style.height = this.value;
+		}, false);
 
 	},
 	formElsAdded: function (e) {
@@ -218,7 +238,12 @@ var model = {
 		inpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
 		inpTmpl.querySelector("input.snapField").setAttribute("name", e.item.fieldName);
 		inpTmpl.querySelector("a.closeAnchor").addEventListener('click', model.closeAnchor, false);
-		document.querySelector('#snapGrid').appendChild(inpTmpl)
+		document.querySelector('#snapGrid').appendChild(inpTmpl);
+		var pLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-left'), 10),
+			pRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-right'), 10),
+			bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
+			bRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-right-width'), 10);
+		inpTmpl.style.width = e.item.w - pLeft - pRight - bLeft;
 
 		document.addEventListener('mousemove', mousemove, false)
 		var mousedown = false;
@@ -229,17 +254,12 @@ var model = {
 			});
 			document.querySelector("#gid").classList.remove("clicked");
 			document.querySelector("#hoverRect").setAttribute('display', 'none');
-		    //e.dataTransfer.effectAllowed = 'move';
+		    e.dataTransfer.effectAllowed = 'move';
 		    e.dataTransfer.setData('text/html', this.innerHTML);
-		    //this.style.opacity = '0.4';
 		    model.offsetX = e.offsetX;
 		    model.offsetY = e.offsetY;
 		    e.target.style.cursor = "move";
 		    mousedown = true;
-		    dragID = setInterval(function () {
-				//debugger;
-				dragTimeout = true;
-			}, 100);
 		}
 
 		function mousemove (e) {
@@ -264,11 +284,8 @@ var model = {
 	  		//this.classList.remove('over');
 		}
 
-		function handleDrop(e) {
-		  	return false;
-		}
-
 		function handleDragEnd(e) {
+			//debugger;
 			var that = this;
 		    this.classList.remove('over');
 			this.style.opacity = '1.0';
@@ -277,7 +294,14 @@ var model = {
 					y = Math.floor((e.y - rect.top) / model.defaultHeight) * model.defaultHeight,
 					top = Math.floor((y - model.offsetY) / model.defaultHeight) * model.defaultHeight,
 					left = Math.floor((x  - model.offsetX) / model.defaultWidth) * model.defaultWidth;
+					//height = ;
+			top = top > (model.gridHeight - that.offsetHeight) 
+					? (Math.floor((model.gridHeight - that.offsetHeight) / model.defaultHeight) * model.defaultHeight) 
+					: top; 
 			top = top > 0 ? top : 0;
+			left = left > (model.gridWidth - that.offsetWidth)
+					? (Math.floor((model.gridWidth - that.offsetWidth) / model.defaultWidth) * model.defaultWidth)
+					: left;
 			left = left > 0 ? left: 0;
 			this.style.top = top;
 			this.style.left = left;
@@ -294,8 +318,6 @@ var model = {
 
 				model.updateFormElsText();
 			}
-
-			if (dragID) clearInterval(dragID);
 		}
 
 		function handleFocusClick (e) {
@@ -314,40 +336,10 @@ var model = {
 			}
 		}
 
-		var dragTimeout = false;
-		var dragID = null;
-		function handleDrag (e) {
-			if (dragTimeout) {
-				dragTimeout = false;
-				var that = this;
-				//debugger;
-				var snapGrid = document.querySelector("div#snapGrid");
-				var width = parseInt(snapGrid.style.width, 10);
-				var p = (e.pageX + that.clientWidth);
-				if (p > width) {
-					//debugger;
-					snapGrid.style.width = (p + width) / 2;
-					snapGrid.querySelector("svg").style.width = (p + width) / 2;
-					snapGrid.querySelector("#rect").style.width = (p + width) / 2;
-					window.scroll((p + width) / 2, window.scrollY);
-				}
-				var height = parseInt(snapGrid.style.height, 10);
-				var t = (e.pageY + that.clientHeight);
-				if (t > height) {
-					snapGrid.style.height = t;
-					snapGrid.querySelector("svg").style.height = t;
-					snapGrid.querySelector("#rect").style.height = t;
-					window.scroll(window.scrollX, t);
-				}
-			}
-		}
-
 		inpTmpl.addEventListener('dragstart', handleDragStart, false);
 		inpTmpl.addEventListener('dragenter', handleDragEnter, false)
 		inpTmpl.addEventListener('dragover', handleDragOver, false);
 		inpTmpl.addEventListener('dragleave', handleDragLeave, false);
-		inpTmpl.addEventListener('drop', handleDrop, false);
-		inpTmpl.addEventListener('drag', handleDrag, false);
 		inpTmpl.addEventListener('dragend', handleDragEnd, false);
 		inpTmpl.addEventListener('click', handleFocusClick, false);
 
@@ -380,12 +372,20 @@ var model = {
 		}, false);
 
 		function doDragRight(e) {
-			var newWidth = (startWidth + e.clientX - startX)
+			//debugger;
+			var pLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-left'), 10),
+				pRight = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-right'), 10),
+				bLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('border-left-width'), 10),
+				bRight = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('border-right-width'), 10);
+			var newWidth = (startWidth + e.clientX - startX);
+			var p = model.resizingTmpl.offsetLeft + newWidth;
+			if (p > (Math.floor(model.gridWidth / model.defaultWidth) * model.defaultWidth - pLeft - pRight - bLeft - bRight)) {
+				newWidth -= (p - (Math.floor(model.gridWidth / model.defaultWidth) * model.defaultWidth - pLeft - pRight - bLeft - bRight));
+			}
 			if (newWidth > model.minInpWidth) {
 				var p = parseInt(model.resizingTmpl.style.left, 10);
 			    model.resizingTmpl.style.width =  newWidth + 'px';
-			 //  var windowWidth = window.
-			 //   if (p + newWidth > )
+
 			}
 		}
 
@@ -399,7 +399,6 @@ var model = {
 			}
 			if (newWidth > model.minInpWidth) {
 			    model.resizingTmpl.style.width = newWidth + 'px';
-			    // debugger;
 			    model.resizingTmpl.style.left = p;
 			}
 		}
@@ -409,10 +408,13 @@ var model = {
 				return model.resizingTmpl.querySelector("input[name='" + item.fieldName +"']");
 			});
 			if (t.length > 0) {
-				//debugger;
-				var w = parseInt(model.resizingTmpl.style.width, 10);
+				var pLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-left'), 10),
+					pRight = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-right'), 10),
+					bLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('border-left-width'), 10),
+					bRight = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('border-right-width'), 10);
+				var w = parseInt(model.resizingTmpl.style.width, 10) + pLeft + pRight + bLeft;
 				t[0].w = closestFloorOrCeil(w, model.defaultWidth);
-				model.resizingTmpl.style.width = t[0].w;
+				model.resizingTmpl.style.width = t[0].w - pLeft - pRight - bLeft;
 				model.updateFormElsText();
 				model.resizingTmpl = null;
 			    document.querySelectorAll('.inpTmpl.on').forEach(function (el) {
@@ -428,11 +430,15 @@ var model = {
 				return model.resizingTmpl.querySelector("input[name='" + item.fieldName +"']");
 			});
 			if (t.length > 0) {
-				var w = parseInt(model.resizingTmpl.style.width, 10);
+				var pLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-left'), 10),
+					pRight = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-right'), 10),
+					bLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('border-left-width'), 10),
+					bRight = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('border-right-width'), 10);
+				var w = parseInt(model.resizingTmpl.style.width, 10) + pLeft + pRight + bLeft;
 				var x = parseInt(model.resizingTmpl.style.left, 10);
 				t[0].w = closestFloorOrCeil(w, model.defaultWidth);
 				t[0].x = closestFloorOrCeil(x, model.defaultWidth);
-				model.resizingTmpl.style.width = t[0].w;
+				model.resizingTmpl.style.width = t[0].w - pLeft - pRight - bLeft;
 				model.resizingTmpl.style.left = t[0].x;
 				model.updateFormElsText();
 				model.resizingTmpl = null;
@@ -458,7 +464,6 @@ var model = {
 	},
 	handleKeyboardMove (e) {
 		if (model.focusedInpEl["domElement"] && model.focusedInpEl["arrayElement"]) {
-			//debugger;
 			var rect = document.getElementById('rect').getBoundingClientRect();
 			//West
 			if (e.keyCode == 37) {
@@ -466,11 +471,6 @@ var model = {
 				if (t >= 0) {
 					model.focusedInpEl["domElement"].style.left = t;
 					model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10);
-					var snapGrid = document.querySelector("div#snapGrid");
-					if (parseInt(snapGrid.style.width, 10) > window.innerWidth && model.focusedInpEl["arrayElement"].x < (parseInt(snapGrid.style.width, 10) - window.innerWidth)) {
-					//debugger;
-						window.scroll(model.focusedInpEl["arrayElement"].x, window.scrollY);
-					}
 				}
 			}
 			//North
@@ -479,51 +479,24 @@ var model = {
 				if (t >= 0) {
 					model.focusedInpEl["domElement"].style.top = t;
 					model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10);
-					var snapGrid = document.querySelector("div#snapGrid");
-					if (parseInt(snapGrid.style.height, 10) > window.innerHeight && model.focusedInpEl["arrayElement"].y < (parseInt(snapGrid.style.height, 10) - window.innerHeight)) {
-						window.scroll(window.scrollX, model.focusedInpEl["arrayElement"].y);
-					}
 				}
 			}
 			//East
 			if (e.keyCode == 39) {
-				model.focusedInpEl["domElement"].style.left = parseInt(model.focusedInpEl["domElement"].style.left, 10) + model.defaultWidth;
-				model.focusedInpEl["domElement"].style.width = +model.focusedInpEl["arrayElement"].w;
-				model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10)
-				//debugger;
-
-				var p = +findPosX(model.focusedInpEl["domElement"]) + +model.focusedInpEl["arrayElement"].w;
-				var snapGrid = document.querySelector("div#snapGrid");
-				if (p > parseInt(snapGrid.style.width, 10)) {
-					//debugger;
-					snapGrid.style.width = p;
-					snapGrid.querySelector("svg").style.width = p;
-					snapGrid.querySelector("#rect").style.width = p;
-					window.scroll(p, window.scrollY);
+				var width = model.focusedInpEl["domElement"].offsetWidth;
+				if ((model.focusedInpEl["arrayElement"].x + width) < Math.floor(model.gridWidth / model.defaultWidth) * model.defaultWidth) {
+					model.focusedInpEl["domElement"].style.left = parseInt(model.focusedInpEl["domElement"].style.left, 10) + model.defaultWidth;
+					model.focusedInpEl["arrayElement"].x = parseInt(model.focusedInpEl["domElement"].style.left, 10);
 				}
-				// } else if (parseInt(snapGrid.style.width, 10) > window.innerWidth && (model.focusedInpEl["arrayElement"].x + model.focusedInpEl["arrayElement"].w) > (parseInt(snapGrid.style.width, 10) - window.innerWidth)) {
-				// 	//debugger;
-				// 	window.scroll((model.focusedInpEl["arrayElement"].x + model.focusedInpEl["arrayElement"].w), window.scrollY);
-				// }
-
 			}
 			//South
 			if (e.keyCode == 40) {
-				model.focusedInpEl["domElement"].style.top = parseInt(model.focusedInpEl["domElement"].style.top, 10) + model.defaultHeight;
-				model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10)
-
-				var p = +findPosY(model.focusedInpEl["domElement"]) + +model.focusedInpEl["domElement"].offsetHeight;
-				var snapGrid = document.querySelector("div#snapGrid");
-				if (p > parseInt(snapGrid.style.height, 10)) {
-					//debugger;
-					snapGrid.style.height = p;
-					snapGrid.querySelector("svg").style.height = p;
-					snapGrid.querySelector("#rect").style.height = p;
-					window.scroll(window.scrollX, p);
+				//debugger;
+				var height = parseInt(model.focusedInpEl["domElement"].offsetHeight, 10);
+				if ((model.focusedInpEl["arrayElement"].y + height) < Math.floor(model.gridHeight / model.defaultHeight) * model.defaultHeight) {
+					model.focusedInpEl["domElement"].style.top = parseInt(model.focusedInpEl["domElement"].style.top, 10) + model.defaultHeight;
+					model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10);
 				}
-				// } else if (parseInt(snapGrid.style.height, 10) > window.innerHeight && (model.focusedInpEl["arrayElement"].y + +model.focusedInpEl["domElement"].offsetHeight) > (parseInt(snapGrid.style.height, 10) - window.innerHeight)) {
-				// 	window.scroll(window.scrollX, (model.focusedInpEl["arrayElement"].y + +model.focusedInpEl["domElement"].offsetHeight));
-				// }
 			}
 			model.updateFormElsText();
 		}

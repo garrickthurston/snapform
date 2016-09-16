@@ -5,7 +5,9 @@ var model = {
 	currentY: 0,
 	formInputs: [],
 	inpTypes: [{
-		value: "text", text: "Text"
+		value: "header", text: "Header"
+	}, {
+		value: "text", text: "Text Input"
 	}],
 	offsetX: 0,
 	offsetY: 0,
@@ -86,7 +88,6 @@ var model = {
 		g.appendChild(hoverRect);
 		svg.appendChild(g);
 		document.querySelector('#snapGrid').appendChild(svg);
-
 		[].forEach.call(model.inpTypes, function (item) {
 			var option = document.createElement("option");
 			option.setAttribute("value", item.value);
@@ -107,34 +108,8 @@ var model = {
 				}
 			}		 			
 		};
-		g.onclick = function (e) {
-			//model.addInpOpen = false;
-			var t = g.getBoundingClientRect(),
-				f = rect.getBoundingClientRect(),
-				x = t.left - f.left,
-			y = t.top - f.top;
-			model.currentX = x;
-			model.currentY = y;
-			if (this.classList.contains('clicked')) {
-				this.classList.remove('clicked');
-			} else {
-				this.classList.add('clicked');
+		g.onclick = model.gOnClick;
 
-				var addInpTmpl = document.getElementById('addInpTmpl').cloneNode(true);
-				addInpTmpl.style.top = t.top + (model.defaultHeight / 2);
-				addInpTmpl.style.left = t.left + (model.defaultWidth / 2);
-				addInpTmpl.style.display = "block";
-				addInpTmpl.removeAttribute("id");
-				addInpTmpl.classList.remove("tmpl");
-				addInpTmpl.classList.add("in");
-				addInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
-				addInpTmpl.querySelector('.close').addEventListener('click', model.addInpClose, false);
-				addInpTmpl.querySelector('[name="fieldName"]').addEventListener('keyup', model.inpOnKeyUp, false);
-				addInpTmpl.querySelector('[name="inputType"]').addEventListener('change', model.inpOnKeyUp, false);
-				document.body.appendChild(addInpTmpl);
-				//model.addInpOpen = true;
-			}
-		};
 		rect.onclick = function (e) {
 			if (g.classList.contains('clicked')) {
 			    g.classList.remove('clicked');
@@ -226,19 +201,63 @@ var model = {
 		}, false);
 
 	},
+	gOnClick: function (e) {
+		//model.addInpOpen = false;
+		var t = document.querySelector("svg g").getBoundingClientRect(),
+			f = document.querySelector("#rect").getBoundingClientRect(),
+			x = t.left - f.left,
+		y = t.top - f.top;
+		model.currentX = x;
+		model.currentY = y;
+		if (this.classList.contains('clicked')) {
+			this.classList.remove('clicked');
+		} else {
+			this.classList.add('clicked');
+
+			var addInpTmpl = document.getElementById('addInpTmpl').cloneNode(true);
+			addInpTmpl.style.top = t.top + (model.defaultHeight / 2);
+			addInpTmpl.style.left = t.left + (model.defaultWidth / 2);
+			addInpTmpl.style.display = "block";
+			addInpTmpl.removeAttribute("id");
+			addInpTmpl.classList.remove("tmpl");
+			addInpTmpl.classList.add("in");
+			addInpTmpl.querySelector('.close').addEventListener('click', model.addInpClose, false);
+			addInpTmpl.querySelector('[name="inputType"]').addEventListener('change', model.addInpTypeChange, false);
+			document.body.appendChild(addInpTmpl);
+			//model.addInpOpen = true;
+		}
+	},
+	addInpTypeChange: function (e) {
+		var that = this;
+		switch (that.value) {
+			case "text":
+				var textAddInpTmpl = document.getElementById('textAddInpTmpl').cloneNode(true);
+				textAddInpTmpl.removeAttribute("id");
+				textAddInpTmpl.classList.remove("tmpl");
+				textAddInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
+				textAddInpTmpl.querySelector('[name="fieldName"]').addEventListener('keydown', model.inpOnKeyUp, false);
+				document.querySelector('.in > div').appendChild(textAddInpTmpl);
+				break;
+			default:
+				var inp = document.querySelector('.in .inpChildTmpl');
+				if (inp) inp.parentNode.removeChild(inp);
+				break;
+		}
+	},
+
 	formElsAdded: function (e) {
 		var rect = document.getElementById('rect').getBoundingClientRect(),
 			inpTmpl = document.getElementById('inpTmpl').cloneNode(true);
+		
 		document.getElementById("gid").classList.remove("clicked");
 		inpTmpl.style.top = e.item.y;
 		inpTmpl.style.left = e.item.x;
 		inpTmpl.removeAttribute("id");
 		inpTmpl.classList.remove("tmpl");
 		inpTmpl.classList.add("on");
-		inpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
-		inpTmpl.querySelector("input.snapField").setAttribute("name", e.item.fieldName);
 		inpTmpl.querySelector("a.closeAnchor").addEventListener('click', model.closeAnchor, false);
 		document.querySelector('#snapGrid').appendChild(inpTmpl);
+
 		var pLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-left'), 10),
 			pRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-right'), 10),
 			bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
@@ -320,28 +339,14 @@ var model = {
 			}
 		}
 
-		function handleFocusClick (e) {
-			var el = e.target.classList.contains("inpTmpl") ? e.target : closest(e.target, function (el) { return el.classList.contains("inpTmpl") });
-			model.focusedInpEl["domElement"] = el ? el : {};
-			if (el) {
-				var t = el.querySelector("input.snapField").getAttribute("name");
-				var y = grep(model.formEls, function (item) {
-					return item.fieldName == t;
-				});
-				if (y.length > 0) model.focusedInpEl["arrayElement"] = y[0];
-				document.querySelectorAll('.inpTmpl.on').forEach(function (item) {
-					item.style.background = "#FFF";
-				});
-				el.style.background = "#eee";
-			}
-		}
+		
 
 		inpTmpl.addEventListener('dragstart', handleDragStart, false);
 		inpTmpl.addEventListener('dragenter', handleDragEnter, false)
 		inpTmpl.addEventListener('dragover', handleDragOver, false);
 		inpTmpl.addEventListener('dragleave', handleDragLeave, false);
 		inpTmpl.addEventListener('dragend', handleDragEnd, false);
-		inpTmpl.addEventListener('click', handleFocusClick, false);
+		inpTmpl.addEventListener('click', model.handleFocusClick, false);
 
 		var startX, startWidth;
 
@@ -454,13 +459,38 @@ var model = {
 		inp.parentNode.removeChild(inp);
 
 		model.focusedInpEl["domElement"] = inpTmpl;
-		var t = inpTmpl.querySelector("input.snapField").getAttribute("name");
-		var y = grep(model.formEls, function (item) {
-			return item.fieldName == t;
-		});
-		if (y.length > 0) model.focusedInpEl["arrayElement"] = y[0];
+		model.focusedInpEl["arrayElement"] = e.item;
 
+		inpTmpl.inpArrayItem = e.item;
+
+		switch (e.item.inputType) {
+			case "text":
+				var textInpTmpl = document.getElementById('textInpTmpl').cloneNode(true);
+				textInpTmpl.removeAttribute("id");
+				textInpTmpl.classList.remove("tmpl");
+				textInpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
+				textInpTmpl.querySelector(".snapField").setAttribute("name", e.item.fieldName);
+				inpTmpl.querySelector('.onpDrag').appendChild(textInpTmpl);
+				break;
+			case "header":
+				break;
+			default:
+				break;
+		}
+		
 		model.updateFormElsText();
+	},
+	handleFocusClick: function (e) {
+			//debugger;
+		var el = e.target.classList.contains("inpTmpl") ? e.target : closest(e.target, function (el) { return el.classList.contains("inpTmpl") });
+		model.focusedInpEl["domElement"] = el ? el : null;
+		if (el) {
+			model.focusedInpEl["arrayElement"] = el.inpArrayItem;
+			document.querySelectorAll('.inpTmpl.on').forEach(function (item) {
+				item.style.background = "#FFF";
+			});
+			el.style.background = "#eee";
+		}
 	},
 	handleKeyboardMove (e) {
 		if (model.focusedInpEl["domElement"] && model.focusedInpEl["arrayElement"]) {
@@ -560,7 +590,7 @@ var model = {
 				w: 200
 			});
 		}
-	},
+	},	
 	addInpClose: function (e) {
 		var inp = document.getElementsByClassName('in');
 		if (inp.length && !e.target.classList.contains("in")) {

@@ -267,7 +267,7 @@ var model = {
 		document.addEventListener('mousemove', mousemove, false)
 		var mousedown = false;
 		function handleDragStart(e) {
-			handleFocusClick(e);
+			model.handleFocusClick(e);
 			document.querySelectorAll('.addInpTmpl.in').forEach(function (item) {
 				item.parentNode.removeChild(item);
 			});
@@ -351,7 +351,7 @@ var model = {
 		var startX, startWidth;
 
 		inpTmpl.querySelector('.dragDiv.right').addEventListener('mousedown', function (e) {
-			handleFocusClick(e);
+			model.handleFocusClick(e);
 			model.resizingTmpl = closest(this, function (el) {
 		    	return el.classList.contains('inpTmpl');
 		    });
@@ -364,7 +364,7 @@ var model = {
 		}, false);
 
 		inpTmpl.querySelector('.dragDiv.left').addEventListener('mousedown', function (e) {
-			handleFocusClick(e);
+			model.handleFocusClick(e);
 			model.resizingTmpl = closest(this, function (el) {
 		    	return el.classList.contains('inpTmpl');
 		    });

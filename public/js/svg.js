@@ -229,7 +229,17 @@ var model = {
 	},
 	addInpTypeChange: function (e) {
 		var that = this;
+		var inp = document.querySelector('.in .inpChildTmpl');
+		if (inp) inp.parentNode.removeChild(inp);
 		switch (that.value) {
+			case "header": 
+				var headerAddInpTmpl = document.getElementById('headerAddInpTmpl').cloneNode(true);
+				headerAddInpTmpl.removeAttribute("id");
+				headerAddInpTmpl.classList.remove("tmpl");
+				headerAddInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
+				headerAddInpTmpl.querySelector('[name="fieldName"]').addEventListener('keydown', model.inpOnKeyUp, false);
+				document.querySelector('.in > div').appendChild(headerAddInpTmpl);
+				break;
 			case "text":
 				var textAddInpTmpl = document.getElementById('textAddInpTmpl').cloneNode(true);
 				textAddInpTmpl.removeAttribute("id");
@@ -239,8 +249,6 @@ var model = {
 				document.querySelector('.in > div').appendChild(textAddInpTmpl);
 				break;
 			default:
-				var inp = document.querySelector('.in .inpChildTmpl');
-				if (inp) inp.parentNode.removeChild(inp);
 				break;
 		}
 	},
@@ -262,7 +270,6 @@ var model = {
 			pRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-right'), 10),
 			bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
 			bRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-right-width'), 10);
-		inpTmpl.style.width = e.item.w - pLeft - pRight - bLeft;
 
 		document.addEventListener('mousemove', mousemove, false)
 		var mousedown = false;
@@ -329,7 +336,7 @@ var model = {
 			model.offsetY = 0;
 			mousedown = false;
 			var t = grep(model.formEls, function (item) {
-				return that.querySelector("input[name='" + item.fieldName +"']");
+				return that.inpArrayItem.fieldName == item.fieldName;
 			});
 			if (t.length > 0) {
 				t[0].y = top //- rect.top;
@@ -350,7 +357,11 @@ var model = {
 
 		var startX, startWidth;
 
-		inpTmpl.querySelector('.dragDiv.right').addEventListener('mousedown', function (e) {
+		inpTmpl.querySelector('.dragDiv.right').addEventListener('mousedown', startDragRight, false);
+
+		inpTmpl.querySelector('.dragDiv.left').addEventListener('mousedown', startDragLeft, false);
+
+		function startDragRight(e) {
 			model.handleFocusClick(e);
 			model.resizingTmpl = closest(this, function (el) {
 		    	return el.classList.contains('inpTmpl');
@@ -361,9 +372,9 @@ var model = {
 		    startWidth = parseInt(document.defaultView.getComputedStyle(model.resizingTmpl).width, 10);
 		    document.documentElement.addEventListener('mousemove', doDragRight, false);
 		    document.documentElement.addEventListener('mouseup', stopDragRight, false);
-		}, false);
+		}
 
-		inpTmpl.querySelector('.dragDiv.left').addEventListener('mousedown', function (e) {
+		function startDragLeft(e) {
 			model.handleFocusClick(e);
 			model.resizingTmpl = closest(this, function (el) {
 		    	return el.classList.contains('inpTmpl');
@@ -374,7 +385,7 @@ var model = {
 		    startWidth = parseInt(document.defaultView.getComputedStyle(model.resizingTmpl).width, 10);
 		    document.documentElement.addEventListener('mousemove', doDragLeft, false);
 		    document.documentElement.addEventListener('mouseup', stopDragLeft, false);
-		}, false);
+		}
 
 		function doDragRight(e) {
 			//debugger;
@@ -410,7 +421,7 @@ var model = {
 
 		function stopDragRight(e) {
 			var t = grep(model.formEls, function (item) {
-				return model.resizingTmpl.querySelector("input[name='" + item.fieldName +"']");
+				return model.resizingTmpl.inpArrayItem.fieldName == item.fieldName;
 			});
 			if (t.length > 0) {
 				var pLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-left'), 10),
@@ -432,7 +443,7 @@ var model = {
 
 		function stopDragLeft(e) {
 			var t = grep(model.formEls, function (item) {
-				return model.resizingTmpl.querySelector("input[name='" + item.fieldName +"']");
+				return model.resizingTmpl.inpArrayItem.fieldName == item.fieldName;
 			});
 			if (t.length > 0) {
 				var pLeft = parseInt(window.getComputedStyle(model.resizingTmpl, null).getPropertyValue('padding-left'), 10),
@@ -471,14 +482,29 @@ var model = {
 				textInpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
 				textInpTmpl.querySelector(".snapField").setAttribute("name", e.item.fieldName);
 				inpTmpl.querySelector('.onpDrag').appendChild(textInpTmpl);
+				inpTmpl.style.width = e.item.w - pLeft - pRight - bLeft;
 				break;
 			case "header":
+				var headerInpTmpl = document.getElementById('headerInpTmpl').cloneNode(true);
+				headerInpTmpl.removeAttribute('id');
+				headerInpTmpl.classList.remove('tmpl');
+				headerInpTmpl.querySelector('.snapInpLabel').innerText = e.item.fieldName;
+				inpTmpl.querySelector('.onpDrag').appendChild(headerInpTmpl);
+				inpTmpl.inpArrayItem.w = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('width'), 10) + pLeft + pRight + bLeft;
+				var right = inpTmpl.querySelector('.dragDiv.right');
+				right.parentNode.removeChild(right)
+				var left = inpTmpl.querySelector('.dragDiv.left');
+				left.parentNode.removeChild(left);
+				inpTmpl.querySelector(".pencil").addEventListener('click', model.editHeader, false);
 				break;
 			default:
 				break;
 		}
 		
 		model.updateFormElsText();
+	},
+	editHeader: function (e) {
+
 	},
 	handleFocusClick: function (e) {
 			//debugger;
@@ -541,7 +567,7 @@ var model = {
 
 		if (el) {
 			var m = grep(model.formEls, function (item) {
-				return item.fieldName == el.querySelector('input.snapField').getAttribute("name");
+				return item.fieldName == el.inpArrayItem.fieldName;
 			});
 			if (m.length > 0) {
 				var i = model.formEls.indexOf(m[0]);
@@ -582,13 +608,23 @@ var model = {
 		}
 		if (valid) {
 
-			model.formEls.push({
+			var item = {
 				fieldName: fieldName,
 				inputType: inputType,
 				x: model.currentX,
-				y: model.currentY,
-				w: 200
-			});
+				y: model.currentY
+			};
+
+			switch (fieldName) {
+				case "header":
+					item.w = 0;
+					break;
+				case "text":
+					item.w = 200;
+					break;
+			}
+
+			model.formEls.push(item);
 		}
 	},	
 	addInpClose: function (e) {

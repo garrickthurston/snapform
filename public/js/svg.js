@@ -603,12 +603,16 @@ var model = {
 			el.style.background = "#eee";
 			if (model.formEls.length) {
 				//debugger;
+				[].forEach.call(model.formEls, function (elItem) {
+					elItem.selected = false;
+				});
 				var z = model.focusedInpEl["arrayElement"].z;
 				var baseZ = +document.querySelector('div#snapGrid').style.zIndex;
 				baseZ = baseZ ? baseZ : 10000;
 				[].forEach.call(document.querySelectorAll('.inpTmpl.on'), function (elItem) {
 					if (model.focusedInpEl["arrayElement"].z < (+elItem.style.zIndex - baseZ)) 
 						model.focusedInpEl["arrayElement"].z = (+elItem.style.zIndex - baseZ);
+						model.focusedInpEl["arrayElement"].selected = true;
 				});
 				[].forEach.call(model.formEls, function (elItem) {
 					if (elItem.z > z && elItem.uid != model.focusedInpEl["arrayElement"].uid) {
@@ -618,6 +622,7 @@ var model = {
 						});
 						if (eItem.length) {
 							eItem[0].style.zIndex = elItem.z + baseZ;
+							eItem[0].inpArrayItem = model.focusedInpEl["arrayElement"];
 						}
 					}
 				});
@@ -721,13 +726,14 @@ var model = {
 				inputType: {
 					name: inputType,
 					properties: {
-						tagName: document.getElementById('headerInpTmpl').querySelector('.snapInpLabel').tagName
+						tagName: document.getElementById(inputType + 'InpTmpl').querySelector('.tagMeat').tagName
 					}
 				},
 				x: model.currentX,
 				y: model.currentY,
 				z: 0,
-				uid: guid()
+				uid: guid(),
+				selected: false
 			};
 
 

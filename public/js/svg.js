@@ -587,6 +587,7 @@ var model = {
 				bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
 				bRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-right-width'), 10);
 			model.focusedInpEl["arrayElement"].w = inpTmpl.offsetWidth + pLeft + pRight + bLeft + bRight;
+			model.focusedInpEl["arrayElement"].inputType.properties.tagName = selectedTmpl.tagName;
 		}
 
 		model.updateFormElsText();
@@ -715,11 +716,12 @@ var model = {
 		}
 		if (valid) {
 			var item = {
+
 				fieldName: fieldName,
 				inputType: {
 					name: inputType,
 					properties: {
-						tagName: "h1"
+						tagName: document.getElementById('headerInpTmpl').querySelector('.snapInpLabel').tagName
 					}
 				},
 				x: model.currentX,

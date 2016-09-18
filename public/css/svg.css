@@ -75,7 +75,6 @@ span.changeError {
 
 .inpTmpl {
 	position:absolute;
-	z-index:10000;
 	background:#FFF;
 	padding:6px;
 	border:1px solid #787878;
@@ -101,3 +100,47 @@ div.dragDiv {
 	div.dragDiv.left {
 	    left: -4px;
 	}
+
+.headerAnchor > [class*='Header'] {
+	cursor: pointer;
+	padding:4px;
+}
+
+.headerAnchor > [class*='Header'].selected {
+	cursor: pointer;
+	padding:4px;
+	background: #ccc;
+}
+
+.headerAnchor > [class*='Header']:hover {
+	background: #ccc;
+}
+
+.hoverSliderTmpl {
+    position: absolute;
+    display: none;
+    right:-5px;
+    top:5px;
+}
+
+.hoverSliderTmpl.onHover {
+	display:block;
+}
+
+.hoverSliderTmpl .hoverInp {
+    background-color: #666;
+    border: 2px solid #666;
+    border-bottom-width:4px;
+    margin-left: 6px;
+    margin-right: -5px;
+    cursor:pointer;
+}
+
+.hoverSliderTmpl .triangle {
+    float: right;
+    margin-top: 20px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid #666;
+    border-right: 5px solid transparent;
+}

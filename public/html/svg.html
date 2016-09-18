@@ -9,6 +9,53 @@
 	<link rel="stylesheet" type="text/css" href="../css/svg.css">
 </head>
 <body>
+	<div id="headerInpTmpl" class="headerInpTmpl tmpl">
+  		<h3 class="snapInpLabel" style="float:left;"></h3>
+  	</div>
+
+  	<div id="textInpTmpl" class="textInpTmpl tmpl">
+  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
+  		<div class="inp" style="clear:both;">
+  			<input class="snapField inputDiv" />
+  		</div>
+  	</div>
+
+  	<div id="editHeaderTmpl" class="editTmpl editHeaderTmpl tmpl" style="border:1px solid #aaa;position:absolute;top:24px;">
+  		<div style="text-align:center;float:left;background:#FFF;padding:3px;">
+  			<a class="headerAnchor">
+	  			<h6 class="h6Header"></h6>
+	  		</a>
+	  		<a class="headerAnchor">
+	  			<h5 class="h5Header"></h5>
+	  		</a>
+	  		<a class="headerAnchor">
+	  			<h4 class="h4Header"></h4>
+	  		</a>
+	  		<a class="headerAnchor">
+	  			<h3 class="h3Header"></h3>
+	  		</a>
+	  		<a class="headerAnchor">
+	  			<h2 class="h2Header"></h2>
+	  		</a>
+	  		<a class="headerAnchor">
+	  			<h1 class="h1Header"></h1>
+	  		</a>
+  		</div>
+  		<div style="clear:both;"></div>
+  	</div>
+
+  	<div id="hoverSliderTmpl" class="hoverSliderTmpl tmpl">
+  		<div style="position:relative;">
+  			<a class="btnEdit hoverInp editAnchor" title="Edit">
+	        	<div class="pencil"></div>
+	        </a>
+  		    <a class="btnClose hoverInp closeAnchor" title="Close">
+        		<span class="close hairline"></span>
+	        </a>
+	        <div class="triangle"></div>
+        </div>
+    </div>
+
 	<div style="position:relative;">
 		<div id="inpEls" style="margin:0 0 12px 0;"></div>
 		<div style="margin: 0 0 12px 0;">
@@ -53,7 +100,7 @@
 
 	    	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
 	  	</svg> -->
-	  	<div id="snapGrid" style="position:relative;border-right:1px solid #b0b0b0;border-bottom:1px solid #b0b0b0;">
+	  	<div id="snapGrid" style="position:relative;border-right:1px solid #b0b0b0;border-bottom:1px solid #b0b0b0;z-index:10000;">
 	  	<div id="addInpTmpl" class="addInpTmpl tmpl">
 	  		<div style="position:relative;">
 		  		<span class="close hairline" style="position:absolute;top:0;right:0;"></span>
@@ -102,30 +149,17 @@
 	  	</div>
 
 	  	<div id="inpTmpl" class="inpTmpl tmpl" draggable="true">
-	  		<a class="closeAnchor" style="cursor:pointer;position:absolute;top:4px;right:4px;width:12px;height:12px;">
-	  			<span class="close hairline"></span>
-	  		</a>
-	  		<a class="editAnchor" style="position:absolute;cursor:pointer;top:4px;right:16px">
-		  		<div class="pencil"></div>
-		  	</a>
 		  	<div class="dragDiv left"></div>
-	  		<div class="onpDrag">
-		  		
-	  		<div>
-	  		<div class="dragDiv right"></div>
-	  	</div>
+		  		<div class="onpDrag">
+			  		
+		  		<div>
+		  		<div class="dragDiv right"></div>
+		  	</div>
+		</div>
 
-	  	<div id="headerInpTmpl" class="headerInpTmpl tmpl">
-	  		<h3 class="snapInpLabel" style="float:left;"></label>
-	  	</div>
-
-	  	<div id="textInpTmpl" class="textInpTmpl tmpl">
-	  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
-	  		<div class="inp" style="clear:both;">
-	  			<input class="snapField inputDiv" />
-	  		</div>
-	  	</div>
 		
+		
+
 	</div>
 
 	<script>

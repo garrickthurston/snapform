@@ -263,13 +263,43 @@ var model = {
 		inpTmpl.removeAttribute("id");
 		inpTmpl.classList.remove("tmpl");
 		inpTmpl.classList.add("on");
-		inpTmpl.querySelector("a.closeAnchor").addEventListener('click', model.closeAnchor, false);
 		document.querySelector('#snapGrid').appendChild(inpTmpl);
+
+		inpTmpl.addEventListener('mouseenter', function () {
+			this.querySelector('.hoverSliderTmpl').classList.add('onHover');
+		}, false);
+
+		inpTmpl.addEventListener('mouseleave', function () {
+			this.querySelector('.hoverSliderTmpl').classList.remove('onHover');
+			var edit = this.querySelector('.editTmpl');
+			if (edit) edit.parentNode.removeChild(edit);
+		}, false);
+
+		[].forEach.call(inpTmpl.querySelectorAll('.hoverInp'), function (item) {
+			item.addEventListener('mouseenter', function () {
+				if (item.querySelector('.pencil')) item.querySelector('.pencil').classList.add('hover');
+				if (item.querySelector('.close')) item.querySelector('.close').classList.add('hover');
+			}, false);
+			item.addEventListener('mouseleave', function () {
+				if (item.querySelector('.pencil')) item.querySelector('.pencil').classList.remove('hover');
+				if (item.querySelector('.close')) item.querySelector('.close').classList.remove('hover');
+			}, false);
+		});
 
 		var pLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-left'), 10),
 			pRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-right'), 10),
 			bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
 			bRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-right-width'), 10);
+
+		var hoverSliderTmpl = document.getElementById('hoverSliderTmpl').cloneNode(true);
+		hoverSliderTmpl.removeAttribute('id');
+		hoverSliderTmpl.classList.remove('tmpl');
+		inpTmpl.appendChild(hoverSliderTmpl);
+		inpTmpl.querySelector("a.closeAnchor").addEventListener('click', model.closeAnchor, false);
+
+		var baseZ = +document.querySelector('div#snapGrid').style.zIndex;
+		baseZ = baseZ ? baseZ : 10000;
+		inpTmpl.style.zIndex = baseZ + e.item.z;
 
 		document.addEventListener('mousemove', mousemove, false)
 		var mousedown = false;
@@ -473,8 +503,9 @@ var model = {
 		model.focusedInpEl["arrayElement"] = e.item;
 
 		inpTmpl.inpArrayItem = e.item;
+		inpTmpl.uid = e.item.uid;
 
-		switch (e.item.inputType) {
+		switch (e.item.inputType.name) {
 			case "text":
 				var textInpTmpl = document.getElementById('textInpTmpl').cloneNode(true);
 				textInpTmpl.removeAttribute("id");
@@ -488,14 +519,24 @@ var model = {
 				var headerInpTmpl = document.getElementById('headerInpTmpl').cloneNode(true);
 				headerInpTmpl.removeAttribute('id');
 				headerInpTmpl.classList.remove('tmpl');
+				
 				headerInpTmpl.querySelector('.snapInpLabel').innerText = e.item.fieldName;
+				var label = headerInpTmpl.querySelector('.snapInpLabel'), 
+					parent = label.parentNode,
+					temp = document.createElement(e.item.inputType.properties.tagName);
+				[].forEach.call(label.classList, function (it) {
+					temp.classList.add(it);
+				});
+				temp.innerText = label.innerText;
+				parent.replaceChild(temp, label);
+				//headerInpTmpl.querySelector('.snapInpLabel').tagName = e.item.inputType.properties.tagName;
 				inpTmpl.querySelector('.onpDrag').appendChild(headerInpTmpl);
 				inpTmpl.inpArrayItem.w = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('width'), 10) + pLeft + pRight + bLeft;
 				var right = inpTmpl.querySelector('.dragDiv.right');
 				right.parentNode.removeChild(right)
 				var left = inpTmpl.querySelector('.dragDiv.left');
 				left.parentNode.removeChild(left);
-				inpTmpl.querySelector(".pencil").addEventListener('click', model.editHeader, false);
+				inpTmpl.querySelector(".editAnchor").addEventListener('click', model.editHeader, false);
 				break;
 			default:
 				break;
@@ -504,10 +545,53 @@ var model = {
 		model.updateFormElsText();
 	},
 	editHeader: function (e) {
+		//debugger;
+		var editHeaderTmpl = document.getElementById('editHeaderTmpl').cloneNode(true);
+		var inpTmpl = closest(this, function (el) {
+			return el.classList.contains('inpTmpl');
+		});
+		var text = inpTmpl.querySelector('.snapInpLabel:not(.tmpl)').innerText;
+		var tagName = inpTmpl.querySelector('.snapInpLabel:not(.tmpl)').tagName;
+		editHeaderTmpl.removeAttribute('id');
+		editHeaderTmpl.classList.remove('tmpl');
+		editHeaderTmpl.querySelector(tagName).classList.add('selected');
+		[].forEach.call(editHeaderTmpl.querySelectorAll('[class*="Header"]'), function (item) {
+			item.innerText = text;
+		});
+		inpTmpl.appendChild(editHeaderTmpl);
+		[].forEach.call(editHeaderTmpl.querySelectorAll('a.headerAnchor'), function (item) {
+			item.addEventListener('click', model.editHeaderClick, false);
+		});
+		//model.updateFormElsText();
+	},
+	editHeaderClick: function (e) {
+		var selectedTmpl = this.querySelector('[class*="Header"]').cloneNode(true);
+		var tagName = selectedTmpl.tagName;
+		selectedTmpl.classList.remove(tagName + "Header");
+		selectedTmpl.classList.add('snapInpLabel');
+		var inpTmpl = closest(this, function (el) {
+			return el.classList.contains('inpTmpl');
+		});
+		var snapInpLabel = inpTmpl.querySelector('.headerInpTmpl .snapInpLabel');
+		snapInpLabel.parentNode.removeChild(snapInpLabel);
+		inpTmpl.querySelector('.headerInpTmpl').appendChild(selectedTmpl);
 
+		var edit = inpTmpl.querySelector('.editTmpl');
+		edit.parentNode.removeChild(edit);
+
+		inpTmpl.querySelector('.hoverSliderTmpl').classList.remove('onHover');
+
+		if (model.focusedInpEl["arrayElement"]) {
+			var pLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-left'), 10),
+				pRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-right'), 10),
+				bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
+				bRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-right-width'), 10);
+			model.focusedInpEl["arrayElement"].w = inpTmpl.offsetWidth + pLeft + pRight + bLeft + bRight;
+		}
+
+		model.updateFormElsText();
 	},
 	handleFocusClick: function (e) {
-			//debugger;
 		var el = e.target.classList.contains("inpTmpl") ? e.target : closest(e.target, function (el) { return el.classList.contains("inpTmpl") });
 		model.focusedInpEl["domElement"] = el ? el : null;
 		if (el) {
@@ -516,6 +600,29 @@ var model = {
 				item.style.background = "#FFF";
 			});
 			el.style.background = "#eee";
+			if (model.formEls.length) {
+				//debugger;
+				var z = model.focusedInpEl["arrayElement"].z;
+				var baseZ = +document.querySelector('div#snapGrid').style.zIndex;
+				baseZ = baseZ ? baseZ : 10000;
+				[].forEach.call(document.querySelectorAll('.inpTmpl.on'), function (elItem) {
+					if (model.focusedInpEl["arrayElement"].z < (+elItem.style.zIndex - baseZ)) 
+						model.focusedInpEl["arrayElement"].z = (+elItem.style.zIndex - baseZ);
+				});
+				[].forEach.call(model.formEls, function (elItem) {
+					if (elItem.z > z && elItem.uid != model.focusedInpEl["arrayElement"].uid) {
+						elItem.z -= 1;
+						var eItem = grep(document.querySelectorAll('.inpTmpl.on'), function (dItem) {
+							return dItem.uid == elItem.uid;
+						});
+						if (eItem.length) {
+							eItem[0].style.zIndex = elItem.z + baseZ;
+						}
+					}
+				});
+			}
+			el.style.zIndex = model.focusedInpEl["arrayElement"].z + baseZ;
+			model.updateFormElsText();
 		}
 	},
 	handleKeyboardMove (e) {
@@ -607,15 +714,29 @@ var model = {
 			valid = false;
 		}
 		if (valid) {
-
 			var item = {
 				fieldName: fieldName,
-				inputType: inputType,
+				inputType: {
+					name: inputType,
+					properties: {
+						tagName: "h1"
+					}
+				},
 				x: model.currentX,
-				y: model.currentY
+				y: model.currentY,
+				z: 0,
+				uid: guid()
 			};
 
-			switch (fieldName) {
+
+			if (model.formEls.length) {
+				[].forEach.call(model.formEls, function (elItem) {
+					if (elItem.z > item.z) item.z = elItem.z;
+				});
+				item.z += 1;
+			}
+
+			switch (inputType) {
 				case "header":
 					item.w = 0;
 					break;

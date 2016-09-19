@@ -131,6 +131,8 @@ var model = {
 	init: function () {
 		model.buildSvg();
 
+		//assume that top incoming Z is selected
+
 		model.updateFormElsText();
 
 		model.formEls.addEventListener("itemAdded", model.formElsAdded);
@@ -603,16 +605,12 @@ var model = {
 			el.style.background = "#eee";
 			if (model.formEls.length) {
 				//debugger;
-				[].forEach.call(model.formEls, function (elItem) {
-					elItem.selected = false;
-				});
 				var z = model.focusedInpEl["arrayElement"].z;
 				var baseZ = +document.querySelector('div#snapGrid').style.zIndex;
 				baseZ = baseZ ? baseZ : 10000;
 				[].forEach.call(document.querySelectorAll('.inpTmpl.on'), function (elItem) {
 					if (model.focusedInpEl["arrayElement"].z < (+elItem.style.zIndex - baseZ)) 
 						model.focusedInpEl["arrayElement"].z = (+elItem.style.zIndex - baseZ);
-						model.focusedInpEl["arrayElement"].selected = true;
 				});
 				[].forEach.call(model.formEls, function (elItem) {
 					if (elItem.z > z && elItem.uid != model.focusedInpEl["arrayElement"].uid) {
@@ -622,7 +620,6 @@ var model = {
 						});
 						if (eItem.length) {
 							eItem[0].style.zIndex = elItem.z + baseZ;
-							eItem[0].inpArrayItem = model.focusedInpEl["arrayElement"];
 						}
 					}
 				});
@@ -631,7 +628,7 @@ var model = {
 			model.updateFormElsText();
 		}
 	},
-	handleKeyboardMove (e) {
+	handleKeyboardMove: function (e) {
 		if (model.focusedInpEl["domElement"] && model.focusedInpEl["arrayElement"]) {
 			var rect = document.getElementById('rect').getBoundingClientRect();
 			//West
@@ -732,8 +729,7 @@ var model = {
 				x: model.currentX,
 				y: model.currentY,
 				z: 0,
-				uid: guid(),
-				selected: false
+				uid: guid()
 			};
 
 

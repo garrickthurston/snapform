@@ -765,7 +765,6 @@ var model = {
 	},
 	//header
 	editHeader: function (e) {
-		//debugger;
 		var editHeaderTmpl = document.getElementById('editHeaderTmpl').cloneNode(true);
 		var inpTmpl = closest(this, function (el) {
 			return el.classList.contains('inpTmpl');
@@ -786,7 +785,7 @@ var model = {
 		if (findPosX(editHeaderTmpl)[0] < parseInt(window.getComputedStyle(document.querySelector('body'), null).getPropertyValue('margin'), 10)) {
 			//debugger;
 			var right = parseInt(window.getComputedStyle(editHeaderTmpl, null).getPropertyValue('right'), 10)
-			editHeaderTmpl.style.right = right - findPosX(editHeaderTmpl)[0] - parseInt(window.getComputedStyle(document.querySelector('body'), null).getPropertyValue('margin'), 10) - 1;
+			editHeaderTmpl.style.right = right + findPosX(editHeaderTmpl)[0] - parseInt(window.getComputedStyle(document.querySelector('body'), null).getPropertyValue('margin'), 10) - 1;
 		}
 		//debugger;
 		//model.updateFormElsText();

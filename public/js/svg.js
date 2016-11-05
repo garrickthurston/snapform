@@ -6,11 +6,11 @@ var model = {
 	currentY: 0,
 	formInputs: [],
 	inpTypes: [{
-		value: "header", text: "Header"
-	}, {
-		value: "text", text: "Text Input"
-	}, {
-		value: "textArea", text: "Text Area"
+			value: "header", text: "Header"
+		}, {
+			value: "text", text: "Text Input"
+		}, {
+			value: "textArea", text: "Text Area"
 	}],
 	offsetX: 0,
 	offsetY: 0,
@@ -31,7 +31,6 @@ var model = {
 		var dsg = document.querySelector("div#snapGrid");
 		var width = model.gridWidth;
 		var height = model.gridHeight;
-		//debugger;
 		dsg.style.width = width;
 		dsg.style.height = height;
 		document.getElementById('headerBar').style.width = width;
@@ -40,9 +39,9 @@ var model = {
 		svg.setAttribute("position", "relative");
 		svg.setAttribute("id", "snapGrid")
 			
-			var defs = document.createElementNS(svgns, "defs");
+		var defs = document.createElementNS(svgns, "defs");
 
-			var pattern = document.createElementNS(svgns, "pattern");
+		var pattern = document.createElementNS(svgns, "pattern");
 		pattern.setAttribute('id', 'smallGrid');
 		pattern.setAttribute('width', model.defaultWidth),
 		pattern.setAttribute('height', model.defaultHeight);
@@ -136,6 +135,7 @@ var model = {
 
 		//assume that top incoming Z is selected
 
+		model.updateViewGrid();
 		model.updateFormElsText();
 
 		model.formEls.addEventListener("itemAdded", model.formElsAdded);
@@ -205,6 +205,12 @@ var model = {
 			snapGrid.querySelector("svg").style.height = this.value;
 			snapGrid.querySelector("#rect").style.height = this.value;
 		}, false);
+
+		document.getElementById('toggleGridBtn').addEventListener('click', model.toggleGrid, false);
+
+
+		document.getElementById('viewGrid').style.width = model.gridWidth;
+		document.getElementById('viewGrid').style.height = model.gridHeight;
 
 	},
 	gOnClick: function (e) {
@@ -449,6 +455,7 @@ var model = {
 				t[0].y = top //- rect.top;
 				t[0].x = left//- rect.left;
 
+				model.updateViewGrid();
 				model.updateFormElsText();
 			}
 		}
@@ -538,6 +545,8 @@ var model = {
 				var w = parseInt(model.resizingTmpl.style.width, 10) + pLeft + pRight + bLeft;
 				t[0].w = closestFloorOrCeil(w, model.defaultWidth);
 				model.resizingTmpl.style.width = t[0].w - pLeft - pRight - bLeft;
+
+			model.updateViewGrid();
 				model.updateFormElsText();
 				model.resizingTmpl = null;
 			    document.querySelectorAll('.inpTmpl.on').forEach(function (el) {
@@ -563,6 +572,8 @@ var model = {
 				t[0].x = closestFloorOrCeil(x, model.defaultWidth);
 				model.resizingTmpl.style.width = t[0].w - pLeft - pRight - bLeft;
 				model.resizingTmpl.style.left = t[0].x;
+
+				model.updateViewGrid();
 				model.updateFormElsText();
 				model.resizingTmpl = null;
 			    document.querySelectorAll('.inpTmpl.on').forEach(function (el) {
@@ -628,6 +639,7 @@ var model = {
 		}
 		
 		model.updateFormElsText();
+		model.updateViewGrid();
 	},
 	handleFocusClick: function (e) {
 		var el = e.target.classList.contains("inpTmpl") ? e.target : closest(e.target, function (el) { return el.classList.contains("inpTmpl") });
@@ -660,6 +672,8 @@ var model = {
 				});
 			}
 			el.style.zIndex = model.focusedInpEl["arrayElement"].z + baseZ;
+
+			model.updateViewGrid();
 			model.updateFormElsText();
 		}
 	},
@@ -699,6 +713,8 @@ var model = {
 					model.focusedInpEl["arrayElement"].y = parseInt(model.focusedInpEl["domElement"].style.top, 10);
 				}
 			}
+
+			model.updateViewGrid();
 			model.updateFormElsText();
 		}
 	},
@@ -723,6 +739,8 @@ var model = {
 		}
 	},
 	formElsRemoved: function (e) {
+
+		model.updateViewGrid();
 		model.updateFormElsText();
 	},
 	updateFormElsText: function () {
@@ -799,6 +817,54 @@ var model = {
 			model.focusedInpEl["arrayElement"].inputType.properties.tagName = selectedTmpl.tagName;
 		}
 
+		model.updateViewGrid();
 		model.updateFormElsText();
+	},
+	//exports
+	updateViewGrid: function () {
+		var snapGrid = document.getElementById('snapGrid'),
+			viewGrid = document.getElementById('viewGrid');
+
+		viewGrid.innerHTML = '';
+
+		if (model.formEls.length) {
+			model.formEls.forEach(function (item) {
+				var elItems = grep(document.querySelectorAll('.inpTmpl.on'), function (dItem) {
+						return dItem.uid == item.uid;
+					}),
+					elItem = elItems.length ? elItems[0] : null;
+
+				if (elItem) {
+					var viewInp = elItem.cloneNode(true);
+					viewInp.removeAttribute('draggable');
+					viewInp.removeAttribute('class');
+					viewInp.style.position = 'absolute';
+					viewInp.style.background = '';
+					viewInp.style.padding = '6px';
+					viewGrid.appendChild(viewInp);
+					var t = viewInp.querySelector('.hoverSliderTmpl');
+					t.parentNode.removeChild(t);
+					viewInp.querySelector('.onpDrag').classList.remove('onpDrag');
+				}
+			});
+		}
+	},
+	exportToHtml: function () {
+
+	},
+	toggleGrid: function (e) {
+		model.updateViewGrid();
+
+		var snapGrid = document.getElementById('snapGrid'),
+			viewGrid = document.getElementById('viewGrid');
+
+	    if (snapGrid.style.display !== 'none') {
+	        snapGrid.style.display = 'none';
+	        viewGrid.style.display = 'block';
+	    }
+	    else {
+	        viewGrid.style.display = 'none';
+	        snapGrid.style.display = 'block';
+	    }
 	}
 };

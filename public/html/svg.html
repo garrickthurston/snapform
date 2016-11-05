@@ -67,6 +67,78 @@
         </div>
     </div>
 
+	<div id="addInpTmpl" class="addInpTmpl tmpl">
+  		<div style="position:relative;">
+	  		<span class="close hairline" style="position:absolute;top:0;right:0;"></span>
+	  		<div class="formDiv">
+		  		<label>Input Type</label>
+		  		<div class="inp" style="margin:3px 0 0 0;">
+		  			<select class="inputDiv" name="inputType">
+		  				<option value="">Select...</option>
+		  			</select>
+		  		</div>
+		  		<div class="errorDiv">
+		  			<span class="changeError inputTypeError"></span>
+		  		</div>
+	  		</div>
+  		</div>
+  	</div>
+
+  	<div id="textAddInpTmpl" class="textAddInpTmpl tmpl inpChildTmpl">
+  		<div class="formDiv">
+	  		<label>Field Name</label>
+	  		<div class="inp" style="margin:3px 0 0 0;">
+	  			<input name="fieldName" class="inputDiv" />
+	  		</div>
+	  		<div class="errorDiv">
+	  			<span class="changeError fieldNameError"></span>
+	  		</div>
+  		</div>
+  		<div style="text-align:center;">
+  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
+  		</div>
+  	</div>
+
+  	<div id="headerAddInpTmpl" class="headerAddInpTmpl tmpl inpChildTmpl">
+  		<div class="formDiv">
+	  		<label>Header Text</label>
+	  		<div class="inp" style="margin:3px 0 0 0;">
+	  			<input name="fieldName" class="inputDiv" />
+	  		</div>
+	  		<div class="errorDiv">
+	  			<span class="changeError fieldNameError"></span>
+	  		</div>
+  		</div>
+  		<div style="text-align:center;">
+  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
+  		</div>
+  	</div>
+
+  	<div id="textAreaAddInpTmpl" class="textAreaAddInpTmpl tmpl inpChildTmpl">
+  		<div class="formDiv">
+	  		<label>Field Name</label>
+	  		<div class="inp" style="margin:3px 0 0 0;">
+	  			<input name="fieldName" class="inputDiv" />
+	  		</div>
+	  		<div class="errorDiv">
+	  			<span class="changeError fieldNameError"></span>
+	  		</div>
+  		</div>
+  		<div style="text-align:center;">
+  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
+  		</div>
+  	</div>
+
+  	<div id="inpTmpl" class="inpTmpl tmpl" draggable="true">
+	  	<div class="dragDiv left"></div>
+	  	<div class="onpDrag">
+		  		
+	  		<div>
+		  		<div class="dragDiv right"></div>
+		  	</div>
+		</div>
+	</div>
+
 	<div  style="position:relative;">
 		<div id="inpEls" style="margin:0 0 12px 0;"></div>
 		<div id="headerBar" style="margin: 0 0 12px 0;">
@@ -94,7 +166,7 @@
 	  		</div>
 	  		<div style="float:right;">
 	  			<label>&nbsp;</label>
-	  			<button>Toggle Grid</button>
+	  			<button id="toggleGridBtn">Toggle Grid</button>
 	  		</div>
 	  		<div style="float:right;margin: 0 6px 0 0;">
 	  			<label>&nbsp;</label>
@@ -124,82 +196,13 @@
 	    	<rect id="rect" width="100%" height="100%" fill="url(#grid)" />
 	  	</svg> -->
 	  	<div id="snapGrid" style="position:relative;border-right:1px solid #b0b0b0;border-bottom:1px solid #b0b0b0;z-index:10000;">
-	  	<div id="addInpTmpl" class="addInpTmpl tmpl">
-	  		<div style="position:relative;">
-		  		<span class="close hairline" style="position:absolute;top:0;right:0;"></span>
-		  		<div class="formDiv">
-			  		<label>Input Type</label>
-			  		<div class="inp" style="margin:3px 0 0 0;">
-			  			<select class="inputDiv" name="inputType">
-			  				<option value="">Select...</option>
-			  			</select>
-			  		</div>
-			  		<div class="errorDiv">
-			  			<span class="changeError inputTypeError"></span>
-			  		</div>
-		  		</div>
-	  		</div>
-	  	</div>
-
-	  	<div id="textAddInpTmpl" class="textAddInpTmpl tmpl inpChildTmpl">
-	  		<div class="formDiv">
-		  		<label>Field Name</label>
-		  		<div class="inp" style="margin:3px 0 0 0;">
-		  			<input name="fieldName" class="inputDiv" />
-		  		</div>
-		  		<div class="errorDiv">
-		  			<span class="changeError fieldNameError"></span>
-		  		</div>
-	  		</div>
-	  		<div style="text-align:center;">
-	  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
-	  		</div>
-	  	</div>
-
-	  	<div id="headerAddInpTmpl" class="headerAddInpTmpl tmpl inpChildTmpl">
-	  		<div class="formDiv">
-		  		<label>Header Text</label>
-		  		<div class="inp" style="margin:3px 0 0 0;">
-		  			<input name="fieldName" class="inputDiv" />
-		  		</div>
-		  		<div class="errorDiv">
-		  			<span class="changeError fieldNameError"></span>
-		  		</div>
-	  		</div>
-	  		<div style="text-align:center;">
-	  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
-	  		</div>
-	  	</div>
-
-	  	<div id="textAreaAddInpTmpl" class="textAreaAddInpTmpl tmpl inpChildTmpl">
-	  		<div class="formDiv">
-		  		<label>Field Name</label>
-		  		<div class="inp" style="margin:3px 0 0 0;">
-		  			<input name="fieldName" class="inputDiv" />
-		  		</div>
-		  		<div class="errorDiv">
-		  			<span class="changeError fieldNameError"></span>
-		  		</div>
-	  		</div>
-	  		<div style="text-align:center;">
-	  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
-	  		</div>
-	  	</div>
-
-	  	<div id="inpTmpl" class="inpTmpl tmpl" draggable="true">
-		  	<div class="dragDiv left"></div>
-		  		<div class="onpDrag">
-			  		
-		  		<div>
-		  		<div class="dragDiv right"></div>
-		  	</div>
+	  	
 		</div>
 
-		
-		
-
+		<div id="viewGrid" style="position:relative;border:1px solid #b0b0b0;z-index:10000;">
+		  	
+		</div>
 	</div>
-
 	<script>
 
 		(function () {

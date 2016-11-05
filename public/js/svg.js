@@ -23,8 +23,6 @@ var model = {
 	gridHeight: 800,
 	//svg/init
 	buildSvg: function () {
-
-		model.formInputs.length = 0;
 		var pSvg = document.querySelector('svg');
 		if (pSvg) pSvg.parentNode.removeChild(pSvg);
 
@@ -36,6 +34,7 @@ var model = {
 		//debugger;
 		dsg.style.width = width;
 		dsg.style.height = height;
+		document.getElementById('headerBar').style.width = width;
 		svg.setAttribute("width", width);
 		svg.setAttribute("height", height);
 		svg.setAttribute("position", "relative");
@@ -197,6 +196,7 @@ var model = {
 			snapGrid.style.width = this.value;
 			snapGrid.querySelector("svg").style.width = this.value;
 			snapGrid.querySelector("#rect").style.width = this.value;
+			document.getElementById('headerBar').style.width = this.value;
 		}, false);
 		gridHeight.addEventListener('change', function (e) {
 			model.gridHeight = this.value;

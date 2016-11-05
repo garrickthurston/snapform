@@ -20,6 +20,15 @@
   		</div>
   	</div>
 
+  	<div id="textAreaInpTmpl" class="textAreaInpTmpl tmpl">
+  		<label class="snapInpLabel" style="padding:0 0 6px 0;float:left;"></label>
+  		<div class="inp" style="clear:both;">
+  			<textarea class="snapField inputDiv tagMeat"></textarea> 
+  		</div>
+  	</div>
+
+  	
+
   	<div id="editHeaderTmpl" class="editTmpl editHeaderTmpl tmpl" style="border:1px solid #aaa;position:absolute;top:24px;right: 5px;">
   		<div style="text-align:center;float:left;background:#FFF;padding:3px;">
   			<a class="headerAnchor">
@@ -136,6 +145,21 @@
 	  	<div id="headerAddInpTmpl" class="headerAddInpTmpl tmpl inpChildTmpl">
 	  		<div class="formDiv">
 		  		<label>Header Text</label>
+		  		<div class="inp" style="margin:3px 0 0 0;">
+		  			<input name="fieldName" class="inputDiv" />
+		  		</div>
+		  		<div class="errorDiv">
+		  			<span class="changeError fieldNameError"></span>
+		  		</div>
+	  		</div>
+	  		<div style="text-align:center;">
+	  			<button style="width:72px; margin: 6px 0 0 0;">OK</button>
+	  		</div>
+	  	</div>
+
+	  	<div id="textAreaAddInpTmpl" class="textAreaAddInpTmpl tmpl inpChildTmpl">
+	  		<div class="formDiv">
+		  		<label>Field Name</label>
 		  		<div class="inp" style="margin:3px 0 0 0;">
 		  			<input name="fieldName" class="inputDiv" />
 		  		</div>

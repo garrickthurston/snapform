@@ -1,4 +1,5 @@
 var model = {
+	//global props
 	defaultWidth: 8,
 	defaultHeight: 8,
 	currentX: 0,
@@ -8,6 +9,8 @@ var model = {
 		value: "header", text: "Header"
 	}, {
 		value: "text", text: "Text Input"
+	}, {
+		value: "textArea", text: "Text Area"
 	}],
 	offsetX: 0,
 	offsetY: 0,
@@ -18,6 +21,7 @@ var model = {
 	minInpWidth: 80,
 	gridWidth: 1200,
 	gridHeight: 800,
+	//svg/init
 	buildSvg: function () {
 
 		model.formInputs.length = 0;
@@ -250,11 +254,82 @@ var model = {
 				textAddInpTmpl.querySelector('[name="fieldName"]').addEventListener('keydown', model.inpOnKeyUp, false);
 				document.querySelector('.in > div').appendChild(textAddInpTmpl);
 				break;
+			case "textArea":
+				var textAreaAddInpTmpl = document.getElementById('textAreaAddInpTmpl').cloneNode(true);
+				textAreaAddInpTmpl.removeAttribute("id");
+				textAreaAddInpTmpl.classList.remove("tmpl");
+				textAreaAddInpTmpl.querySelector('button').addEventListener('click', model.addInp, false);
+				textAreaAddInpTmpl.querySelector('[name="fieldName"]').addEventListener('keydown', model.inpOnKeyUp, false);
+				document.querySelector('.in > div').appendChild(textAreaAddInpTmpl);
+				break;
 			default:
 				break;
 		}
 	},
 
+	addInp: function (e) {
+		//debugger;
+		var valid = true,
+			errors = [];
+		[].forEach.call(document.querySelectorAll('.in .changeError'), function (item) {
+			item.innerText = "";
+			item.parentNode.style.display = "none;"
+		});
+
+		var fieldName = document.querySelector('.in [name="fieldName"]').value;
+		var inputType = document.querySelector('.in [name="inputType"]').value;
+
+		if (fieldName == "") errors.push({ field: "fieldName", message: "Required" });
+		if (inputType == "") errors.push({ field: "inputType", message: "Required" });
+
+		if (errors.length) {
+			[].forEach.call(errors, function (item) {
+				var t = document.querySelector('.in .' + item.field + 'Error');
+				t.innerText = item.message;
+				t.parentNode.style.display = "block";
+			});
+			valid = false;
+		}
+		if (valid) {
+			var item = {
+
+				fieldName: fieldName,
+				inputType: {
+					name: inputType,
+					properties: {
+						tagName: document.getElementById(inputType + 'InpTmpl').querySelector('.tagMeat').tagName
+					}
+				},
+				x: model.currentX,
+				y: model.currentY,
+				z: 0,
+				uid: guid()
+			};
+
+
+			if (model.formEls.length) {
+				[].forEach.call(model.formEls, function (elItem) {
+					if (elItem.z > item.z) item.z = elItem.z;
+				});
+				item.z += 1;
+			}
+
+			switch (inputType) {
+				case "header":
+					item.w = 0;
+					break;
+				case "text":
+					item.w = 200;
+					break;
+
+				case "textArea":
+					item.w = 200;
+					break;
+			}
+
+			model.formEls.push(item);
+		}
+	},	
 	formElsAdded: function (e) {
 		var rect = document.getElementById('rect').getBoundingClientRect(),
 			inpTmpl = document.getElementById('inpTmpl').cloneNode(true);
@@ -506,7 +581,6 @@ var model = {
 
 		inpTmpl.inpArrayItem = e.item;
 		inpTmpl.uid = e.item.uid;
-
 		switch (e.item.inputType.name) {
 			case "text":
 				var textInpTmpl = document.getElementById('textInpTmpl').cloneNode(true);
@@ -540,58 +614,19 @@ var model = {
 				left.parentNode.removeChild(left);
 				inpTmpl.querySelector(".editAnchor").addEventListener('click', model.editHeader, false);
 				break;
+			case "textArea":
+				var textAreaInpTmpl = document.getElementById('textAreaInpTmpl').cloneNode(true);
+				textAreaInpTmpl.removeAttribute("id");
+				textAreaInpTmpl.classList.remove("tmpl");
+				textAreaInpTmpl.querySelector(".snapInpLabel").innerText = e.item.fieldName;
+				textAreaInpTmpl.querySelector(".snapField").setAttribute("name", e.item.fieldName);
+				inpTmpl.querySelector('.onpDrag').appendChild(textAreaInpTmpl);
+				inpTmpl.style.width = e.item.w - pLeft - pRight - bLeft;
+				break;
 			default:
 				break;
 		}
 		
-		model.updateFormElsText();
-	},
-	editHeader: function (e) {
-		//debugger;
-		var editHeaderTmpl = document.getElementById('editHeaderTmpl').cloneNode(true);
-		var inpTmpl = closest(this, function (el) {
-			return el.classList.contains('inpTmpl');
-		});
-		var text = inpTmpl.querySelector('.snapInpLabel:not(.tmpl)').innerText;
-		var tagName = inpTmpl.querySelector('.snapInpLabel:not(.tmpl)').tagName;
-		editHeaderTmpl.removeAttribute('id');
-		editHeaderTmpl.classList.remove('tmpl');
-		editHeaderTmpl.querySelector(tagName).classList.add('selected');
-		[].forEach.call(editHeaderTmpl.querySelectorAll('[class*="Header"]'), function (item) {
-			item.innerText = text;
-		});
-		inpTmpl.appendChild(editHeaderTmpl);
-		[].forEach.call(editHeaderTmpl.querySelectorAll('a.headerAnchor'), function (item) {
-			item.addEventListener('click', model.editHeaderClick, false);
-		});
-		//model.updateFormElsText();
-	},
-	editHeaderClick: function (e) {
-		var selectedTmpl = this.querySelector('[class*="Header"]').cloneNode(true);
-		var tagName = selectedTmpl.tagName;
-		selectedTmpl.classList.remove(tagName + "Header");
-		selectedTmpl.classList.add('snapInpLabel');
-		var inpTmpl = closest(this, function (el) {
-			return el.classList.contains('inpTmpl');
-		});
-		var snapInpLabel = inpTmpl.querySelector('.headerInpTmpl .snapInpLabel');
-		snapInpLabel.parentNode.removeChild(snapInpLabel);
-		inpTmpl.querySelector('.headerInpTmpl').appendChild(selectedTmpl);
-
-		var edit = inpTmpl.querySelector('.editTmpl');
-		edit.parentNode.removeChild(edit);
-
-		inpTmpl.querySelector('.hoverSliderTmpl').classList.remove('onHover');
-
-		if (model.focusedInpEl["arrayElement"]) {
-			var pLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-left'), 10),
-				pRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-right'), 10),
-				bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
-				bRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-right-width'), 10);
-			model.focusedInpEl["arrayElement"].w = inpTmpl.offsetWidth + pLeft + pRight + bLeft + bRight;
-			model.focusedInpEl["arrayElement"].inputType.properties.tagName = selectedTmpl.tagName;
-		}
-
 		model.updateFormElsText();
 	},
 	handleFocusClick: function (e) {
@@ -668,7 +703,6 @@ var model = {
 		}
 	},
 	formElsSet: function (e) {
-
 	},
 	closeAnchor: function (e) {
 		var el = closest(this, function (el) {
@@ -694,64 +728,6 @@ var model = {
 	updateFormElsText: function () {
 		document.querySelector("#inpEls").innerText = JSON.stringify(model.formEls.slice());
 	},
-	addInp: function (e) {
-		var valid = true,
-			errors = [];
-		[].forEach.call(document.querySelectorAll('.in .changeError'), function (item) {
-			item.innerText = "";
-			item.parentNode.style.display = "none;"
-		});
-
-		var fieldName = document.querySelector('.in [name="fieldName"]').value;
-		var inputType = document.querySelector('.in [name="inputType"]').value;
-
-		if (fieldName == "") errors.push({ field: "fieldName", message: "Required" });
-		if (inputType == "") errors.push({ field: "inputType", message: "Required" });
-
-		if (errors.length) {
-			[].forEach.call(errors, function (item) {
-				var t = document.querySelector('.in .' + item.field + 'Error');
-				t.innerText = item.message;
-				t.parentNode.style.display = "block";
-			});
-			valid = false;
-		}
-		if (valid) {
-			var item = {
-
-				fieldName: fieldName,
-				inputType: {
-					name: inputType,
-					properties: {
-						tagName: document.getElementById(inputType + 'InpTmpl').querySelector('.tagMeat').tagName
-					}
-				},
-				x: model.currentX,
-				y: model.currentY,
-				z: 0,
-				uid: guid()
-			};
-
-
-			if (model.formEls.length) {
-				[].forEach.call(model.formEls, function (elItem) {
-					if (elItem.z > item.z) item.z = elItem.z;
-				});
-				item.z += 1;
-			}
-
-			switch (inputType) {
-				case "header":
-					item.w = 0;
-					break;
-				case "text":
-					item.w = 200;
-					break;
-			}
-
-			model.formEls.push(item);
-		}
-	},	
 	addInpClose: function (e) {
 		var inp = document.getElementsByClassName('in');
 		if (inp.length && !e.target.classList.contains("in")) {
@@ -769,5 +745,60 @@ var model = {
 			errorDiv.querySelector('.changeError').innerText = "";
 		}
 	},
+	//header
+	editHeader: function (e) {
+		//debugger;
+		var editHeaderTmpl = document.getElementById('editHeaderTmpl').cloneNode(true);
+		var inpTmpl = closest(this, function (el) {
+			return el.classList.contains('inpTmpl');
+		});
+		var text = inpTmpl.querySelector('.snapInpLabel:not(.tmpl)').innerText;
+		var tagName = inpTmpl.querySelector('.snapInpLabel:not(.tmpl)').tagName;
+		editHeaderTmpl.removeAttribute('id');
+		editHeaderTmpl.classList.remove('tmpl');
+		editHeaderTmpl.querySelector(tagName).classList.add('selected');
+		[].forEach.call(editHeaderTmpl.querySelectorAll('[class*="Header"]'), function (item) {
+			item.innerText = text;
+		});
+		inpTmpl.appendChild(editHeaderTmpl);
+		[].forEach.call(editHeaderTmpl.querySelectorAll('a.headerAnchor'), function (item) {
+			item.addEventListener('click', model.editHeaderClick, false);
+		});
+		var p = parseInt(window.getComputedStyle(document.querySelector('body'), null).getPropertyValue('margin'), 10);
+		if (findPosX(editHeaderTmpl)[0] < parseInt(window.getComputedStyle(document.querySelector('body'), null).getPropertyValue('margin'), 10)) {
+			//debugger;
+			var right = parseInt(window.getComputedStyle(editHeaderTmpl, null).getPropertyValue('right'), 10)
+			editHeaderTmpl.style.right = right - findPosX(editHeaderTmpl)[0] - parseInt(window.getComputedStyle(document.querySelector('body'), null).getPropertyValue('margin'), 10) - 1;
+		}
+		//debugger;
+		//model.updateFormElsText();
+	},
+	editHeaderClick: function (e) {
+		var selectedTmpl = this.querySelector('[class*="Header"]').cloneNode(true);
+		var tagName = selectedTmpl.tagName;
+		selectedTmpl.classList.remove(tagName + "Header");
+		selectedTmpl.classList.add('snapInpLabel');
+		var inpTmpl = closest(this, function (el) {
+			return el.classList.contains('inpTmpl');
+		});
+		var snapInpLabel = inpTmpl.querySelector('.headerInpTmpl .snapInpLabel');
+		snapInpLabel.parentNode.removeChild(snapInpLabel);
+		inpTmpl.querySelector('.headerInpTmpl').appendChild(selectedTmpl);
 
+		var edit = inpTmpl.querySelector('.editTmpl');
+		edit.parentNode.removeChild(edit);
+
+		inpTmpl.querySelector('.hoverSliderTmpl').classList.remove('onHover');
+
+		if (model.focusedInpEl["arrayElement"]) {
+			var pLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-left'), 10),
+				pRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('padding-right'), 10),
+				bLeft = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-left-width'), 10),
+				bRight = parseInt(window.getComputedStyle(inpTmpl, null).getPropertyValue('border-right-width'), 10);
+			model.focusedInpEl["arrayElement"].w = inpTmpl.offsetWidth + pLeft + pRight + bLeft + bRight;
+			model.focusedInpEl["arrayElement"].inputType.properties.tagName = selectedTmpl.tagName;
+		}
+
+		model.updateFormElsText();
+	}
 };

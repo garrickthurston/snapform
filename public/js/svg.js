@@ -841,6 +841,7 @@ var model = {
 					viewInp.style.position = 'absolute';
 					viewInp.style.background = '';
 					viewInp.style.padding = '6px';
+					viewInp.style.cursor = '';
 					viewGrid.appendChild(viewInp);
 					var t = viewInp.querySelector('.hoverSliderTmpl');
 					t.parentNode.removeChild(t);

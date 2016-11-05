@@ -145,6 +145,20 @@ div.dragDiv {
     border-right: 5px solid transparent;
 }
 
+.inpTmplClose {
+	position:absolute;
+	top:-20px;
+	right:-20px;
+	padding:4px 2px;
+	background:#FFF;
+	border:1px solid #787878;
+	cursor: pointer;
+}
+
+.inpTmplClose .close::before, .inpTmplClose .close::after {
+	background:#787878;
+}
+
 /*pikaday datepicker*/
 .pika-single {
 	z-index: 2147483647;

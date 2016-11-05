@@ -4,5 +4,23 @@
   "dependencies": {
     "express": "~4.0.0",
     "mongoose": "~3.6.13"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "description": "",
+  "version": "1.0.0",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/garrickthurston/snapform.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/garrickthurston/snapform/issues"
+  },
+  "homepage": "https://github.com/garrickthurston/snapform#readme"
 }

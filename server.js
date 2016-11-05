@@ -11,6 +11,7 @@ var express = require('express'),
 mongoose.connect("mongodb://localhost/snapform");
 
 //serve static files
+app.use(express.static('./bower_components'));
 app.use(express.static('./public'));
 
 var port = process.env.PORT || 8080;

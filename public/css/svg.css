@@ -144,3 +144,8 @@ div.dragDiv {
     border-top: 5px solid #666;
     border-right: 5px solid transparent;
 }
+
+/*pikaday datepicker*/
+.pika-single {
+	z-index: 2147483647 !important;
+}

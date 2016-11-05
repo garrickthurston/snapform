@@ -4,9 +4,11 @@
 	<script src="../js/util.js"></script>
 	<script src="../js/ObservableArray.js"></script>
 	<script src="../js/svg.js"></script>
+	<script src="../../pikaday/pikaday.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/closeicon.css">
 	<link rel="stylesheet" type="text/css" href="../css/editicon.css">
 	<link rel="stylesheet" type="text/css" href="../css/svg.css">
+	<link rel="stylesheet" type="text/css" href="../../pikaday/css/pikaday.css">
 </head>
 <body>
 	<div id="headerInpTmpl" class="headerInpTmpl tmpl">
@@ -190,8 +192,6 @@
 
 		(function () {
 			if (typeof model != 'undefined') model.init();
-
-
 		})();
 
 		window.onresize = function (e) {

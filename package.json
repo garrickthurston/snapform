@@ -13,20 +13,37 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
     "request": "^2.88.0"
   },
   "scripts": {
-    "dev": "concurrently \"rimraf dist && cd client && webpack --mode=development --watch\" \"nodemon --inspect server.js\"",
+    "dev": "concurrently \"rimraf dist && webpack --mode=development --watch\" \"nodemon --inspect server.js\"",
     "dev1": "nodemon --inspect server.js",
     "dev2": "concurrently \"rimraf public && cd client && ng build -w\"  \"cd client && gulp dev\" \"nodemon --inspect server.js\""
   },
   "description": "",
   "version": "1.0.0",
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^1.0.1",
     "concurrently": "^4.1.0",
+    "css-loader": "^2.1.0",
+    "html-webpack-plugin": "^3.2.0",
     "mocha": "^5.2.0",
+    "node-sass": "^4.11.0",
     "nodemon": "^1.18.10",
-    "rimraf": "^2.6.3"
+    "path": "^0.12.7",
+    "rimraf": "^2.6.3",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-middleware": "^3.5.2"
   },
   "repository": {
     "type": "git",

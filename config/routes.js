@@ -8,7 +8,7 @@ module.exports = (app) => {
     const mw = middleware(app);
 
     // provide application index
-	app.get('/*', function (req, res) {
+	app.get('/', function (req, res) {
 		res.sendFile('index.html', {root: './dist/'});
     });
     

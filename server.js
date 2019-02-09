@@ -1,27 +1,18 @@
+const port = process.env.PORT || 8080;
+const env = process.env.NODE_ENV || 'development';
+const config = require('./config/env.' + env);
+
 const express = require('express');
-
-// //BASE SETUP
-// //===============
-
-// //call needed packages
-// var express = require('express'),
-// 	app = express(),
-// 	mongoose = require('mongoose'),
-// 	fs = require('fs');
-
-// //connect to database
-// mongoose.connect("mongodb://localhost/snapform");
-
-// //serve static files
-// app.use(express.static('./bower_components'));
-// app.use(express.static('./public'));
-
-// var port = process.env.PORT || 8080;
+const app = express();
+const http = require('http').createServer(app);
+const cors = require('cors');
 
 
+app.use(express.static('./public'));
 
+app.use(cors());
+require('./config/routes')(app);
 
-// // START THE SERVER
-// //=====================
-// app.listen(port);
-// console.log('Server running on localhost:' + port);
+http.listen(port, () => {
+    console.log(`PORT :: ${port}`);
+});

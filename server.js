@@ -1,25 +1,27 @@
-//BASE SETUP
-//===============
+const express = require('express');
 
-//call needed packages
-var express = require('express'),
-	app = express(),
-	mongoose = require('mongoose'),
-	fs = require('fs');
+// //BASE SETUP
+// //===============
 
-//connect to database
-mongoose.connect("mongodb://localhost/snapform");
+// //call needed packages
+// var express = require('express'),
+// 	app = express(),
+// 	mongoose = require('mongoose'),
+// 	fs = require('fs');
 
-//serve static files
-app.use(express.static('./bower_components'));
-app.use(express.static('./public'));
+// //connect to database
+// mongoose.connect("mongodb://localhost/snapform");
 
-var port = process.env.PORT || 8080;
+// //serve static files
+// app.use(express.static('./bower_components'));
+// app.use(express.static('./public'));
+
+// var port = process.env.PORT || 8080;
 
 
 
 
-// START THE SERVER
-//=====================
-app.listen(port);
-console.log('Server running on localhost:' + port);
+// // START THE SERVER
+// //=====================
+// app.listen(port);
+// console.log('Server running on localhost:' + port);

@@ -5,12 +5,10 @@ const config = require('./config/env.' + env);
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const cors = require('cors');
 
 
-app.use(express.static('./public'));
+app.use(express.static('./dist'));
 
-app.use(cors());
 require('./config/routes')(app);
 
 http.listen(port, () => {

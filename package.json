@@ -16,13 +16,17 @@
     "request": "^2.88.0"
   },
   "scripts": {
-    "dev": "nodemon --inspect server.js"
+    "dev": "concurrently \"rimraf dist && cd client && webpack --mode=development --watch\" \"nodemon --inspect server.js\"",
+    "dev1": "nodemon --inspect server.js",
+    "dev2": "concurrently \"rimraf public && cd client && ng build -w\"  \"cd client && gulp dev\" \"nodemon --inspect server.js\""
   },
   "description": "",
   "version": "1.0.0",
   "devDependencies": {
+    "concurrently": "^4.1.0",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "rimraf": "^2.6.3"
   },
   "repository": {
     "type": "git",

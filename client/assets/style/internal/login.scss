@@ -92,11 +92,10 @@
                     min-width: 272px;
                     padding-top: 14px;
                     padding-left: 16px;
-                    border: 0;
                     border-radius: 2px;
                     font-family: source-sans-pro;
                     font-size: 16px;
-                    background-color: #DBDBDB;
+                    background-color: rgba(255, 255, 255, 0.9);
                     box-sizing: border-box;
                     -moz-appearance: none !important;
                     -webkit-appearance: none !important;
@@ -105,7 +104,7 @@
                         border-radius: 2px;
                     }
                     &.g-touched, &.g-valid, &:focus {
-                        background-color: rgba(244, 244, 244, 1);
+                        background-color: rgba(255, 255, 255, 0.9);
                     }
                     &.g-touched, &.g-valid {
                         ~span {

@@ -13,7 +13,7 @@ function mapDispatchToProps(dispatch) {
     return {
         updateViewSettings: payload => dispatch(updateViewSettings(payload))
     };
-  }
+}
 
 class GridComponent extends Component {
     smallGridPath = `M ${this.props.cellWidth} 0 L 0 0 0 ${this.props.cellHeight}`;

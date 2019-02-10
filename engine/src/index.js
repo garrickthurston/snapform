@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
 import GridComponent from './components/grid.component';
+import { Provider } from 'react-redux';
+import store from './config/redux/redux.store';
 
-import '../assets/style/index.scss'
+import '../assets/style/index.scss';
 
 class EngineComponent extends Component {
-
     render() {
         return (
-            <div id="snapgrid">
-                <GridComponent width={this.props.width} height={this.props.height} />
-            </div>
+            <Provider store={store}>
+                <div id="snapgrid">
+                    <GridComponent 
+                        viewWidth={this.props.viewWidth} 
+                        viewHeight={this.props.viewHeight}
+                        cellWidth={this.props.cellWidth}
+                        cellHeight={this.props.cellHeight} />
+                </div>
+            </Provider>
         );
     }
 };

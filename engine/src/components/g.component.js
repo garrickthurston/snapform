@@ -10,5 +10,4 @@ class GComponent extends Component {
     }
 }
 
-
 export default GComponent;

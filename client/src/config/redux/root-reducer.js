@@ -1,4 +1,4 @@
-import { UPDATE_VIEW_SETTINGS } from './redux.actions.types';
+import { UPDATE_VIEW_SETTINGS, UPDATE_BG_IMAGE } from './redux.actions.types';
 
 const initialState = {
     
@@ -13,6 +13,10 @@ const reducer = (state = initialState, action) => {
                 cellWidth: action.payload.cellWidth || state.cellWidth,
                 cellHeight: action.payload.cellHeight || state.cellHeight,
                 cellTransform: action.payload.cellTransform || state.cellTransform
+            });
+        case UPDATE_BG_IMAGE:
+            return Object.assign({}, state, {
+                backgroundImage: action.payload || state.backgroundImage
             });
     }
     return state;

@@ -1,0 +1,94 @@
+.g-container {
+    position: relative;
+    z-index: 10;
+    max-width: 700px;
+    margin: 80px auto;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, .9);
+    @media (max-width: 600px) {
+        max-width: 100%;
+        margin: 0 !important;
+        border-radius: 0;
+    }
+
+    .shade {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 5;
+        background-color: rgba(0, 0, 0, .65);
+    }
+    .bg {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        background-size: cover;
+    }
+}
+
+// .c-container {
+//     position: relative;
+//     z-index: 10;
+//     max-width: 700px;
+//     margin: 80px auto;
+//     border-radius: 4px;
+//     background-color: rgba(255, 255, 255, .9);
+//     @media (max-width: 600px) {
+//         max-width: 100%;
+//         margin: 0 !important;
+//         border-radius: 0;
+//     }
+//     &.firststage {
+//         max-width: 430px;
+//         @media (max-width: 600px) {
+//             max-width: 100%;
+//             min-height: 100vh;
+//         }
+//     }
+//     &.userselect-open {
+//         display: none;
+//     }
+//     &__header {
+//         padding-top: 32px;
+//         padding-bottom: 32px;
+//         border-radius: 4px 4px 0 0;
+//         text-align: center;
+//         background-color: rgba(255, 255, 255, 1);
+//         @media (max-width: 600px) {
+//             padding-top: 24px;
+//             padding-bottom: 24px;
+//         }
+//         img {
+//             display: block;
+//             width: 204px;
+//             margin: 0 auto;
+//             @media (max-width: 600px) {
+//                 width: 202px;
+//             }
+//         }
+//     }
+//     &__holder {
+//         margin-bottom: 120px;
+//         opacity: 0;
+//         transition: .5s;
+//         &_loaded {
+//             opacity: 1;
+//         }
+//         @media (max-width: 600px) {
+//             min-height: 100%;
+//             margin-bottom: 0;
+//         }
+//     }
+//     &__body {
+//         padding: 32px 45px 10px;
+//         text-align: center;
+//         @media (max-width: 600px) {
+//             padding: 36px 24px 10px;
+//         }
+//     }
+// }

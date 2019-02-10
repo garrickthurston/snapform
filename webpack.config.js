@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
+    context: path.join(__dirname),
     entry: {
         app: './client/src/index.js',
         engine: './engine/src/index.js'
@@ -39,6 +40,16 @@ module.exports = {
                 }, {
                     loader: "sass-loader", options: {
                         sourceMap: true
+                    }
+                }]
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                exclude: /node_modules/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        name: '[path][name].[ext]'
                     }
                 }]
             }

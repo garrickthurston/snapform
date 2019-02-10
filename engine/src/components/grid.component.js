@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import GComponent from './g.component';
 
+import '../../assets/images/mgt-logo.png';
 import '../../assets/style/components/grid.component.scss';
 
 const mapStateToProps = (state) => state;

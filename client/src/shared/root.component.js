@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import AppComponent from './app.component';
 import LoginComponent from '../internal/login.component';
 import DashboardComponent from '../external/dashboard.component';
+import DocumentationComponent from '../external/documentation.component';
 
 const Root = ({ store }) => (
     <Provider store={store}>
@@ -12,6 +13,7 @@ const Root = ({ store }) => (
             <AppComponent>
                 <Switch>
                     <Route path="/login" component={LoginComponent} />
+                    <Route path="/documentation" component={DocumentationComponent} />
                     <Route path="/" component={DashboardComponent} />
                 </Switch>
             </AppComponent>

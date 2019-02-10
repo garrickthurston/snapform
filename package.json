@@ -3,24 +3,24 @@
   "main": "server.js",
   "dependencies": {
     "async": "^2.6.1",
-    "bcrypt": "^3.0.4",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
     "http": "0.0.0",
     "jsonwebtoken": "^8.4.0",
-    "mssql": "^4.3.1",
+    "mssql": "4.1.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "tedious": "2.2.4"
   },
   "scripts": {
-    "dev": "concurrently \"rimraf dist && webpack --mode=development --watch\" \"nodemon --inspect server.js\"",
-    "dev1": "nodemon --inspect server.js",
-    "dev2": "concurrently \"rimraf public && cd client && ng build -w\"  \"cd client && gulp dev\" \"nodemon --inspect server.js\""
+    "dev": "concurrently \"rimraf dist && webpack --mode=development --watch\" \"nodemon --inspect server.js\""
   },
   "description": "",
   "version": "1.0.0",
@@ -35,10 +35,10 @@
     "css-loader": "^2.1.0",
     "html-webpack-plugin": "^3.2.0",
     "mocha": "^5.2.0",
+    "morgan": "^1.9.1",
     "node-sass": "^4.11.0",
     "nodemon": "^1.18.10",
     "path": "^0.12.7",
-    "react-hot-loader": "^4.6.5",
     "rimraf": "^2.6.3",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",

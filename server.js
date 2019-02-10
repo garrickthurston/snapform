@@ -6,8 +6,6 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 
-require('./common/database-pool');
-
 
 app.use(express.static('./dist'));
 

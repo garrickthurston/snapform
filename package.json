@@ -2,6 +2,7 @@
   "name": "snapform",
   "main": "server.js",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
     "async": "^2.6.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",

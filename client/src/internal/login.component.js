@@ -2,6 +2,7 @@ import React, { Component} from 'react';
 import { updateBGImage } from '../config/redux/redux.actions';
 import store from '../config/redux/redux.store';
 import { connect } from 'react-redux';
+import { http } from '../shared/common/http';
 
 import bg_1 from '../../assets/images/login-background-1.jpg';
 import bg_2 from '../../assets/images/login-background-2.jpg';
@@ -18,11 +19,15 @@ class LoginComponent extends Component {
     constructor(props) {
         super(props);
 
+        this.http = new http();
+
         this.state = {
-            email: '' ,
-            password: '' ,
+            email: '',
+            password: '',
             emailInputClassName: 'g-border-color',
-            passwordInputClassName: 'g-border-color'
+            passwordInputClassName: 'g-border-color',
+            submitText: 'Submit',
+            processing: false
         };
 
         const backgrounds = [bg_1, bg_2];
@@ -34,10 +39,6 @@ class LoginComponent extends Component {
         this.handleInputClassName = this.handleInputClassName.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    }
-
-    login(e) {
-        e.preventDefault();
     }
 
     handleInputClassName(field) {
@@ -65,13 +66,42 @@ class LoginComponent extends Component {
 
         this.handleInputClassName('password');
     }
+
+    async login(e) {
+        try {
+            e.preventDefault();
+
+            this.setState({
+                submitText: 'Processing...',
+                processing: true
+            });
+
+            let response = await this.http.post('/api/v1/auth/authenticate', {
+                email: this.state.email,
+                password: this.state.password
+            }, false);
+
+            if (response) {
+                this.setState({
+                    submitText: 'Submit',
+                    processing: false
+                });
+            }
+        } catch (e) {
+            this.setState({
+                submitText: 'Submit',
+                processing: false
+            });
+        }
+    }
+
     render() {
         const { backgroundImage } = store.getState();
-        const { emailInputClassName, passwordInputClassName } = this.state;
+        const { emailInputClassName, passwordInputClassName, submitText, processing } = this.state;
         return (
             <div className="g-container">
                 <div id="backgroundElement" className="bg" style={{ background: backgroundImage }}></div>
-                <div id="backgroundElementShade" className="shade"></div>
+                {/* <div id="backgroundElementShade" className="shade"></div> */}
                 <div className="g-landing">
                     <div className="g-landing-logo"></div>
                     <form className="g-login-form" onSubmit={this.login}>
@@ -84,7 +114,7 @@ class LoginComponent extends Component {
                             <span className="g-login-form-input-placeholder">Password</span>
                         </div>
                         <div className="g-btn-holder">
-                            <input className="g-btn" type="submit" value="Submit" />
+                            <input className="g-btn" type="submit" value={submitText} disabled={processing} />
                         </div>
                         {/* <input type="submit" [ngClass]="{'o-btn--dark': processing}" class="t-btn o-btn o-btn--maxinternal o-btn__dashboard--active o-btn--setheight" value="Login" [disabled]="!loginForm.valid || processing">  */}
                         {/* <div class="c-login__forgot_container">

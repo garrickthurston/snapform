@@ -14,6 +14,7 @@ module.exports = (app) => {
     // Auth
     app.get('/api/v1/auth/hashpassword', /*mw.validToken,*/ cors(mw.corsOrigin), Auth.hashPassword);
     app.post('/api/v1/auth/updatepassword', /*mw.validToken,*/ cors(mw.corsOrigin), Auth.updatePassword);
+    app.post('/api/v1/auth/authenticate', /*cors(mw.corsOrigin),*/ Auth.authenticate);
 
     // provide application index
 	app.get('/*', function (req, res) {

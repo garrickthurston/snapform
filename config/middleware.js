@@ -46,9 +46,9 @@ module.exports = (app) => {
 
     // jwt
     const validToken = jwt({
-        secret: process.env.TOKEN_SECRET || 'SECRET',
-        requestProperty: 'payload',
-        issuer: process.env.TOKEN_ISSUER || 'localhost:1337'
+        issuer: config.token_issuer,
+        secret: config.token_secret,
+        requestProperty: 'payload'
     });
 
     // body parser

@@ -5,6 +5,12 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
     context: path.join(__dirname),
+    node: {
+        console: true,
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty'
+    },
     entry: {
         app: './client/src/index.js',
         engine: './engine/src/index.js'

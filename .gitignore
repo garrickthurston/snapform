@@ -1,2 +1,5 @@
-/config/.config.json
-/prev/*
+config/.config.json
+prev
+prev/*
+.vscode
+.vscode/*

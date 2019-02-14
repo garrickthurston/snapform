@@ -2,6 +2,8 @@ import React from 'react';
 import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
+// import 'babel-polyfill';
+
 import AppComponent from './app.component';
 import LoginComponent from '../internal/login.component';
 import DashboardComponent from '../external/dashboard.component';

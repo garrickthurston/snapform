@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import store from './config/redux/redux.store';
 import RootComponent from './shared/root.component';
+import { store } from './config/redux/redux.store';
 
+import $ from 'jquery';
+import 'bootstrap';
 import '../assets/style/root.scss';
 
 ReactDOM.render(

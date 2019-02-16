@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import GridComponent from './components/grid.component';
 import { Provider } from 'react-redux';
-import store from './config/redux/redux.store';
+import { store } from './config/redux/redux.store';
 
 import '../assets/style/index.scss';
 

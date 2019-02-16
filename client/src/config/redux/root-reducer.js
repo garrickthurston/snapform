@@ -1,10 +1,11 @@
-import { UPDATE_VIEW_SETTINGS, UPDATE_BG_IMAGE } from './redux.actions.types';
+import { UPDATE_VIEW_SETTINGS, UPDATE_BG_IMAGE, UPDATE_TOKEN } from './redux.actions.types';
+const jwt = require('jsonwebtoken');
 
 const initialState = {
-    
+    token: localStorage.getItem('token') || null
 };
 
-const reducer = (state = initialState, action) => {
+export const reducer = (state = initialState, action) => {
     switch (action.type) {
         case UPDATE_VIEW_SETTINGS:
             return Object.assign({}, state, {
@@ -18,8 +19,16 @@ const reducer = (state = initialState, action) => {
             return Object.assign({}, state, {
                 backgroundImage: action.payload || state.backgroundImage
             });
+        case UPDATE_TOKEN:
+            if (action.payload) {
+                localStorage.setItem('token', action.payload);
+            } else {
+                localStorage.removeItem('token');
+            }
+            return Object.assign({}, state, {
+                token: action.payload,
+                user: action.payload ? jwt.decode(action.payload) : null
+            });
     }
     return state;
 };
-
-export default reducer;

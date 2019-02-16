@@ -58,6 +58,16 @@ module.exports = {
                         name: '[path][name].[ext]'
                     }
                 }]
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name].[ext]',
+                        outputPath: 'client/assets/fonts/'
+                    }
+                }]
             }
         ]
     },
@@ -66,6 +76,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'client/src/index.html'
         }),
-        new webpack.NoEmitOnErrorsPlugin()
+        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.ProvidePlugin({
+            $: 'jquery'
+        })
     ]
 }

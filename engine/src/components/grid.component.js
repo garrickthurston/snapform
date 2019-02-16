@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import store from '../config/redux/redux.store';
+import { store } from '../config/redux/redux.store';
 import { updateViewSettings } from '../config/redux/redux.actions';
 import { connect } from 'react-redux';
 

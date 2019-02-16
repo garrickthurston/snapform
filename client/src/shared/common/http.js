@@ -1,4 +1,5 @@
 import request from 'request';
+import { store } from '../../config/redux/redux.store';
 
 export class http {
 
@@ -20,8 +21,7 @@ export class http {
                 }
 
                 if (auth) {
-                    // TODO - set token as a static prop on... something
-                    var token = '';
+                    const { token } = store.getStore();
                     options.headers['Authorization'] = `Bearer ${token}`;
                 }
                 request(options, (error, response, body) => {
@@ -56,8 +56,7 @@ export class http {
                 }
 
                 if (auth) {
-                    // TODO - set token as a static prop on... something
-                    var token = '';
+                    const { token } = store.getStore();
                     options.headers['Authorization'] = `Bearer ${token}`;
                 }
                 request(options, (error, response, body) => {

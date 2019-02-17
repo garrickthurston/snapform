@@ -3,14 +3,38 @@ import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import { PrivateRoute } from './privateroute.component';
+import Loadable from 'react-loadable';
 
-import AppComponent from './app.component';
-import LoginComponent from '../internal/login.component';
-import DashboardComponent from '../internal/dashboard.component';
-import DocsComponent from '../external/docs.component';
-import HomeComponent from '../external/home.component';
-import BlogComponent from '../external/blog.component';
-import TutorialComponent from '../external/tutorial.component';
+import LoadingComponent from './loading.component';
+
+const AppComponent = Loadable({
+    loader: () => import ('./app.component'),
+    loading: LoadingComponent
+});
+const LoginComponent = Loadable({
+    loader: () => import ('../internal/login.component'),
+    loading: LoadingComponent
+});
+const DashboardComponent = Loadable({
+    loader: () => import ('../internal/dashboard.component'),
+    loading: LoadingComponent
+});
+const DocsComponent = Loadable({
+    loader: () => import ('../external/docs.component'),
+    loading: LoadingComponent
+});
+const HomeComponent = Loadable({
+    loader: () => import ('../external/home.component'),
+    loading: LoadingComponent
+});
+const BlogComponent = Loadable({
+    loader: () => import ('../external/blog.component'),
+    loading: LoadingComponent
+});
+const TutorialComponent = Loadable({
+    loader: () => import ('../external/tutorial.component'),
+    loading: LoadingComponent
+});
 
 const Root = ({ store }) => (
     <Provider store={store}>

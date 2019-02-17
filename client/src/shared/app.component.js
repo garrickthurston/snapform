@@ -6,7 +6,9 @@ class AppComponent extends Component {
         return (
             <div>
                 <MenuComponent />
-                <div>{this.props.children}</div>
+                <div className="body-content">
+                    {this.props.children}
+                </div>
                 
             </div>
         );

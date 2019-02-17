@@ -3,7 +3,7 @@ const config = require('./env.' + env);
 
 const morgan = require('morgan');
 const webpack = require('webpack');
-const webpackConfig = require('../webpack.config');
+const webpackConfig = require('../webpack.dev');
 const compiler = webpack(webpackConfig);
 const cors = require('cors');
 const bodyParser = require('body-parser');

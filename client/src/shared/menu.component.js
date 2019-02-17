@@ -8,6 +8,21 @@ import '../../assets/style/shared/menu.scss';
 const mapStateToProps = (state) => state;
 
 class MenuComponent extends Component {
+    constructor(props) {
+        super(props);
+
+    //this.handleLoginClick = this.handleLoginClick.bind(this);
+
+    }
+
+    // handleLoginClick() {
+    //     import(/* webpackChunkName: "login" */ '../internal/login.component').then(module => {
+    //         var login = module.default;
+
+    //         login();
+    //     });
+    // }
+
     render() {
         const { token, user } = store.getState();
         return (
@@ -38,7 +53,7 @@ class MenuComponent extends Component {
                     { !token && !user ?
                     <ul className="navbar-nav ml-auto">
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/login">Log in</NavLink>
+                            <NavLink onClick={this.handleLoginClick} className="nav-link" to="/login">Log in</NavLink>
                         </li>
                     </ul>
                     : 

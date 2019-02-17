@@ -1,8 +1,10 @@
 import { UPDATE_VIEW_SETTINGS, UPDATE_BG_IMAGE, UPDATE_TOKEN } from './redux.actions.types';
 const jwt = require('jsonwebtoken');
 
+const token = localStorage.getItem('token');
 const initialState = {
-    token: localStorage.getItem('token') || null
+    token: token,
+    user: token ? jwt.decode(token) : null
 };
 
 export const reducer = (state = initialState, action) => {

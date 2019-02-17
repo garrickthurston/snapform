@@ -1,1 +1,2 @@
 export const UPDATE_VIEW_SETTINGS = 'UPDATE_VIEW_SETTINGS';
+export const G_CLICKED = 'G_CLICKED';

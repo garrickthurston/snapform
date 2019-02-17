@@ -1,15 +1,25 @@
-#gid {
-    fill: #FF0000;
-    display: none;
-}
-
 .view-svg {
+    .gid {
+        fill: #FF0000;
+        display: none;
+    
+        &.clicked {
+            display: block;
+        }
+    }
+
     &:hover {
-        #gid {
+        .gid {
             display: block;
         }
     }
 
     border-right: 1px solid #B0B0B0;
     border-bottom: 1px solid #B0B0B0;
+
+    border-radius: 4px;
+}
+
+.add-container {
+    position:relative;
 }

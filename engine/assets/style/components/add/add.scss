@@ -1,15 +1,65 @@
 .add {
     position: absolute;
-    width:300px;
-    top:0;
-    left:0;
+    width: 300px;
+    top: 0;
+    left: 0;
     z-index: 100000;
     background:#eee;
     border: 1px solid #787878;
-    padding:8px 12px;
-    border-radius: 4px;
+    padding: 8px 12px;
 
     .add-content {
         position: relative;
+
+        .dropdown {
+            button {
+                width: 100%;
+                text-align: left;
+                background: #FFF;
+                color: rgba(0, 0, 0, 0.9);
+                border-radius: 2px;
+
+                &:after {
+                    float: right;
+                    margin: 10px 0 0;
+                }
+
+                &:focus, &:active {
+                    box-shadow: none;
+                    background: #FFF;
+                    color: rgba(0, 0, 0, 0.9);
+                }
+            }
+
+            .dropdown-menu {
+                width: 100%;
+                border-radius: 2px;
+
+                a {
+                    color: rgba(0, 0, 0, 0.9);
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .close-icon-container {
+        position:absolute;
+        top: -8px;
+        right: -8px;
+        padding: 0 4px;
+        background:#FFF;
+        border:1px solid #787878;
+        cursor: pointer;
+        height: 19px;
+        width: 19px;
+
+        .close-icon {
+            font-size: 14px;
+            position: absolute;
+            margin-left: -1px;
+            margin-top: 1px;
+            color: rgba(0, 0, 0, 0.9);
+        }
     }
 }

@@ -1,3 +1,7 @@
-#snapgrid {
-    font-style: italic;
+$fa-font-path: '~font-awesome/fonts';
+@import '~font-awesome/scss/font-awesome';
+
+.close-icon {
+    @extend .fa;
+    @extend .fa-close;
 }

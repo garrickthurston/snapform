@@ -18,10 +18,29 @@ class AddComponent extends Component {
         super(props);
 
         this.state = {
-
+            inputTypes: [
+                {
+                    value: 'header',
+                    text: 'Header'
+                },
+                {
+                    value: 'text',
+                    text: 'Text'
+                },
+                {
+                    value: 'text-area',
+                    text: 'Text Area'
+                }
+            ],
+            selectedInputType: {
+                value: null,
+                text: 'Select Input Type'
+            }
         };
 
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
+        this.handleCloseClick = this.handleCloseClick.bind(this);
+        this.handleInputTypeClick = this.handleInputTypeClick.bind(this);
     }
 
     componentWillMount() {
@@ -43,29 +62,45 @@ class AddComponent extends Component {
         });
     }
 
+    handleCloseClick(e) {
+        this.props.gClicked({
+            addComponent: null,
+            gClassList: 'gid'
+        });
+    }
+
+    handleInputTypeClick(e) {
+        const value = e.target.name;
+        const text = e.target.innerText;
+        
+        this.setState(Object.assign({}, this.state, {
+            selectedInputType: {
+                value: value,
+                text: text
+            }
+        }));
+    }
+
     render() {
         return (
             <div ref={add => this.add = add} className="add" style={{'top': this.props.top, 'left': this.props.left}}>
+                <div className="close-icon-container" onClick={this.handleCloseClick}>
+                    <span className="close-icon"></span>
+                </div>
                 <div className="add-content">
-                    ADD
+                    <label>Input Type:</label>
+                    <div className="dropdown">
+                        <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span>{this.state.selectedInputType.text}</span>
+                        </button>
+                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {this.state.inputTypes.map((inputType, i) => {   
+                                return (<a key={i} className="dropdown-item" onClick={this.handleInputTypeClick} name={inputType.value}>{inputType.text}</a>) 
+                            })}
+                        </div>
+                    </div>
                 </div>
             </div>
-        //     <div style="position:relative;">
-  		// 	<div class="inpTmplClose">
-	  	// 		<span class="close hairline"></span>
-	  	// 	</div>
-	  	// 	<div class="formDiv">
-		//   		<label>Input Type</label>
-		//   		<div class="inp" style="margin:3px 0 0 0;">
-		//   			<select class="inputDiv" name="inputType">
-		//   				<option value="">Select...</option>
-		//   			</select>
-		//   		</div>
-		//   		<div class="errorDiv">
-		//   			<span class="changeError inputTypeError"></span>
-		//   		</div>
-	  	// 	</div>
-  		// </div>
         );
     }
 }

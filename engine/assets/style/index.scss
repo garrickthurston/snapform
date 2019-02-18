@@ -5,3 +5,7 @@ $fa-font-path: '~font-awesome/fonts';
     @extend .fa;
     @extend .fa-close;
 }
+
+label {
+    margin-bottom: 0.2rem;
+}

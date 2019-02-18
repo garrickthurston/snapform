@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { store } from '../config/redux/redux.store';
 import { updateViewSettings, gClicked } from '../config/redux/redux.actions';
 import { connect } from 'react-redux';
+import Loadable from 'react-loadable';
+import LoadingComponent from '../shared/loading.component';
 
 import GComponent from './g.component';
 import AddComponent from './add/add.component';
@@ -9,14 +11,21 @@ import AddComponent from './add/add.component';
 import '../../assets/images/mgt-logo.png';
 import '../../assets/style/components/grid.component.scss';
 
+const project_path = 'form_1';
+
 const mapStateToProps = (state) => state;
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
     return {
         updateViewSettings: payload => dispatch(updateViewSettings(payload)),
         gClicked: payload => dispatch(gClicked(payload))
     };
 }
+
+const ProjectOutputComponent = Loadable({
+    loader: () => import ('./project-output.component'),
+    loading: LoadingComponent
+});
 
 class GridComponent extends Component {
     smallGridPath = `M ${this.props.cellWidth} 0 L 0 0 0 ${this.props.cellHeight}`;
@@ -34,8 +43,13 @@ class GridComponent extends Component {
         };
         this.props.updateViewSettings(payload);
 
+        this.state = {
+            
+        }
+
         this.mouseMove = this.mouseMove.bind(this);
         this.handleSvgClick = this.handleSvgClick.bind(this);
+        this.processProject = this.processProject.bind(this);
     }
 
     mouseMove(e) {
@@ -70,28 +84,38 @@ class GridComponent extends Component {
         });
     }
 
+    processProject(item) {
+        return (<div></div>);
+    }
+
     render() {
         const { cellTransform, viewWidth, viewHeight, cellWidth, cellHeight, addComponent } = store.getState();
+        const { project } = store.getState();
+        
+        const project_items = this.processProject(project[project_path]);
+
         return (
             <div>
+                <ProjectOutputComponent project_path={project_path} />
                 <div className="add-container" ref={container => this.container = container}>
-                <svg ref={node => this.node = node} className="view-svg" width={viewWidth} height={viewHeight} xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <pattern id="smallGrid" width={cellWidth} height={cellHeight} patternUnits="userSpaceOnUse">
-                            <path d={this.smallGridPath} fill="none" stroke="gray" strokeWidth="0.5"/>
-                        </pattern>
-                        <pattern id="grid" width={cellWidth * 10} height={cellHeight * 10} patternUnits="userSpaceOnUse">
-                            <rect width={cellWidth * 10} height={cellHeight * 10} fill="url(#smallGrid)"/>
-                            <path d={this.gridPath} fill="none" stroke="gray" strokeWidth="1"/>
-                        </pattern>
-                    </defs>
-            
-                    <rect width="100%" height="100%" fill="url(#grid)" onMouseMove={this.mouseMove} onClick={this.handleSvgClick} />
-                    <GComponent ref={g => this.g = g} width={cellWidth} height={cellHeight} transform={cellTransform} node={this.node} container={this.container} add={this.add} />
-                </svg>
-                { addComponent
-                    ? <AddComponent top={addComponent.props.top} left={addComponent.props.left} g={this.g} node={this.node} container={this.container} />
-                    : null }
+                    <svg ref={node => this.node = node} className="view-svg" width={viewWidth} height={viewHeight} xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="smallGrid" width={cellWidth} height={cellHeight} patternUnits="userSpaceOnUse">
+                                <path d={this.smallGridPath} fill="none" stroke="gray" strokeWidth="0.5"/>
+                            </pattern>
+                            <pattern id="grid" width={cellWidth * 10} height={cellHeight * 10} patternUnits="userSpaceOnUse">
+                                <rect width={cellWidth * 10} height={cellHeight * 10} fill="url(#smallGrid)"/>
+                                <path d={this.gridPath} fill="none" stroke="gray" strokeWidth="1"/>
+                            </pattern>
+                        </defs>
+                
+                        <rect width="100%" height="100%" fill="url(#grid)" onMouseMove={this.mouseMove} onClick={this.handleSvgClick} />
+                        <GComponent ref={g => this.g = g} width={cellWidth} height={cellHeight} transform={cellTransform} node={this.node} container={this.container} add={this.add} />
+                    </svg>
+                    { addComponent
+                        ? <AddComponent top={addComponent.props.top} left={addComponent.props.left} g={this.g} node={this.node} container={this.container} project_path={project_path} />
+                        : null }
+                    {project_items}
                 </div>
             </div>
         )

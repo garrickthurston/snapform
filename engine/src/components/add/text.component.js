@@ -21,4 +21,5 @@ class TextComponent extends Component {
 }
 
 const Text = connect(mapStateToProps)(TextComponent);
+
 export default Text;

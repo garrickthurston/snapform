@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { store } from '../../config/redux/redux.store';
 import { connect } from 'react-redux';
-import { gClicked } from '../../config/redux/redux.actions'; 
+import { gClicked, updateProject, addInputTagChanged } from '../../config/redux/redux.actions'; 
 import Loadable from 'react-loadable';
+
+const uuid = require('uuid');
 
 import LoadingComponent from '../../shared/loading.component';
 
@@ -25,7 +27,9 @@ const mapStateToProps = (state) => state;
 
 function mapDispatchToProps(dispatch) {
     return {
-        gClicked: payload => dispatch(gClicked(payload))
+        gClicked: payload => dispatch(gClicked(payload)),
+        updateProject: payload => dispatch(updateProject(payload)),
+        addInputTagChanged: payload => dispatch(addInputTagChanged(payload))
     };
 }
 
@@ -50,14 +54,16 @@ class AddComponent extends Component {
             ],
             selectedInputType: {
                 value: null,
-                text: 'Select Input Type'
+                text: 'Select...'
             },
             selectedInputComponent: null
+
         };
 
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
         this.handleCloseClick = this.handleCloseClick.bind(this);
         this.handleInputTypeClick = this.handleInputTypeClick.bind(this);
+        this.handleAddClick = this.handleAddClick.bind(this);
     }
 
     componentWillMount() {
@@ -79,56 +85,99 @@ class AddComponent extends Component {
         });
     }
 
-    handleCloseClick(e) {
+    handleCloseClick() {
         this.props.gClicked({
             addComponent: null,
             gClassList: 'gid'
         });
+        this.props.addInputTagChanged(null);
     }
 
     handleInputTypeClick(e) {
         const value = e.target.name;
         const text = e.target.innerText;
-        
+
+        var selectedInputComponent = null;
+        switch (value) {
+            case 'header':
+                selectedInputComponent = (<HeaderComponent />);
+                this.props.addInputTagChanged('h6');
+                break;
+            case 'text':
+                selectedInputComponent = (<TextComponent />);
+                break;
+            case 'text-area':
+                selectedInputComponent = (<TextAreaComponent />);
+                break;
+        }
+
         this.setState(Object.assign({}, this.state, {
+            selectedInputComponent: selectedInputComponent,
             selectedInputType: {
                 value: value,
                 text: text
             }
         }));
+    }
 
-        switch (value) {
-            case 'header':
-                this.setState(Object.assign({}, this.state, {
-                    selectedInputComponent: (<HeaderComponent />)
-                }));
+    handleAddClick() {
+        const { project, current_x, current_y, addInputValue, addInputTag } = store.getState();
+
+        var item = {
+            tag: {
+                name: addInputTag,
+                value: addInputValue
+            },
+            x: current_x,
+            y: current_y,
+            z: 0
+        };
+
+        const project_item = project[this.props.project_path];
+        if (project_item) {
+            for (var key in project_item) {
+                if (project_item[key].z > item.z) {
+                    item.z = project_item[key];
+                }
+            }
+            item.z += 1;
+        }
+
+        switch (this.state.selectedInputType.value) {
+            case "header":
+                item.w = 0;
                 break;
-            case 'text':
-                this.setState(Object.assign({}, this.state, {
-                    selectedInputComponent: (<TextComponent />)
-                }));
+            case "text":
+                item.w = 200;
                 break;
-            case 'text-area':
-                this.setState(Object.assign({}, this.state, {
-                    selectedInputComponent: (<TextAreaComponent />)
-                }));
+            case "text-area":
+                item.w = 200;
                 break;
         }
+
+        this.props.updateProject({
+            path: `${this.props.project_path}.${uuid()}`,
+            value: item
+        });
+
+        this.handleCloseClick();
     }
 
     render() {
-        const { selectedInputComponent } = this.state;
+        const { selectedInputComponent, selectedInputType } = this.state;
+        const { addInputValue } = store.getState();
         return (
             <div ref={add => this.add = add} className="add" style={{'top': this.props.top, 'left': this.props.left}}>
                 <div className="close-icon-container" onClick={this.handleCloseClick}>
                     <span className="close-icon"></span>
                 </div>
                 <div className="add-content">
-                    <div>
+                    <div className="input-component">
                         <div className="dropdown">
-                            <button className="btn dropdown-toggle shadow-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span>{this.state.selectedInputType.text}</span>
+                            <button className="btn dropdown-toggle shadow-none g-valid" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span>{selectedInputType.text}</span>
                             </button>
+                            <span>Input Type</span>
                             <div className="dropdown-menu">
                                 {this.state.inputTypes.map((inputType, i) => {   
                                     return (<a key={i} className="dropdown-item" onClick={this.handleInputTypeClick} name={inputType.value}>{inputType.text}</a>) 
@@ -137,10 +186,13 @@ class AddComponent extends Component {
                         </div>
                     </div>
                     {selectedInputComponent}
-                    <div>
+                    <div className={
+                        selectedInputComponent && addInputValue && addInputValue.length 
+                            ? 'show-btn-group' 
+                            : 'hide-btn-group'}>
                         <div className="add-btn-group btn-group text-center">
-                            <button type="button" className="btn shadow-none add-btn"><span className="close-icon"></span></button>
-                            <button type="button" className="btn shadow-none add-btn"><span className="check-icon"></span></button>
+                            <button type="button" className="btn shadow-none add-btn" onClick={this.handleCloseClick}><span className="close-icon"></span></button>
+                            <button type="button" className="btn shadow-none add-btn" onClick={this.handleAddClick}><span className="check-icon"></span></button>
                         </div>
                     </div>
                 </div>

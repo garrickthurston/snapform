@@ -1,6 +1,6 @@
 .add {
     position: absolute;
-    width: 300px;
+    min-width: 300px;
     top: 0;
     left: 0;
     z-index: 100000;
@@ -10,6 +10,18 @@
 
     .add-content {
         position: relative;
+
+        input {
+            height: 36px;
+        }
+
+        .hide-btn-group, .hide-dropdown {
+            display: none;
+        }
+
+        .show-btn-group, .show-dropdown {
+            display: block;
+        }
 
         .add-btn-group {
             display: block;
@@ -34,10 +46,12 @@
                 color: rgba(0, 0, 0, 0.9);
                 border-radius: 2px;
                 border: 1px solid #787878;
+                min-height: 36px;
 
                 &:after {
-                    float: right;
-                    margin: 10px 0 0;
+                    position: absolute;
+                    top: 48%;
+                    right: 10px;
                 }
 
                 &:focus, &:active {
@@ -47,7 +61,7 @@
             }
 
             .dropdown-menu {
-                width: 100%;
+                min-width: 100%;
                 border-radius: 2px;
 
                 a {
@@ -66,7 +80,7 @@
             padding-top: 0.5rem;
             position: relative;
             width: 100%;
-            height: 44px;
+            min-height: 44px;
             background-color: rgba(244, 244, 244, .4);
             @media (max-width: 600px) {
                 float: none;
@@ -93,7 +107,7 @@
                     opacity: .85;
                 }
             }
-            input {
+            input, .dropdown-toggle {
                 width: 100%;
                 height: 100%;
                 padding-top: 10px;
@@ -115,7 +129,6 @@
                 }
                 &.g-touched, &.g-valid {
                     ~span {
-                        top: 30%;
                         font-size: 12px;
                         opacity: .85;
                     }
@@ -123,9 +136,40 @@
                 &:focus {
                     outline: none;
                     ~span {
-                        top: 30%;
                         font-size: 12px;
                         opacity: .85;
+                    }
+                }
+            }
+
+            .dropdown-toggle {
+                &.g-touched, &.g-valid {
+                    ~span {
+                        top: 15%;
+                    }
+                }
+                &:focus {
+                    outline: none;
+                    ~span {
+                        top: 15%;
+                    }
+                }
+
+                h1, h2, h3, h4, h5, h6 {
+                    margin: 0;
+                }
+            }
+
+            input {
+                &.g-touched, &.g-valid {
+                    ~span {
+                        top: 30%;
+                    }
+                }
+                &:focus {
+                    outline: none;
+                    ~span {
+                        top: 30%;
                     }
                 }
             }

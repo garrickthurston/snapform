@@ -6,6 +6,11 @@ $fa-font-path: '~font-awesome/fonts';
     @extend .fa-close;
 }
 
+.check-icon {
+    @extend .fa;
+    @extend .fa-check;
+}
+
 label {
     margin-bottom: 0.2rem;
 }

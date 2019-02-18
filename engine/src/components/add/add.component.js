@@ -126,7 +126,7 @@ class AddComponent extends Component {
                 <div className="add-content">
                     <div>
                         <div className="dropdown">
-                            <button className="btn btn-secondary dropdown-toggle shadow-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button className="btn dropdown-toggle shadow-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span>{this.state.selectedInputType.text}</span>
                             </button>
                             <div className="dropdown-menu">
@@ -137,6 +137,12 @@ class AddComponent extends Component {
                         </div>
                     </div>
                     {selectedInputComponent}
+                    <div>
+                        <div className="add-btn-group btn-group text-center">
+                            <button type="button" className="btn shadow-none add-btn"><span className="close-icon"></span></button>
+                            <button type="button" className="btn shadow-none add-btn"><span className="check-icon"></span></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

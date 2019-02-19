@@ -11,6 +11,7 @@ class EngineComponent extends Component {
             <Provider store={store}>
                 <div id="snapgrid">
                     <GridComponent 
+                        project_name={this.props.project_name}
                         viewWidth={this.props.viewWidth} 
                         viewHeight={this.props.viewHeight}
                         cellWidth={this.props.cellWidth}

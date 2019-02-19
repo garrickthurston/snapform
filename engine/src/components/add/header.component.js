@@ -47,11 +47,12 @@ class HeaderComponent extends Component {
 
     render() {
         const { inputClassName, dropdownClassName, headerSizes } = this.state;
-        const { addInputTag } = store.getState();
+        const { workspace } = store.getState();
+        const project = workspace.project;
 
         var headerSize = (<h6>{this.state.headerText}</h6>);
-        if (addInputTag) {
-            switch (addInputTag) {
+        if (project.add.addInputTag) {
+            switch (project.add.addInputTag) {
                 case 'h1':
                     headerSize = (<h1>{this.state.headerText}</h1>);
                     break;

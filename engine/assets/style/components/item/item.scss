@@ -1,0 +1,15 @@
+.item-container {
+    position: absolute;
+    border: 1px solid #787878;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px;
+    cursor: move;
+
+    h1, h2, h3, h4, h5, h6 {
+        margin: 0;
+    }
+
+    &.focus {
+        background: rgba(240, 240, 240, 0.9);
+    }
+}

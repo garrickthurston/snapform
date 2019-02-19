@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { store } from '../../config/redux/redux.store';
 import { connect } from 'react-redux';
-import { gClicked, updateProject, addInputTagChanged } from '../../config/redux/redux.actions'; 
+import { gClicked, updateProject, addInputTagChanged, addInputValueChanged } from '../../config/redux/redux.actions'; 
 import Loadable from 'react-loadable';
 
 const uuid = require('uuid');
@@ -29,7 +29,8 @@ function mapDispatchToProps(dispatch) {
     return {
         gClicked: payload => dispatch(gClicked(payload)),
         updateProject: payload => dispatch(updateProject(payload)),
-        addInputTagChanged: payload => dispatch(addInputTagChanged(payload))
+        addInputTagChanged: payload => dispatch(addInputTagChanged(payload)),
+        addInputValueChanged: payload => dispatch(addInputValueChanged(payload))
     };
 }
 
@@ -121,23 +122,24 @@ class AddComponent extends Component {
     }
 
     handleAddClick() {
-        const { project, current_x, current_y, addInputValue, addInputTag } = store.getState();
+        const { workspace } = store.getState();
+        const project = workspace.project;
 
         var item = {
             tag: {
-                name: addInputTag,
-                value: addInputValue
+                name: project.add.addInputTag,
+                value: project.add.addInputValue
             },
-            x: current_x,
-            y: current_y,
-            z: 0
+            x: project.current_x,
+            y: project.current_y,
+            z: 0,
+            h: 'auto'
         };
 
-        const project_item = project[this.props.project_path];
-        if (project_item) {
-            for (var key in project_item) {
-                if (project_item[key].z > item.z) {
-                    item.z = project_item[key];
+        if (project.items) {
+            for (var key in project.items) {
+                if (project.items[key].z > item.z) {
+                    item.z = project.items[key].z;
                 }
             }
             item.z += 1;
@@ -145,18 +147,21 @@ class AddComponent extends Component {
 
         switch (this.state.selectedInputType.value) {
             case "header":
-                item.w = 0;
+                item.w = 'auto';
+                item.tag.innerValue = true;
                 break;
             case "text":
                 item.w = 200;
+                item.tag.innerValue = false;
                 break;
             case "text-area":
                 item.w = 200;
+                item.tag.innerValue = false;
                 break;
         }
 
         this.props.updateProject({
-            path: `${this.props.project_path}.${uuid()}`,
+            path: uuid(),
             value: item
         });
 
@@ -165,7 +170,9 @@ class AddComponent extends Component {
 
     render() {
         const { selectedInputComponent, selectedInputType } = this.state;
-        const { addInputValue } = store.getState();
+        const { workspace } = store.getState();
+        const project = workspace.project;
+
         return (
             <div ref={add => this.add = add} className="add" style={{'top': this.props.top, 'left': this.props.left}}>
                 <div className="close-icon-container" onClick={this.handleCloseClick}>
@@ -187,7 +194,7 @@ class AddComponent extends Component {
                     </div>
                     {selectedInputComponent}
                     <div className={
-                        selectedInputComponent && addInputValue && addInputValue.length 
+                        selectedInputComponent && project.add.addInputValue && project.add.addInputValue.length 
                             ? 'show-btn-group' 
                             : 'hide-btn-group'}>
                         <div className="add-btn-group btn-group text-center">

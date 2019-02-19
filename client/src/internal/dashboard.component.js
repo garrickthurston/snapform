@@ -23,17 +23,19 @@ class DashboardComponent extends Component {
             viewWidth: 800,
             viewHeight: 550,
             cellWidth: 8,
-            cellHeight: 8
+            cellHeight: 8,
+            project_name: 'form_1'
         };
         this.props.updateViewSettings(payload);
     }
 
     render() {
-        const { viewWidth, viewHeight, cellWidth, cellHeight } = store.getState();
+        const { viewWidth, viewHeight, cellWidth, cellHeight, project_name } = store.getState();
         return (
             <div className="d-container">
                 <h2><span className="user-icon"></span>Dashboard</h2>
                 <EngineComponent 
+                    project_name={project_name}
                     viewWidth={viewWidth} 
                     viewHeight={viewHeight}
                     cellWidth={cellWidth}

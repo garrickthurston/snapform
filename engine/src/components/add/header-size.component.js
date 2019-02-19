@@ -27,27 +27,28 @@ class HeaderSizeComponent extends Component {
     }
 
     render() {
-        const { addInputValue } = store.getState();
+        const { workspace } = store.getState();
+        const project = workspace.project;
 
         var headerSize = null;
         switch (this.props.headerKey) {
             case 'h1':
-                headerSize = (<h1>{addInputValue}</h1>);
+                headerSize = (<h1>{project.add.addInputValue}</h1>);
                 break;
             case 'h2':
-                headerSize = (<h2>{addInputValue}</h2>);
+                headerSize = (<h2>{project.add.addInputValue}</h2>);
                 break;
             case 'h3':
-                headerSize = (<h3>{addInputValue}</h3>);
+                headerSize = (<h3>{project.add.addInputValue}</h3>);
                 break;
             case 'h4':
-                headerSize = (<h4>{addInputValue}</h4>);
+                headerSize = (<h4>{project.add.addInputValue}</h4>);
                 break;
             case 'h5':
-                headerSize = (<h5>{addInputValue}</h5>);
+                headerSize = (<h5>{project.add.addInputValue}</h5>);
                 break;
             case 'h6':
-                headerSize = (<h6>{addInputValue}</h6>);
+                headerSize = (<h6>{project.add.addInputValue}</h6>);
                 break;
         }
         return (

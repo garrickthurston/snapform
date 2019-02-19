@@ -12,13 +12,13 @@ class ProjectOutputComponent extends Component {
 
         };
     }
-    
+
     render() {
-        const { project } = store.getState();
-        const item = project[this.props.project_path];
+        const { workspace } = store.getState();
+        const project = workspace.project;
 
         return (
-            <div>{JSON.stringify(item)}</div>
+            <div>{JSON.stringify(project.items)}</div>
         );
     }
 }

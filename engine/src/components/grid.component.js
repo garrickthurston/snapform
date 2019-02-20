@@ -71,14 +71,15 @@ class GridComponent extends Component {
     }
 
     handleSvgClick(e) {
-        const { cellWidth, cellHeight } = store.getState();
+        const { workspace } = store.getState();
+        const project = workspace.project;
 
-        var x = Math.floor(e.nativeEvent.offsetX / cellWidth) * cellWidth;
-        var y = Math.floor(e.nativeEvent.offsetY / cellHeight) * cellHeight;
+        var x = Math.floor(e.nativeEvent.offsetX / project.cellWidth) * project.cellWidth;
+        var y = Math.floor(e.nativeEvent.offsetY / project.cellHeight) * project.cellHeight;
         var cellTransform = 'translate(' + x + ',' + y + ')';
 
-        const left = x + (cellWidth / 2);
-        const top = y + (cellHeight / 2);
+        const left = x + (project.cellWidth / 2);
+        const top = y + (project.cellHeight / 2);
 
         this.props.gClicked({
             cellTransform,

@@ -96,7 +96,9 @@ class GridComponent extends Component {
         for (var key in items) {
             const item = items[key];
             render_items.push({
-                props: item
+                props: Object.assign({}, item, {
+                    uid: key
+                })
             });
         }
 
@@ -131,7 +133,7 @@ class GridComponent extends Component {
                         ? <AddComponent top={project.add.addComponent.props.top} left={project.add.addComponent.props.left} g={this.g} node={this.node} container={this.container} />
                         : null }
                     {project_items.map((item, i) => {
-                        return <ItemComponent key={i} {...item.props} />;
+                        return <ItemComponent key={i} container={this.container} {...item.props} />;
                     })}
                 </div>
             </div>

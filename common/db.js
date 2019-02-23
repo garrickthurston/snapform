@@ -8,6 +8,7 @@ var dbConfig = {
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 10,
+    port: 1433,
     options: {
         encrypt: true
     }

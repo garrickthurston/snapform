@@ -1,15 +1,19 @@
 .view-svg {
     .gid {
-        fill: #FF0000;
+        fill: #B0B0B0;
         display: none;
     
         &.clicked {
             display: block;
         }
+
+        &.hidden {
+            display: none;
+        }
     }
 
     &:hover {
-        .gid {
+        .gid:not(.hidden) {
             display: block;
         }
     }

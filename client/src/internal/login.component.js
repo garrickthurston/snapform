@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import { updateBGImage, updateToken } from '../config/redux/redux.actions';
 import { store } from '../config/redux/redux.store';
 import { connect } from 'react-redux';
-import { http } from '../shared/common/http';
+import { Http } from '../../../common/client/http';
 import { withRouter } from 'react-router-dom';
-import { qs } from '../shared/common/qs';
+import { Qs } from '../../../common/client/qs';
 
 import bg_1 from '../../assets/images/login-background-1.jpg';
 import bg_2 from '../../assets/images/login-background-2.jpg';
 import '../../../engine/assets/images/mgt-logo-2.png';
 import '../../assets/style/internal/login.scss';
 
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch) => {
     return {
         updateBGImage: payload => dispatch(updateBGImage(payload)),
         updateToken: payload => dispatch(updateToken(payload))
@@ -22,8 +22,8 @@ class LoginComponent extends Component {
     constructor(props) {
         super(props);
 
-        this.http = new http();
-        this.qs = new qs();
+        this.http = new Http();
+        this.qs = new Qs();
 
         this.params = this.qs.parse(this.props.location.search);
         if (this.params && this.params.l && this.params.l === '1') {

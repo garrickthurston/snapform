@@ -11,9 +11,9 @@ const generateToken = (user_id) => {
     //TODO: add role to users table
     //TODO: add keep signed in
 
-    const exp = 3600 * 1000;
+    const exp = 3600 * 24 * 1000;
     const now = new Date();
-    const exp_date = new Date(now + exp);
+    const exp_date = new Date(now.getTime() + exp);
 
     var token_obj = {
         sub: this._id,

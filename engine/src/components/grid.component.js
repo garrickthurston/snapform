@@ -47,7 +47,7 @@ class GridComponent extends Component {
 
         this.state = {
             
-        }
+        };
 
         this.mouseMove = this.mouseMove.bind(this);
         this.handleSvgClick = this.handleSvgClick.bind(this);
@@ -68,7 +68,7 @@ class GridComponent extends Component {
 
         var x = Math.floor(e.nativeEvent.offsetX / this.props.cellWidth) * this.props.cellWidth;
         var y = Math.floor(e.nativeEvent.offsetY / this.props.cellHeight) * this.props.cellHeight;
-        var cellTransform = 'translate(' + x + ',' + y + ')';
+        var cellTransform = `translate(${x},${y})`;
 
         this.props.updateViewSettings({ 
             cellTransform 
@@ -79,12 +79,12 @@ class GridComponent extends Component {
         const { workspace } = store.getState();
         const project = workspace.project;
 
-        var x = Math.floor(e.nativeEvent.offsetX / project.cellWidth) * project.cellWidth;
-        var y = Math.floor(e.nativeEvent.offsetY / project.cellHeight) * project.cellHeight;
-        var cellTransform = 'translate(' + x + ',' + y + ')';
+        var x = Math.floor(e.nativeEvent.offsetX / project.config.cellWidth) * project.config.cellWidth;
+        var y = Math.floor(e.nativeEvent.offsetY / project.config.cellHeight) * project.config.cellHeight;
+        var cellTransform = `translate(${x},${y})`;
 
-        const left = x + (project.cellWidth / 2);
-        const top = y + (project.cellHeight / 2);
+        const left = x + (project.config.cellWidth / 2);
+        const top = y + (project.config.cellHeight / 2);
 
         this.props.gClicked({
             cellTransform,
@@ -120,19 +120,19 @@ class GridComponent extends Component {
             <div>
                 <ProjectOutputComponent />
                 <div className="add-container" ref={container => this.container = container}>
-                    <svg ref={node => this.node = node} className="view-svg" width={project.viewWidth} height={project.viewHeight} xmlns="http://www.w3.org/2000/svg">
+                    <svg ref={node => this.node = node} className="view-svg" width={project.config.viewWidth} height={project.config.viewHeight} xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <pattern id="smallGrid" width={project.cellWidth} height={project.cellHeight} patternUnits="userSpaceOnUse">
+                            <pattern id="smallGrid" width={project.config.cellWidth} height={project.config.cellHeight} patternUnits="userSpaceOnUse">
                                 <path d={this.smallGridPath} fill="none" stroke="gray" strokeWidth="0.5"/>
                             </pattern>
-                            <pattern id="grid" width={project.cellWidth * 10} height={project.cellHeight * 10} patternUnits="userSpaceOnUse">
-                                <rect width={project.cellWidth * 10} height={project.cellHeight * 10} fill="url(#smallGrid)"/>
+                            <pattern id="grid" width={project.config.cellWidth * 10} height={project.config.cellHeight * 10} patternUnits="userSpaceOnUse">
+                                <rect width={project.config.cellWidth * 10} height={project.config.cellHeight * 10} fill="url(#smallGrid)"/>
                                 <path d={this.gridPath} fill="none" stroke="gray" strokeWidth="1"/>
                             </pattern>
                         </defs>
                 
                         <rect width="100%" height="100%" fill="url(#grid)" onMouseMove={this.mouseMove} onClick={this.handleSvgClick} />
-                        <GComponent ref={g => this.g = g} width={project.cellWidth} height={project.cellHeight} transform={project.cellTransform} node={this.node} container={this.container} add={this.add} />
+                        <GComponent ref={g => this.g = g} width={project.config.cellWidth} height={project.config.cellHeight} transform={project.config.cellTransform} node={this.node} container={this.container} add={this.add} />
                     </svg>
                     { project.add.addComponent
                         ? <AddComponent top={project.add.addComponent.props.top} left={project.add.addComponent.props.left} g={this.g} node={this.node} container={this.container} />

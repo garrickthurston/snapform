@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { store } from '../../config/redux/redux.store';
 import { updateProject, gClicked, updateProjectItems } from '../../config/redux/redux.actions';
+//import { SaveService } from '../../shared/services/save.service';
 
 import '../../../assets/style/components/item/item.scss';
 
@@ -17,6 +18,10 @@ const mapDispatchToProps = (dispatch) => {
 const defaultItemContainerClassName = 'item-container';
 
 class ItemComponent extends Component {
+    dragging = false;
+    dragOffsetX = 0;
+    dragOffsetY = 0;
+
     constructor(props) {
         super(props);
 
@@ -25,11 +30,10 @@ class ItemComponent extends Component {
         
         this.state = {
             info: project.items[this.props.uid],
-            itemContainerClassName: defaultItemContainerClassName,
-            dragging: false,
-            dragOffsetX: 0,
-            dragOffsetY: 0
+            itemContainerClassName: defaultItemContainerClassName
         };
+
+        //this.saveService = new SaveService();
 
         this.handleItemContainerClick = this.handleItemContainerClick.bind(this);
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
@@ -102,11 +106,9 @@ class ItemComponent extends Component {
         const container = workspace.project.container.getBoundingClientRect();
         const item = workspace.project.items[this.props.uid];
 
-        this.setState(Object.assign({}, this.state, {
-            dragging: true,
-            dragOffsetX: item.x - (e.clientX - container.left),
-            dragOffsetY: item.y - (e.clientY - container.top)
-        }));
+        this.dragging = true;
+        this.dragOffsetX = item.x - (e.clientX - container.left);
+        this.dragOffsetY = item.y - (e.clientY - container.top);
     }
 
     handleDrag(e) {
@@ -120,20 +122,20 @@ class ItemComponent extends Component {
             gClassList: 'gid'
         });
 
-        this.setState(Object.assign({}, this.state, {
-            dragging: false
-        }));
+        this.dragging = false;
+
+        const { workspace } = store.getState();
+        this.saveService.saveProject('1', '1', workspace.project);
     }
 
     drag(e) {
-        const { dragOffsetX, dragOffsetY } = this.state;
         const { workspace } = store.getState();
         const container = workspace.project.container.getBoundingClientRect();
-        const defaultWidth = workspace.project.cellWidth;
-        const defaultHeight = workspace.project.cellHeight;
+        const defaultWidth = workspace.project.config.cellWidth;
+        const defaultHeight = workspace.project.config.cellHeight;
 
-        const x = Math.floor((e.clientX - (container.left - dragOffsetX)) / defaultWidth) * defaultWidth;
-        const y = Math.floor((e.clientY - (container.top - dragOffsetY)) / defaultHeight) * defaultHeight;
+        const x = Math.floor((e.clientX - (container.left - this.dragOffsetX)) / defaultWidth) * defaultWidth;
+        const y = Math.floor((e.clientY - (container.top - this.dragOffsetY)) / defaultHeight) * defaultHeight;
         var left = x > 0 ? x : 0;
         var top = y > 0 ? y : 0;
 
@@ -165,7 +167,7 @@ class ItemComponent extends Component {
     }
 
     mousemove(e) {
-        if (this.state.dragging) {
+        if (this.dragging) {
             e.target.style.cursor = 'move';
         }
     }

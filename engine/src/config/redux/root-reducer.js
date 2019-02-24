@@ -3,7 +3,10 @@ import { UPDATE_VIEW_SETTINGS, G_CLICKED, ADD_INPUT_VALUE_CHANGED, ADD_INPUT_TAG
 const initialState = {
     workspace: {
         project: {
-            gClassList: 'gid',
+            config: {},
+            ui: {
+                gClassList: 'gid',
+            },
             add: {},
             items: {}
         }
@@ -19,22 +22,22 @@ export const reducer = (state = initialState, action) => {
                 workspace
             });
         case UPDATE_VIEW_SETTINGS:
-            workspace.project.viewWidth = action.payload.viewWidth || state.workspace.project.viewWidth;
-            workspace.project.viewHeight = action.payload.viewHeight || state.workspace.project.viewHeight;
-            workspace.project.cellWidth = action.payload.cellWidth || state.workspace.project.cellWidth;
-            workspace.project.cellHeight = action.payload.cellHeight || state.workspace.project.cellHeight;
-            workspace.project.cellTransform = action.payload.cellTransform || state.workspace.project.cellTransform;
-            workspace.project.current_x = action.payload.current_x || state.workspace.project.current_x;
-            workspace.project.current_y = action.payload.current_y || state.workspace.project.current_y;
+            workspace.project.config.viewWidth = action.payload.viewWidth || state.workspace.project.config.viewWidth;
+            workspace.project.config.viewHeight = action.payload.viewHeight || state.workspace.project.config.viewHeight;
+            workspace.project.config.cellWidth = action.payload.cellWidth || state.workspace.project.config.cellWidth;
+            workspace.project.config.cellHeight = action.payload.cellHeight || state.workspace.project.config.cellHeight;
+            workspace.project.config.cellTransform = action.payload.cellTransform || state.workspace.project.config.cellTransform;
+            workspace.project.config.current_x = action.payload.current_x || state.workspace.project.config.current_x;
+            workspace.project.config.current_y = action.payload.current_y || state.workspace.project.config.current_y;
             return Object.assign({}, state, {
                 workspace
             });
         case G_CLICKED:
-            workspace.project.cellTransform = action.payload.cellTransform || state.workspace.project.cellTransform;
-            workspace.project.current_x = action.payload.current_x || state.workspace.project.current_x;
-            workspace.project.current_y = action.payload.current_y || state.workspace.project.current_y;
+            workspace.project.config.cellTransform = action.payload.cellTransform || state.workspace.project.config.cellTransform;
+            workspace.project.config.current_x = action.payload.current_x || state.workspace.project.config.current_x;
+            workspace.project.config.current_y = action.payload.current_y || state.workspace.project.config.current_y;
             workspace.project.add.addComponent = action.payload.addComponent;
-            workspace.project.gClassList = action.payload.gClassList || state.workspace.project.gClassList;
+            workspace.project.ui.gClassList = action.payload.gClassList || state.workspace.ui.project.gClassList;
             return Object.assign({}, state, {
                 workspace
             });
@@ -65,6 +68,7 @@ export const reducer = (state = initialState, action) => {
             });
         case UPDATE_PROJECT_ITEMS:
             workspace.project.items = action.payload;
+
             return Object.assign({}, state, {
                 workspace
             });
@@ -74,5 +78,6 @@ export const reducer = (state = initialState, action) => {
                 workspace
             });
     }
+    
     return state;
 };

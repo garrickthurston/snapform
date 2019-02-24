@@ -130,8 +130,8 @@ class AddComponent extends Component {
                 name: project.add.addInputTag,
                 value: project.add.addInputValue
             },
-            x: project.current_x,
-            y: project.current_y,
+            x: project.config.current_x,
+            y: project.config.current_y,
             z: 0,
             h: 'auto'
         };

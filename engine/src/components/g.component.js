@@ -28,12 +28,12 @@ class GComponent extends Component {
         const { workspace } = store.getState();
         const project = workspace.project;
 
-        var x = Math.floor(e.nativeEvent.offsetX / project.cellWidth) * project.cellWidth;
-        var y = Math.floor(e.nativeEvent.offsetY / project.cellHeight) * project.cellHeight;
+        var x = Math.floor(e.nativeEvent.offsetX / project.config.cellWidth) * project.config.cellWidth;
+        var y = Math.floor(e.nativeEvent.offsetY / project.config.cellHeight) * project.config.cellHeight;
         var cellTransform = 'translate(' + x + ',' + y + ')';
 
-        const left = x + (project.cellWidth / 2);
-        const top = y + (project.cellHeight / 2);
+        const left = x + (project.config.cellWidth / 2);
+        const top = y + (project.config.cellHeight / 2);
 
         this.props.gClicked({
             cellTransform,
@@ -47,8 +47,9 @@ class GComponent extends Component {
     render() {
         const { workspace } = store.getState();
         const project = workspace.project;
+        
         return (
-            <g ref={el => this.el = el} className={project.gClassList} transform={this.props.transform} onClick={this.handleClick}>
+            <g ref={el => this.el = el} className={project.ui.gClassList} transform={this.props.transform} onClick={this.handleClick}>
                 <rect className="hover-rect" width={this.props.width} height={this.props.height} /> 
             </g>
         );

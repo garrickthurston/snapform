@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { store } from '../config/redux/redux.store';
-import { updateViewSettings, gClicked } from '../config/redux/redux.actions';
+import { updateViewSettings, gClicked, updateProjectContainer } from '../config/redux/redux.actions';
 import { connect } from 'react-redux';
 import Loadable from 'react-loadable';
 import LoadingComponent from '../shared/loading.component';
@@ -16,7 +16,8 @@ const mapStateToProps = (state) => state;
 const mapDispatchToProps = (dispatch) => {
     return {
         updateViewSettings: payload => dispatch(updateViewSettings(payload)),
-        gClicked: payload => dispatch(gClicked(payload))
+        gClicked: payload => dispatch(gClicked(payload)),
+        updateProjectContainer: payload => dispatch(updateProjectContainer(payload))
     };
 }
 
@@ -51,6 +52,10 @@ class GridComponent extends Component {
         this.mouseMove = this.mouseMove.bind(this);
         this.handleSvgClick = this.handleSvgClick.bind(this);
         this.processProject = this.processProject.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.updateProjectContainer(this.container);
     }
 
     mouseMove(e) {
@@ -133,7 +138,7 @@ class GridComponent extends Component {
                         ? <AddComponent top={project.add.addComponent.props.top} left={project.add.addComponent.props.left} g={this.g} node={this.node} container={this.container} />
                         : null }
                     {project_items.map((item, i) => {
-                        return <ItemComponent key={i} container={this.container} {...item.props} />;
+                        return <ItemComponent key={i} {...item.props} />;
                     })}
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { UPDATE_VIEW_SETTINGS, G_CLICKED, ADD_INPUT_VALUE_CHANGED, ADD_INPUT_TAG_CHANGED, UPDATE_PROJECT, ADD_PROJECT_FORM, UPDATE_PROJECT_ITEMS } from './redux.actions.types';
+import { UPDATE_VIEW_SETTINGS, G_CLICKED, ADD_INPUT_VALUE_CHANGED, ADD_INPUT_TAG_CHANGED, UPDATE_PROJECT, ADD_PROJECT_FORM, UPDATE_PROJECT_ITEMS, UPDATE_PROJECT_CONTAINER } from './redux.actions.types';
 
 const initialState = {
     workspace: {
@@ -65,6 +65,11 @@ export const reducer = (state = initialState, action) => {
             });
         case UPDATE_PROJECT_ITEMS:
             workspace.project.items = action.payload;
+            return Object.assign({}, state, {
+                workspace
+            });
+        case UPDATE_PROJECT_CONTAINER:
+            workspace.project.container = action.payload;
             return Object.assign({}, state, {
                 workspace
             });

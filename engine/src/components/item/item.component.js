@@ -19,16 +19,16 @@ const defaultItemContainerClassName = 'item-container';
 class ItemComponent extends Component {
     constructor(props) {
         super(props);
-        
+
         const { workspace } = store.getState();
         const project = workspace.project;
-
+        
         this.state = {
-            container: this.props.container.getBoundingClientRect(),
-            defaultWidth: project.cellWidth,
-            defaultHeight: project.cellHeight,
             info: project.items[this.props.uid],
-            itemContainerClassName: defaultItemContainerClassName
+            itemContainerClassName: defaultItemContainerClassName,
+            dragging: false,
+            dragOffsetX: 0,
+            dragOffsetY: 0
         };
 
         this.handleItemContainerClick = this.handleItemContainerClick.bind(this);
@@ -37,10 +37,12 @@ class ItemComponent extends Component {
         this.handleDragStart = this.handleDragStart.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragEnd = this.handleDragEnd.bind(this);
+        this.mousemove = this.mousemove.bind(this);
     }
 
     componentWillMount() {
         document.addEventListener('mousedown', this.handleOutsideClick, false);
+        document.addEventListener('mousemove', this.mousemove, false);
     }
 
     componentDidMount() {
@@ -50,6 +52,7 @@ class ItemComponent extends Component {
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleOutsideClick, false);
+        document.removeEventListener('mousemove', this.mousemouve, false);
     }
 
     handleOutsideClick(e) {
@@ -93,6 +96,17 @@ class ItemComponent extends Component {
         });
 
         e.dataTransfer.setDragImage(this.dragImg, 0, 0);
+        e.target.style.cursor = 'move';
+
+        const { workspace } = store.getState();
+        const container = workspace.project.container.getBoundingClientRect();
+        const item = workspace.project.items[this.props.uid];
+
+        this.setState(Object.assign({}, this.state, {
+            dragging: true,
+            dragOffsetX: item.x - (e.clientX - container.left),
+            dragOffsetY: item.y - (e.clientY - container.top)
+        }));
     }
 
     handleDrag(e) {
@@ -105,11 +119,21 @@ class ItemComponent extends Component {
         this.props.gClicked({
             gClassList: 'gid'
         });
+
+        this.setState(Object.assign({}, this.state, {
+            dragging: false
+        }));
     }
 
     drag(e) {
-        const x = Math.floor((e.clientX - this.state.container.left) / this.state.defaultWidth) * this.state.defaultWidth;
-        const y = Math.floor((e.clientY - this.state.container.top) / this.state.defaultHeight) * this.state.defaultHeight;
+        const { dragOffsetX, dragOffsetY } = this.state;
+        const { workspace } = store.getState();
+        const container = workspace.project.container.getBoundingClientRect();
+        const defaultWidth = workspace.project.cellWidth;
+        const defaultHeight = workspace.project.cellHeight;
+
+        const x = Math.floor((e.clientX - (container.left - dragOffsetX)) / defaultWidth) * defaultWidth;
+        const y = Math.floor((e.clientY - (container.top - dragOffsetY)) / defaultHeight) * defaultHeight;
         var left = x > 0 ? x : 0;
         var top = y > 0 ? y : 0;
 
@@ -117,12 +141,12 @@ class ItemComponent extends Component {
         const itemOffsetLeft = left + rect.width;
         const itemOffsetTop = top + rect.height;
 
-        if (itemOffsetLeft > this.state.container.width) {
-            left = Math.floor((this.state.container.width - rect.width) / this.state.defaultWidth) * this.state.defaultWidth;
+        if (itemOffsetLeft > container.width) {
+            left = Math.floor((container.width - rect.width) / defaultWidth) * defaultWidth;
         }
 
-        if (itemOffsetTop > this.state.container.height) {
-            top = Math.floor((this.state.container.height - rect.height) / this.state.defaultHeight) * this.state.defaultHeight;
+        if (itemOffsetTop > container.height) {
+            top = Math.floor((container.height - rect.height) / defaultHeight) * defaultHeight;
         }
 
         const info = Object.assign({}, this.state.info, {
@@ -138,6 +162,12 @@ class ItemComponent extends Component {
         this.setState(Object.assign({}, this.state, {
             info
         }));
+    }
+
+    mousemove(e) {
+        if (this.state.dragging) {
+            e.target.style.cursor = 'move';
+        }
     }
 
     render() {

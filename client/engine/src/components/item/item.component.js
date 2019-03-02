@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { store } from '../../../../common/config/redux/redux.store';
 import { updateProject, gClicked, updateProjectItems } from '../../config/redux/redux.actions';
-//import { SaveService } from '../../shared/services/save.service';
+import { SaveService } from '../../../../common/services/save.service';
 
 import '../../../assets/style/components/item/item.scss';
 
@@ -25,15 +25,24 @@ class ItemComponent extends Component {
     constructor(props) {
         super(props);
 
+        const TagName = `${this.props.tag.name}`;
+        var tag = null;
+        if (this.props.tag.innerValue) {
+            tag = (<TagName>{this.props.tag.value}</TagName>)
+        } else {
+            tag = (<TagName value={this.props.tag.value}></TagName>)
+        }
+
         const { workspace } = store.getState().engineReducer;
         const project = workspace.project;
         
         this.state = {
             info: project.items[this.props.uid],
-            itemContainerClassName: defaultItemContainerClassName
+            itemContainerClassName: defaultItemContainerClassName,
+            tag
         };
 
-        //this.saveService = new SaveService();
+        this.saveService = new SaveService();
 
         this.handleItemContainerClick = this.handleItemContainerClick.bind(this);
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
@@ -42,6 +51,7 @@ class ItemComponent extends Component {
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragEnd = this.handleDragEnd.bind(this);
         this.mousemove = this.mousemove.bind(this);
+
     }
 
     componentWillMount() {
@@ -116,16 +126,21 @@ class ItemComponent extends Component {
     }
 
     handleDragEnd(e) {
-        this.drag(e);
+        var info = this.drag(e);
+
+        this.dragging = false;
 
         this.props.gClicked({
             gClassList: 'gid'
         });
 
-        this.dragging = false;
+        this.props.updateProject({
+            path: this.props.uid,
+            value: info
+        });
 
         const { workspace } = store.getState().engineReducer;
-        //this.saveService.saveProject('1', '1', workspace.project);
+        this.saveService.saveProject('1', '1', workspace.project);
     }
 
     drag(e) {
@@ -136,6 +151,7 @@ class ItemComponent extends Component {
 
         const x = Math.floor((e.clientX - (container.left - this.dragOffsetX)) / defaultWidth) * defaultWidth;
         const y = Math.floor((e.clientY - (container.top - this.dragOffsetY)) / defaultHeight) * defaultHeight;
+        
         var left = x > 0 ? x : 0;
         var top = y > 0 ? y : 0;
 
@@ -156,14 +172,11 @@ class ItemComponent extends Component {
             y: top
         });
 
-        this.props.updateProject({
-            path: this.props.uid,
-            value: info
-        });
-
         this.setState(Object.assign({}, this.state, {
             info
         }));
+        
+        return info;
     }
 
     mousemove(e) {
@@ -173,19 +186,11 @@ class ItemComponent extends Component {
     }
 
     render() {
-        const { itemContainerClassName } = this.state;
-        const TagName = `${this.props.tag.name}`;
-
-        var tag = null;
-        if (this.props.tag.innerValue) {
-            tag = (<TagName>{this.props.tag.value}</TagName>)
-        } else {
-            tag = (<TagName value={this.props.tag.value}></TagName>)
-        }
-        
+        const { itemContainerClassName, info, tag } = this.state;
 
         return (
-            <div className={itemContainerClassName}
+            <div 
+                className={itemContainerClassName}
                 ref={item => this.item = item}
                 onClick={this.handleItemContainerClick}
                 draggable={true}
@@ -193,13 +198,12 @@ class ItemComponent extends Component {
                 onDrag={this.handleDrag}
                 onDragEnd={this.handleDragEnd}
                 style={{ 
-                    top: this.props.y, 
-                    left: this.props.x,
-                    width: this.props.width,
-                    height: this.props.height,
-                    zIndex: this.props.z + 100
-                }
-            }>
+                    top: info.y, 
+                    left: info.x,
+                    width: info.width,
+                    height: info.height,
+                    zIndex: info.z + 100
+                }}>
                 {tag}
             </div>
         );

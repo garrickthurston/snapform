@@ -12,8 +12,8 @@ module.exports = {
         tls: 'empty'
     },
     entry: {
-        app: './client/src/index.js',
-        engine: './engine/src/index.js'
+        app: './client/app/src/index.js',
+        engine: './client/engine/src/index.js'
     },
     output: {
         filename: '[name].[contenthash].js',
@@ -90,7 +90,7 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            template: 'client/src/index.html'
+            template: 'client/app/src/index.html'
         }),
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.ProvidePlugin({

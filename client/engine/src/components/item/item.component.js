@@ -51,12 +51,13 @@ class ItemComponent extends Component {
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragEnd = this.handleDragEnd.bind(this);
         this.mousemove = this.mousemove.bind(this);
-
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     componentWillMount() {
         document.addEventListener('mousedown', this.handleOutsideClick, false);
         document.addEventListener('mousemove', this.mousemove, false);
+        document.addEventListener('keydown', this.handleKeyDown, false);
     }
 
     componentDidMount() {
@@ -67,6 +68,7 @@ class ItemComponent extends Component {
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleOutsideClick, false);
         document.removeEventListener('mousemove', this.mousemouve, false);
+        document.removeEventListener('keydown', this.handleKeyDown, false);
     }
 
     handleOutsideClick(e) {
@@ -182,6 +184,52 @@ class ItemComponent extends Component {
     mousemove(e) {
         if (this.dragging) {
             e.target.style.cursor = 'move';
+        }
+    }
+
+    async handleKeyDown(e) {
+        e.preventDefault();
+
+        if (!this.state.itemContainerClassName.indexOf('focus') === -1) {
+            return;
+        }
+
+        const { workspace } = store.getState().engineReducer;
+        var info = this.state.info;
+
+        var save = false;
+        switch (e.keyCode) {
+            case 37: // left
+                info.x -= workspace.project.config.cellWidth;
+                save = true;
+                break;
+            case 38: // up
+                info.y -= workspace.project.config.cellHeight;
+                save = true;
+                break;
+            case 39: // right
+                info.x += workspace.project.config.cellWidth;
+                save = true;
+                break;
+            case 40: // down
+                info.y += workspace.project.config.cellHeight;
+                save = true;
+                break;
+            default:
+                return;
+        }
+
+        if (save) {
+            this.setState(Object.assign({}, this.state, {
+                info
+            }));
+
+            this.props.updateProject({
+                path: this.props.uid,
+                value: info
+            });
+
+            await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
         }
     }
 

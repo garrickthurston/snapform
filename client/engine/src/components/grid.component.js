@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { store } from '../../../common/config/redux/redux.store';
-import { updateViewSettings, gClicked, updateProjectContainer } from '../config/redux/redux.actions';
+import { updateViewSettings, gClicked, updateProjectContainer, updateProjectItems, addProjectForm } from '../config/redux/redux.actions';
 import { connect } from 'react-redux';
 import Loadable from 'react-loadable';
 import LoadingComponent from '../shared/loading.component';
+import { ProjectService } from '../../../common/services/project.service';
 
 import GComponent from './g.component';
 import AddComponent from './add/add.component';
@@ -16,7 +17,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         updateViewSettings: payload => dispatch(updateViewSettings(payload)),
         gClicked: payload => dispatch(gClicked(payload)),
-        updateProjectContainer: payload => dispatch(updateProjectContainer(payload))
+        updateProjectContainer: payload => dispatch(updateProjectContainer(payload)),
+        updateProjectItems: payload => dispatch(updateProjectItems(payload)),
+        addProjectForm: payload => dispatch(addProjectForm(payload))
     };
 }
 
@@ -36,17 +39,35 @@ class GridComponent extends Component {
     constructor(props) {
         super(props);
 
-        this.props.updateViewSettings({
-            viewWidth: this.props.viewWidth,
-            viewHeight: this.props.viewHeight,
-            cellWidth: this.props.cellWidth,
-            cellHeight: this.props.cellHeight,
-            cellTransform: this.props.cellTransform
-        });
-
         this.state = {
             
         };
+
+        this.props.addProjectForm({
+            workspace_id: this.props.workspace_id,
+            project_id: this.props.project_id,
+            project_name: this.props.project_name
+        })
+
+        // TODO
+        this.projectService = new ProjectService();
+        this.projectService.get(this.props.workspace_id, this.props.project_id).then(project => {
+            const config = JSON.parse(project.config);
+            const items = JSON.parse(project.items);
+            
+            
+            this.props.updateViewSettings({
+                viewWidth: config.viewWidth || this.props.viewWidth,
+                viewHeight: config.viewHeight || this.props.viewHeight,
+                cellWidth: config.cellWidth || this.props.cellWidth,
+                cellHeight: config.cellHeight || this.props.cellHeight,
+                cellTransform: config.cellTransform
+            });
+            
+            this.props.updateProjectItems(items);
+        }).catch(e => {
+
+        });
 
         this.mouseMove = this.mouseMove.bind(this);
         this.handleSvgClick = this.handleSvgClick.bind(this);
@@ -97,14 +118,14 @@ class GridComponent extends Component {
     processProject(items) {
         var render_items = [];
 
-        for (var key in items) {
+        Object.keys(items).forEach((key) => {
             const item = items[key];
             render_items.push({
                 props: Object.assign({}, item, {
                     uid: key
                 })
             });
-        }
+        });
 
         return render_items;
     }

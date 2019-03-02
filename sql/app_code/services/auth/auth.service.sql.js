@@ -1,6 +1,7 @@
+//TODO: update this query
 module.exports = {
     updatePasswordQuery: `
-        UPDATE [dbo].[users]
+        UPDATE [auth].[user]
         SET passhash = @passhash
         WHERE email = 'garrickthurston@gmail.com'
     `,
@@ -9,7 +10,7 @@ module.exports = {
             user_id,
             email,
             passhash
-        FROM [dbo].[users]
+        FROM [auth].[user]
         WHERE email = @email
     `
 };

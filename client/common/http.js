@@ -14,6 +14,7 @@ export class Http {
                     options = {
                         method: 'GET',
                         url: fullyQualified ? url : `${window.location.protocol}//${window.location.host}${url}`,
+                        cache: false,
                         headers: {
                             'Content-Type': 'application/json'
                         }
@@ -48,6 +49,7 @@ export class Http {
                     options = {
                         method: 'POST',
                         url: fullyQualified ? url : `${window.location.protocol}//${window.location.host}${url}`,
+                        cache: false,
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -83,6 +85,7 @@ export class Http {
                     options = {
                         method: 'PUT',
                         url: fullyQualified ? url : `${window.location.protocol}//${window.location.host}${url}`,
+                        cache: false,
                         headers: {
                             'Content-Type': 'application/json'
                         },

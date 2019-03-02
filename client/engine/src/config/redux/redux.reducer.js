@@ -17,7 +17,9 @@ export const engineReducer = (state = initialState, action) => {
     var workspace = Object.assign({}, state.workspace);
     switch (action.type) {
         case ADD_PROJECT_FORM:
-            workspace.project.id = payload;
+            workspace.id = action.payload.workspace_id;
+            workspace.project.id = action.payload.project_id;
+            workspace.project.name = action.payload.project_name;
             return Object.assign({}, state, {
                 workspace
             });

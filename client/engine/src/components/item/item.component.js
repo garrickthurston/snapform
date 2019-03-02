@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { store } from '../../../../common/config/redux/redux.store';
 import { updateProject, gClicked, updateProjectItems } from '../../config/redux/redux.actions';
-import { SaveService } from '../../../../common/services/save.service';
+import { ProjectService } from '../../../../common/services/project.service';
 
 import '../../../assets/style/components/item/item.scss';
 
@@ -42,7 +42,7 @@ class ItemComponent extends Component {
             tag
         };
 
-        this.saveService = new SaveService();
+        this.projectService = new ProjectService();
 
         this.handleItemContainerClick = this.handleItemContainerClick.bind(this);
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
@@ -125,7 +125,7 @@ class ItemComponent extends Component {
         this.drag(e);
     }
 
-    handleDragEnd(e) {
+    async handleDragEnd(e) {
         var info = this.drag(e);
 
         this.dragging = false;
@@ -140,7 +140,7 @@ class ItemComponent extends Component {
         });
 
         const { workspace } = store.getState().engineReducer;
-        this.saveService.saveProject('1', '1', workspace.project);
+        await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
     }
 
     drag(e) {

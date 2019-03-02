@@ -3,6 +3,7 @@ import { store } from '../../../../common/config/redux/redux.store';
 import { connect } from 'react-redux';
 import { gClicked, updateProject, addInputTagChanged, addInputValueChanged } from '../../config/redux/redux.actions'; 
 import Loadable from 'react-loadable';
+import { ProjectService } from '../../../../common/services/project.service';
 
 const uuid = require('uuid');
 
@@ -60,6 +61,8 @@ class AddComponent extends Component {
             selectedInputComponent: null
 
         };
+
+        this.projectService = new ProjectService();
 
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
         this.handleCloseClick = this.handleCloseClick.bind(this);
@@ -121,7 +124,7 @@ class AddComponent extends Component {
         }));
     }
 
-    handleAddClick() {
+    async handleAddClick() {
         const { workspace } = store.getState().engineReducer;
         const project = workspace.project;
 
@@ -166,6 +169,8 @@ class AddComponent extends Component {
         });
 
         this.handleCloseClick();
+
+        await this.projectService.put(workspace.id, workspace.project.id, project);
     }
 
     render() {

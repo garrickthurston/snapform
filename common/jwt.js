@@ -20,7 +20,7 @@ const generateToken = (user_id) => {
         iss: config.token_issuer,
         role: 'admin',
         exp: Math.floor(exp_date.getTime() / 1000),
-        user: user_id
+        user_id
     };
     
     var keep_signed_in = true;

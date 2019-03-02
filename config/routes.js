@@ -5,6 +5,7 @@ const cors = require('cors');
 const middleware = require('./middleware');
 
 const Auth = require('../api/auth.api')();
+const Workspace = require('../api/workspace/user.workspace.api')();
 const Project = require('../api/workspace/project/project.api')();
 
 module.exports = (app) => {
@@ -17,7 +18,12 @@ module.exports = (app) => {
     app.post('/api/v1/auth/authenticate', cors(mw.corsOrigin), Auth.authenticate);
     
     //Workspace
-    app.put('/api/v1/workspace/:workspace_id/project/:project_id', mw.validToken, cors(mw.corsOrigin), Project.updateProject);
+    app.get('/api/v1/workspace', mw.validToken, cors(mw.corsOrigin), Workspace.getAll);
+    app.get('/api/v1/workspace/:workspace_id', mw.validToken, cors(mw.corsOrigin), Workspace.get);
+    app.post('/api/v1/workspace', mw.validToken, cors(mw.corsOrigin), Workspace.post);
+
+    app.get('/api/v1/workspace/:workspace_id/project/:project_id', mw.validToken, cors(mw.corsOrigin), Project.get);
+    app.put('/api/v1/workspace/:workspace_id/project/:project_id', mw.validToken, cors(mw.corsOrigin), Project.put);
 
     // provide application index
 	app.get('/*', function (req, res) {

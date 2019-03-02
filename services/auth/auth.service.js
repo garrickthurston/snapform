@@ -101,6 +101,9 @@ const authenticate = (req, res) => new Promise(async (resolve, reject) => {
             }
 
             if (user) {
+                user.user_id = user.userID;
+                delete user.userID;
+                
                 return resolve(user);
             }
 

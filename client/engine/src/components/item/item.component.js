@@ -77,12 +77,14 @@ class ItemComponent extends Component {
         }
 
         this.setState(Object.assign({}, this.state, {
+            hasFocus: false,
             itemContainerClassName: defaultItemContainerClassName
         }));
     }
 
     handleItemContainerClick() {
         this.setState(Object.assign({}, this.state, {
+            hasFocus: true,
             itemContainerClassName: defaultItemContainerClassName + ' focus'
         }));
 
@@ -188,32 +190,46 @@ class ItemComponent extends Component {
     }
 
     async handleKeyDown(e) {
-        e.preventDefault();
-
-        if (!this.state.itemContainerClassName.indexOf('focus') === -1) {
+        if (!this.state.hasFocus) {
             return;
         }
+        e.preventDefault();
 
+        const rect = this.item.getBoundingClientRect();
         const { workspace } = store.getState().engineReducer;
+        const container = workspace.project.container.getBoundingClientRect();
         var info = this.state.info;
 
         var save = false;
+        var x, y;
         switch (e.keyCode) {
             case 37: // left
-                info.x -= workspace.project.config.cellWidth;
-                save = true;
+                x = info.x - workspace.project.config.cellWidth;
+                if (x >= 0) {
+                    info.x = x;
+                    save = true;
+                }
                 break;
             case 38: // up
-                info.y -= workspace.project.config.cellHeight;
-                save = true;
+                y = info.y - workspace.project.config.cellHeight;
+                if (y >= 0) {
+                    info.y = y;
+                    save = true;
+                }
                 break;
             case 39: // right
-                info.x += workspace.project.config.cellWidth;
-                save = true;
+                x = info.x + workspace.project.config.cellWidth;
+                if ((x + rect.width) <= container.width) {
+                    info.x = x;
+                    save = true;
+                }
                 break;
             case 40: // down
-                info.y += workspace.project.config.cellHeight;
-                save = true;
+                y = info.y + workspace.project.config.cellHeight;
+                if ((y + rect.height) <= container.height) {
+                    info.y = y;
+                    save = true;
+                }
                 break;
             default:
                 return;

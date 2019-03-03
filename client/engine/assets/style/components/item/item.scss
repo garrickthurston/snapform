@@ -11,5 +11,35 @@
 
     &.focus {
         background: rgba(240, 240, 240, 0.9);
+
+        .item-actions {
+            .close-icon-item {
+                background: rgba(240, 240, 240, 0.5);
+            }
+        }
+    }
+
+    .item-actions {
+        position: absolute;
+        right: 1px;
+        top: 1px;
+
+        .close-icon-item {
+            display: inline-block;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 2px;
+            border: 0;
+            height: 18px;
+            width: 18px;
+            
+            .close-icon {
+                position: absolute;
+                top: 3px;
+                left: 4px;
+                font-size: 14px;
+                margin-top: -1px;
+            }
+        }
     }
 }

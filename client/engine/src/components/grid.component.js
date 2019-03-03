@@ -71,7 +71,7 @@ class GridComponent extends Component {
 
         this.mouseMove = this.mouseMove.bind(this);
         this.handleSvgClick = this.handleSvgClick.bind(this);
-        this.processProject = this.processProject.bind(this);
+        //this.removeItem = this.removeItem.bind(this);
     }
 
     componentDidMount() {
@@ -115,11 +115,40 @@ class GridComponent extends Component {
         });
     }
 
-    processProject(items) {
-        var render_items = [];
+    // async removeItem(uid) {
+    //    // debugger;
+    //     //e.preventDefault();
+    //     //e.stopPropagation();
 
-        Object.keys(items).forEach((key) => {
-            const item = items[key];
+    //     var { workspace } = store.getState().engineReducer;
+    //     var project = workspace.project;
+    //     var items = project.items;
+
+    //     const current_z = items[uid].z;
+    //     var top_z = current_z;
+    //     for (var key in items) {
+    //         if (key !== uid && items[key].z > current_z) {
+    //             if (items[key].z > top_z) {
+    //                 top_z = items[key].z;
+    //             }
+    //             items[key].z -= 1;
+    //         }
+    //     }
+
+    //     delete items[uid];
+
+    //     await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
+
+    //     this.props.updateProjectItems(items);
+    // }
+
+    render() {
+        const { workspace } = store.getState().engineReducer;
+        const project = workspace.project;
+
+        var render_items = [];
+        Object.keys(project.items).forEach((key) => {
+            const item = project.items[key];
             render_items.push({
                 props: Object.assign({}, item, {
                     uid: key
@@ -127,14 +156,6 @@ class GridComponent extends Component {
             });
         });
 
-        return render_items;
-    }
-
-    render() {
-        const { workspace } = store.getState().engineReducer;
-        const project = workspace.project;
-        
-        const project_items = this.processProject(project.items);
 
         return (
             <div>
@@ -157,8 +178,8 @@ class GridComponent extends Component {
                     { project.add.addComponent
                         ? <AddComponent top={project.add.addComponent.props.top} left={project.add.addComponent.props.left} g={this.g} node={this.node} container={this.container} />
                         : null }
-                    {project_items.map((item, i) => {
-                        return <ItemComponent key={i} {...item.props} />;
+                    {render_items.map((item) => {
+                        return <ItemComponent key={item.props.uid} {...item.props} />;
                     })}
                 </div>
             </div>

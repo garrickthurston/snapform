@@ -129,6 +129,7 @@ class AddComponent extends Component {
         const project = workspace.project;
 
         var item = {
+            uid: uuid(),
             tag: {
                 name: project.add.addInputTag,
                 value: project.add.addInputValue
@@ -164,7 +165,7 @@ class AddComponent extends Component {
         }
 
         this.props.updateProject({
-            path: uuid(),
+            path: item.uid,
             value: item
         });
 

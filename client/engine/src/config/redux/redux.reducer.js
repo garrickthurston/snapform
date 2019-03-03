@@ -8,7 +8,8 @@ const initialState = {
                 gClassList: 'gid',
             },
             add: {},
-            items: {}
+            items: {},
+            items_array: []
         }
     }
 };
@@ -56,20 +57,40 @@ export const engineReducer = (state = initialState, action) => {
         case UPDATE_PROJECT:
             const parts = action.payload.path.split('.');
 
-            var item = workspace.project.items;
+            var items = workspace.project.items;
             parts.forEach((part, i) => {
                 if ((i + 1) === parts.length) {
-                    item[part] = action.payload.value;
+                    items[part] = action.payload.value;
                 } else {
-                    item = item[part];
+                    items = item[part];
                 }
             });
+
+            // workspace.project.items_array = [];
+            // Object.keys(items).forEach((key) => {
+            //     const item = items[key];
+            //     workspace.project.items_array.push({
+            //         props: Object.assign({}, item, {
+            //             uid: key
+            //         })
+            //     });
+            // });
             
             return Object.assign({}, state, {
                 workspace
             });
         case UPDATE_PROJECT_ITEMS:
             workspace.project.items = action.payload;
+            
+            // workspace.project.items_array = [];
+            // Object.keys(action.payload).forEach((key) => {
+            //     const item = action.payload[key];
+            //     workspace.project.items_array.push({
+            //         props: Object.assign({}, item, {
+            //             uid: key
+            //         })
+            //     });
+            // });
 
             return Object.assign({}, state, {
                 workspace

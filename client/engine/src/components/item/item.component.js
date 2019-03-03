@@ -52,6 +52,9 @@ class ItemComponent extends Component {
         this.handleDragEnd = this.handleDragEnd.bind(this);
         this.mousemove = this.mousemove.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleMouseEnter = this.handleMouseEnter.bind(this);
+        this.handleMouseLeave = this.handleMouseLeave.bind(this);
+        this.removeItem = this.removeItem.bind(this);
     }
 
     componentWillMount() {
@@ -91,19 +94,21 @@ class ItemComponent extends Component {
         const { workspace } = store.getState().engineReducer;
         var items = workspace.project.items;
 
-        const current_z = items[this.props.uid].z;
-        var top_z = current_z;
-        for (var key in items) {
-            if (key !== this.props.uid && items[key].z > current_z) {
-                if (items[key].z > top_z) {
-                    top_z = items[key].z;
+        if (items[this.props.uid]) {
+            const current_z = items[this.props.uid].z;
+            var top_z = current_z;
+            for (var key in items) {
+                if (key !== this.props.uid && items[key].z > current_z) {
+                    if (items[key].z > top_z) {
+                        top_z = items[key].z;
+                    }
+                    items[key].z -= 1;
                 }
-                items[key].z -= 1;
             }
-        }
-        items[this.props.uid].z = top_z;
+            items[this.props.uid].z = top_z;
 
-        this.props.updateProjectItems(items);
+            this.props.updateProjectItems(items);
+        }
     }
 
     handleDragStart(e) {
@@ -193,7 +198,6 @@ class ItemComponent extends Component {
         if (!this.state.hasFocus) {
             return;
         }
-        e.preventDefault();
 
         const rect = this.item.getBoundingClientRect();
         const { workspace } = store.getState().engineReducer;
@@ -249,8 +253,55 @@ class ItemComponent extends Component {
         }
     }
 
+    handleMouseEnter() {
+        this.setState(Object.assign({}, this.state, {
+            hover: true
+        }));
+    }
+
+    handleMouseLeave() {
+        this.setState(Object.assign({}, this.state, {
+            hover: false
+        }));
+    }
+
+    async removeItem(e) {
+        // if(!this.item.contains(e.target)) {
+        //     return;
+        // }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        //this.handleItemContainerClick();
+
+        var { workspace } = store.getState().engineReducer;
+        var project = workspace.project;
+        var items = project.items;
+
+        const current_z = items[this.props.uid].z;
+        var top_z = current_z;
+        for (var key in items) {
+            if (key !== this.props.uid && items[key].z > current_z) {
+                if (items[key].z > top_z) {
+                    top_z = items[key].z;
+                }
+                items[key].z -= 1;
+            }
+        }
+
+        delete items[this.props.uid];
+        //items[this.props.uid].tag.value += 'ADD';
+
+        await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
+
+        this.props.updateProjectItems(items);
+        //await 
+
+    }
+
     render() {
-        const { itemContainerClassName, info, tag } = this.state;
+        const { itemContainerClassName, info, tag, hover, hasFocus } = this.state;
 
         return (
             <div 
@@ -261,6 +312,8 @@ class ItemComponent extends Component {
                 onDragStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onDragEnd={this.handleDragEnd}
+                onMouseEnter={this.handleMouseEnter}
+                onMouseLeave={this.handleMouseLeave}
                 style={{ 
                     top: info.y, 
                     left: info.x,
@@ -269,6 +322,13 @@ class ItemComponent extends Component {
                     zIndex: info.z + 100
                 }}>
                 {tag}
+                {hover || hasFocus ?
+                <div className="item-actions">
+                    <div className="close-icon-item shadow-none" onClick={this.removeItem}>
+                        <span className="close-icon"></span>
+                    </div>
+                </div>
+                : null}
             </div>
         );
     }

@@ -266,14 +266,8 @@ class ItemComponent extends Component {
     }
 
     async removeItem(e) {
-        // if(!this.item.contains(e.target)) {
-        //     return;
-        // }
-
         e.preventDefault();
         e.stopPropagation();
-
-        //this.handleItemContainerClick();
 
         var { workspace } = store.getState().engineReducer;
         var project = workspace.project;
@@ -291,13 +285,10 @@ class ItemComponent extends Component {
         }
 
         delete items[this.props.uid];
-        //items[this.props.uid].tag.value += 'ADD';
 
         await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
 
         this.props.updateProjectItems(items);
-        //await 
-
     }
 
     render() {

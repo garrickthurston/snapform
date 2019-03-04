@@ -71,7 +71,6 @@ class GridComponent extends Component {
 
         this.mouseMove = this.mouseMove.bind(this);
         this.handleSvgClick = this.handleSvgClick.bind(this);
-        //this.removeItem = this.removeItem.bind(this);
     }
 
     componentDidMount() {
@@ -114,33 +113,6 @@ class GridComponent extends Component {
             gClassList: 'gid clicked'
         });
     }
-
-    // async removeItem(uid) {
-    //    // debugger;
-    //     //e.preventDefault();
-    //     //e.stopPropagation();
-
-    //     var { workspace } = store.getState().engineReducer;
-    //     var project = workspace.project;
-    //     var items = project.items;
-
-    //     const current_z = items[uid].z;
-    //     var top_z = current_z;
-    //     for (var key in items) {
-    //         if (key !== uid && items[key].z > current_z) {
-    //             if (items[key].z > top_z) {
-    //                 top_z = items[key].z;
-    //             }
-    //             items[key].z -= 1;
-    //         }
-    //     }
-
-    //     delete items[uid];
-
-    //     await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
-
-    //     this.props.updateProjectItems(items);
-    // }
 
     render() {
         const { workspace } = store.getState().engineReducer;

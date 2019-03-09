@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { store } from '../../../../common/config/redux/redux.store';
-import { addInputTagChanged } from '../../config/redux/redux.actions';
+import { updateProjectConfig } from '../../config/redux/redux.actions';
 
 const mapStateToProps = (state) => state;
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addInputTagChanged: payload => dispatch(addInputTagChanged(payload))
+        updateProjectConfig: payload => dispatch(updateProjectConfig(payload))
     };
 }
 
@@ -23,7 +23,14 @@ class HeaderSizeComponent extends Component {
     }
 
     handleHeaderSizeClick() {
-        this.props.addInputTagChanged(this.props.headerKey);
+        const { workspace } = store.getState().engineReducer;
+        this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+            ui: Object.assign({}, workspace.project.config.ui, {
+                add: Object.assign({}, workspace.project.config.ui.add, {
+                    tag: this.props.headerKey,
+                })
+            })
+        }));
     }
 
     render() {
@@ -33,22 +40,22 @@ class HeaderSizeComponent extends Component {
         var headerSize = null;
         switch (this.props.headerKey) {
             case 'h1':
-                headerSize = (<h1>{project.add.addInputValue}</h1>);
+                headerSize = (<h1>{project.config.ui.add.value}</h1>);
                 break;
             case 'h2':
-                headerSize = (<h2>{project.add.addInputValue}</h2>);
+                headerSize = (<h2>{project.config.ui.add.value}</h2>);
                 break;
             case 'h3':
-                headerSize = (<h3>{project.add.addInputValue}</h3>);
+                headerSize = (<h3>{project.config.ui.add.value}</h3>);
                 break;
             case 'h4':
-                headerSize = (<h4>{project.add.addInputValue}</h4>);
+                headerSize = (<h4>{project.config.ui.add.value}</h4>);
                 break;
             case 'h5':
-                headerSize = (<h5>{project.add.addInputValue}</h5>);
+                headerSize = (<h5>{project.config.ui.add.value}</h5>);
                 break;
             case 'h6':
-                headerSize = (<h6>{project.add.addInputValue}</h6>);
+                headerSize = (<h6>{project.config.ui.add.value}</h6>);
                 break;
         }
         return (

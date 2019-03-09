@@ -15,8 +15,8 @@ const LoginComponent = Loadable({
     loader: () => import ('../external/login.component'),
     loading: LoadingComponent
 });
-const DashboardComponent = Loadable({
-    loader: () => import ('../internal/dashboard.component'),
+const WorkspaceComponent = Loadable({
+    loader: () => import ('../internal/workspace/workspace.component'),
     loading: LoadingComponent
 });
 const DocsComponent = Loadable({
@@ -45,7 +45,7 @@ const Root = ({ store }) => (
                     <Route path="/docs" component={DocsComponent} />
                     <Route path="/blog" component={BlogComponent} />
                     <Route path="/tutorial" component={TutorialComponent} />
-                    <PrivateRoute path="/dashboard" component={DashboardComponent} />
+                    <PrivateRoute path="/workspace" component={WorkspaceComponent} />
                     <Route path="/" component={HomeComponent} />
                 </Switch>
             </AppComponent>

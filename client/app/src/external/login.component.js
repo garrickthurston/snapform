@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { updateBGImage, updateToken } from '../config/redux/redux.actions';
+import { updateToken } from '../config/redux/redux.actions';
 import { store } from '../../../common/config/redux/redux.store';
 import { connect } from 'react-redux';
 import { Http } from '../../../common/http';
@@ -13,7 +13,6 @@ import '../../assets/style/external/login.scss';
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateBGImage: payload => dispatch(updateBGImage(payload)),
         updateToken: payload => dispatch(updateToken(payload))
     };
 }
@@ -30,18 +29,17 @@ class LoginComponent extends Component {
             this.props.updateToken(null);
             this.props.history.push('/login');
         }
+
+        const backgrounds = [bg_1, bg_2];
+        const url = backgrounds[Math.floor(Math.random() * backgrounds.length)];
         
         this.state = {
             email: '',
             password: '',
             submitText: 'Submit',
-            processing: false
+            processing: false,
+            bgImage: `url('${url}')`
         };
-
-        const backgrounds = [bg_1, bg_2];
-        const url = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-
-        this.props.updateBGImage(`url('${url}')`);
 
         this.login = this.login.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -73,7 +71,7 @@ class LoginComponent extends Component {
             if (response) {
                 this.props.updateToken(response.token);
 
-                this.props.history.push('/dashboard');
+                this.props.history.push('/workspace');
             }
         } catch (e) {
             this.setState({
@@ -84,12 +82,11 @@ class LoginComponent extends Component {
     }
 
     render() {
-        const { backgroundImage } = store.getState().appReducer;
-        const { submitText, processing } = this.state;
+        const { submitText, processing, bgImage } = this.state;
 
         return (
             <div className="g-container">
-                <div id="backgroundElement" className="bg" style={{ background: backgroundImage }}></div>
+                <div id="backgroundElement" className="bg" style={{ background: bgImage }}></div>
                 <div className="g-landing">
                     <div className="g-landing-logo"></div>
                     <form className="g-login-form" onSubmit={this.login}>

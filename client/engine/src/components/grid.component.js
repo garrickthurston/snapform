@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { store } from '../../../common/config/redux/redux.store';
-import { updateViewSettings, gClicked, updateProjectContainer, updateProjectItems, addProjectForm } from '../config/redux/redux.actions';
+import { updateProjectContainer, updateProjectItems, initProject, updateProjectConfig } from '../config/redux/redux.actions';
 import { connect } from 'react-redux';
 import Loadable from 'react-loadable';
 import LoadingComponent from '../shared/loading.component';
-import { ProjectService } from '../../../common/services/project.service';
 
 import GComponent from './g.component';
 import AddComponent from './add/add.component';
@@ -15,11 +14,10 @@ const mapStateToProps = (state) => state;
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateViewSettings: payload => dispatch(updateViewSettings(payload)),
-        gClicked: payload => dispatch(gClicked(payload)),
         updateProjectContainer: payload => dispatch(updateProjectContainer(payload)),
         updateProjectItems: payload => dispatch(updateProjectItems(payload)),
-        addProjectForm: payload => dispatch(addProjectForm(payload))
+        initProject: payload => dispatch(initProject(payload)),
+        updateProjectConfig: payload => dispatch(updateProjectConfig(payload))
     };
 }
 
@@ -33,85 +31,46 @@ const ItemComponent = Loadable({
 });
 
 class GridComponent extends Component {
-    smallGridPath = `M ${this.props.cellWidth} 0 L 0 0 0 ${this.props.cellHeight}`;
-    gridPath = `M ${this.props.cellWidth * 10} 0 L 0 0 0 ${this.props.cellHeight * 10}`;
 
     constructor(props) {
         super(props);
 
+        const { config } = this.props.project;
+
         this.state = {
-            
+            smallGridPath: `M ${config.cellWidth} 0 L 0 0 0 ${config.cellHeight}`,
+            gridPath: `M ${config.cellWidth * 10} 0 L 0 0 0 ${config.cellHeight * 10}`
         };
 
-        this.props.addProjectForm({
+        this.handleMouseMove = this.handleMouseMove.bind(this);
+
+        this.props.initProject({
             workspace_id: this.props.workspace_id,
-            project_id: this.props.project_id,
-            project_name: this.props.project_name
-        })
-
-        // TODO
-        this.projectService = new ProjectService();
-        this.projectService.get(this.props.workspace_id, this.props.project_id).then(project => {
-            const config = JSON.parse(project.config);
-            const items = JSON.parse(project.items);
-            
-            
-            this.props.updateViewSettings({
-                viewWidth: config.viewWidth || this.props.viewWidth,
-                viewHeight: config.viewHeight || this.props.viewHeight,
-                cellWidth: config.cellWidth || this.props.cellWidth,
-                cellHeight: config.cellHeight || this.props.cellHeight,
-                cellTransform: config.cellTransform
-            });
-            
-            this.props.updateProjectItems(items);
-        }).catch(e => {
-
+            project: this.props.project
         });
-
-        this.mouseMove = this.mouseMove.bind(this);
-        this.handleSvgClick = this.handleSvgClick.bind(this);
     }
 
     componentDidMount() {
         this.props.updateProjectContainer(this.container);
     }
 
-    mouseMove(e) {
+    handleMouseMove(e) {
         const { workspace } = store.getState().engineReducer;
-        const project = workspace.project;
+        const { config } = workspace.project;
 
-        if (project.add.addComponent) {
+        if (config.ui.add.component) {
             return;
         }
 
-        var x = Math.floor(e.nativeEvent.offsetX / this.props.cellWidth) * this.props.cellWidth;
-        var y = Math.floor(e.nativeEvent.offsetY / this.props.cellHeight) * this.props.cellHeight;
-        var cellTransform = `translate(${x},${y})`;
+        const x = Math.floor(e.nativeEvent.offsetX / config.cellWidth) * config.cellWidth;
+        const y = Math.floor(e.nativeEvent.offsetY / config.cellHeight) * config.cellHeight;
+        const cellTransform = `translate(${x},${y})`;
 
-        this.props.updateViewSettings({ 
-            cellTransform 
-        });
-    }
-
-    handleSvgClick(e) {
-        const { workspace } = store.getState().engineReducer;
-        const project = workspace.project;
-
-        var x = Math.floor(e.nativeEvent.offsetX / project.config.cellWidth) * project.config.cellWidth;
-        var y = Math.floor(e.nativeEvent.offsetY / project.config.cellHeight) * project.config.cellHeight;
-        var cellTransform = `translate(${x},${y})`;
-
-        const left = x + (project.config.cellWidth / 2);
-        const top = y + (project.config.cellHeight / 2);
-
-        this.props.gClicked({
-            cellTransform,
-            current_x: x,
-            current_y: y,
-            addComponent: <AddComponent top={top} left={left} />,
-            gClassList: 'gid clicked'
-        });
+        this.props.updateProjectConfig(Object.assign({}, config, {
+            ui: Object.assign({}, config.ui, {
+                cellTransform
+            })
+        }));
     }
 
     render() {
@@ -128,7 +87,7 @@ class GridComponent extends Component {
             });
         });
 
-
+        const { smallGridPath, gridPath } = this.state;
         return (
             <div>
                 <ProjectOutputComponent />
@@ -136,19 +95,19 @@ class GridComponent extends Component {
                     <svg ref={node => this.node = node} className="view-svg" width={project.config.viewWidth} height={project.config.viewHeight} xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <pattern id="smallGrid" width={project.config.cellWidth} height={project.config.cellHeight} patternUnits="userSpaceOnUse">
-                                <path d={this.smallGridPath} fill="none" stroke="gray" strokeWidth="0.5"/>
+                                <path d={smallGridPath} fill="none" stroke="gray" strokeWidth="0.5"/>
                             </pattern>
                             <pattern id="grid" width={project.config.cellWidth * 10} height={project.config.cellHeight * 10} patternUnits="userSpaceOnUse">
                                 <rect width={project.config.cellWidth * 10} height={project.config.cellHeight * 10} fill="url(#smallGrid)"/>
-                                <path d={this.gridPath} fill="none" stroke="gray" strokeWidth="1"/>
+                                <path d={gridPath} fill="none" stroke="gray" strokeWidth="1"/>
                             </pattern>
                         </defs>
                 
-                        <rect width="100%" height="100%" fill="url(#grid)" onMouseMove={this.mouseMove} onClick={this.handleSvgClick} />
-                        <GComponent ref={g => this.g = g} width={project.config.cellWidth} height={project.config.cellHeight} transform={project.config.cellTransform} node={this.node} container={this.container} add={this.add} />
+                        <rect width="100%" height="100%" fill="url(#grid)" onMouseMove={this.handleMouseMove} />
+                        <GComponent ref={g => this.g = g} />
                     </svg>
-                    { project.add.addComponent
-                        ? <AddComponent top={project.add.addComponent.props.top} left={project.add.addComponent.props.left} g={this.g} node={this.node} container={this.container} />
+                    { project.config.ui.add.component
+                        ? <AddComponent top={project.config.ui.add.component.top} left={project.config.ui.add.component.left} g={this.g} node={this.node} container={this.container} />
                         : null }
                     {render_items.map((item) => {
                         return <ItemComponent key={item.props.uid} {...item.props} />;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { store } from '../../../../common/config/redux/redux.store';
-import { addInputValueChanged } from '../../config/redux/redux.actions';
+import { updateProjectConfig } from '../../config/redux/redux.actions';
 
 import HeaderSizeComponent from './header-size.component';
 
@@ -9,7 +9,7 @@ const mapStateToProps = (state) => state;
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addInputValueChanged: payload => dispatch(addInputValueChanged(payload))
+        updateProjectConfig: payload => dispatch(updateProjectConfig(payload))
     };
 }
 
@@ -42,7 +42,14 @@ class HeaderComponent extends Component {
             headerText: e.target.value
         }));
 
-        this.props.addInputValueChanged(e.target.value);
+        const { workspace } = store.getState().engineReducer;
+        this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+            ui: Object.assign({}, workspace.project.config.ui, {
+                add: Object.assign({}, workspace.project.config.ui.add, {
+                    value: e.target.value
+                })
+            })
+        }));
     }
 
     render() {
@@ -51,8 +58,8 @@ class HeaderComponent extends Component {
         const project = workspace.project;
 
         var headerSize = (<h6>{this.state.headerText}</h6>);
-        if (project.add.addInputTag) {
-            switch (project.add.addInputTag) {
+        if (project.config.ui.add.tag) {
+            switch (project.config.ui.add.tag) {
                 case 'h1':
                     headerSize = (<h1>{this.state.headerText}</h1>);
                     break;

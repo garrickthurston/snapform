@@ -4,6 +4,7 @@ const uuid = require('uuid');
 
 const db = require('../../common/db');
 const queries = require('../../sql/app_code/services/workspace/user.workspace.service');
+const defaults = require('../../common/defaults');
 
 const getAll = (user_id) => new Promise(async (resolve, reject) => {
     try {
@@ -62,7 +63,7 @@ const post = (user_id, workspace) => new Promise(async (resolve, reject) => {
             workspace = {
                 project: {
                     project_id: uuid(),
-                    config: {},
+                    config: defaults.workspace.project.config,
                     items: {}
                 }
             }

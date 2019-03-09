@@ -17,7 +17,13 @@ const get = (project_id) => new Promise(async (resolve, reject) => {
             throw new Error('Error');
         }
 
-        resolve(result.recordset.length ? result.recordset[0] : {});
+        var record = result.recordset.length ? result.recordset[0] : {};
+        if (record.items && record.config) {
+            record.items = JSON.parse(record.items);
+            record.config = JSON.parse(record.config);
+        }
+
+        resolve(record);
     } catch (e) {
         reject(e);
     }

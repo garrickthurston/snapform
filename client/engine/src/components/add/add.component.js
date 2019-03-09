@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { store } from '../../../../common/config/redux/redux.store';
 import { connect } from 'react-redux';
-import { gClicked, updateProject, addInputTagChanged, addInputValueChanged } from '../../config/redux/redux.actions'; 
+import { updateProject, updateProjectConfig } from '../../config/redux/redux.actions'; 
 import Loadable from 'react-loadable';
 import { ProjectService } from '../../../../common/services/project.service';
 
@@ -28,10 +28,8 @@ const mapStateToProps = (state) => state;
 
 function mapDispatchToProps(dispatch) {
     return {
-        gClicked: payload => dispatch(gClicked(payload)),
         updateProject: payload => dispatch(updateProject(payload)),
-        addInputTagChanged: payload => dispatch(addInputTagChanged(payload)),
-        addInputValueChanged: payload => dispatch(addInputValueChanged(payload))
+        updateProjectConfig: payload => dispatch(updateProjectConfig(payload))
     };
 }
 
@@ -79,33 +77,55 @@ class AddComponent extends Component {
     }
 
     handleOutsideClick(e) {
-        if (this.props.node.contains(e.target) || this.add.contains(e.target)) {
+        if (this.add.contains(e.target)) {
             return;
         }
 
-        this.props.gClicked({
-            addComponent: null,
-            gClassList: 'gid'
-        });
+        const { workspace } = store.getState().engineReducer;
+        this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+            ui: Object.assign({}, workspace.project.config.ui, {
+                g_class_list: 'gid',
+                add: {
+                    component: null,
+                    tag: null,
+                    value: null
+                }
+            })
+        }));
     }
 
     handleCloseClick() {
-        this.props.gClicked({
-            addComponent: null,
-            gClassList: 'gid'
-        });
-        this.props.addInputTagChanged(null);
+        const { workspace } = store.getState().engineReducer;
+        this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+            ui: Object.assign({}, workspace.project.config.ui, {
+                g_class_list: 'gid',
+                add: {
+                    component: null,
+                    tag: null,
+                    value: null
+                }
+            })
+        }));
     }
 
     handleInputTypeClick(e) {
         const value = e.target.name;
         const text = e.target.innerText;
 
+        const { workspace } = store.getState().engineReducer;
+
         var selectedInputComponent = null;
         switch (value) {
             case 'header':
                 selectedInputComponent = (<HeaderComponent />);
-                this.props.addInputTagChanged('h6');
+                this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+                    ui: Object.assign({}, workspace.project.config.ui, {
+                        add: Object.assign({}, workspace.project.config.ui.add, {
+                            tag: 'h6',
+                            value: ''
+                        })
+                    })
+                }));
                 break;
             case 'text':
                 selectedInputComponent = (<TextComponent />);
@@ -131,11 +151,11 @@ class AddComponent extends Component {
         var item = {
             uid: uuid(),
             tag: {
-                name: project.add.addInputTag,
-                value: project.add.addInputValue
+                name: project.config.ui.add.tag,
+                value: project.config.ui.add.value
             },
-            x: project.config.current_x,
-            y: project.config.current_y,
+            x: project.config.ui.current_x,
+            y: project.config.ui.current_y,
             z: 0,
             h: 'auto'
         };
@@ -171,7 +191,7 @@ class AddComponent extends Component {
 
         this.handleCloseClick();
 
-        await this.projectService.put(workspace.id, workspace.project.id, project);
+        await this.projectService.put(workspace.id, workspace.project.project_id, project);
     }
 
     render() {
@@ -200,7 +220,7 @@ class AddComponent extends Component {
                     </div>
                     {selectedInputComponent}
                     <div className={
-                        selectedInputComponent && project.add.addInputValue && project.add.addInputValue.length 
+                        selectedInputComponent && project.config.ui.add.value && project.config.ui.add.value.length 
                             ? 'show-btn-group' 
                             : 'hide-btn-group'}>
                         <div className="add-btn-group btn-group text-center">

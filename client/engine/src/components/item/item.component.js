@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { store } from '../../../../common/config/redux/redux.store';
-import { updateProject, gClicked, updateProjectItems } from '../../config/redux/redux.actions';
+import { updateProject, updateProjectItems, updateProjectConfig } from '../../config/redux/redux.actions';
 import { ProjectService } from '../../../../common/services/project.service';
 
 import '../../../assets/style/components/item/item.scss';
@@ -10,8 +10,8 @@ const mapStateToProps = (state) => state;
 const mapDispatchToProps = (dispatch) => {
     return {
         updateProject: payload => dispatch(updateProject(payload)),
-        gClicked: payload => dispatch(gClicked(payload)),
-        updateProjectItems: payload => dispatch(updateProjectItems(payload))
+        updateProjectItems: payload => dispatch(updateProjectItems(payload)),
+        updateProjectConfig: payload => dispatch(updateProjectConfig(payload))
     };
 };
 
@@ -114,10 +114,6 @@ class ItemComponent extends Component {
     handleDragStart(e) {
         this.handleItemContainerClick();
 
-        this.props.gClicked({
-            gClassList: 'gid hidden'
-        });
-
         e.dataTransfer.setDragImage(this.dragImg, 0, 0);
         e.target.style.cursor = 'move';
 
@@ -128,6 +124,12 @@ class ItemComponent extends Component {
         this.dragging = true;
         this.dragOffsetX = item.x - (e.clientX - container.left);
         this.dragOffsetY = item.y - (e.clientY - container.top);
+
+        this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+            ui: Object.assign({}, workspace.project.config.ui, {
+                g_class_list: 'gid hidden'
+            })
+        }));
     }
 
     handleDrag(e) {
@@ -136,20 +138,22 @@ class ItemComponent extends Component {
 
     async handleDragEnd(e) {
         var info = this.drag(e);
+        const { workspace } = store.getState().engineReducer;
 
         this.dragging = false;
 
-        this.props.gClicked({
-            gClassList: 'gid'
-        });
+        this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+            ui: Object.assign({}, workspace.project.config.ui, {
+                g_class_list: 'gid'
+            })
+        }));
 
         this.props.updateProject({
             path: this.props.uid,
             value: info
         });
 
-        const { workspace } = store.getState().engineReducer;
-        await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
+        await this.projectService.put(workspace.id, workspace.project.project_id, workspace.project);
     }
 
     drag(e) {
@@ -208,6 +212,7 @@ class ItemComponent extends Component {
         var x, y;
         switch (e.keyCode) {
             case 37: // left
+                e.preventDefault();
                 x = info.x - workspace.project.config.cellWidth;
                 if (x >= 0) {
                     info.x = x;
@@ -215,6 +220,7 @@ class ItemComponent extends Component {
                 }
                 break;
             case 38: // up
+                e.preventDefault();
                 y = info.y - workspace.project.config.cellHeight;
                 if (y >= 0) {
                     info.y = y;
@@ -222,6 +228,7 @@ class ItemComponent extends Component {
                 }
                 break;
             case 39: // right
+                e.preventDefault();
                 x = info.x + workspace.project.config.cellWidth;
                 if ((x + rect.width) <= container.width) {
                     info.x = x;
@@ -229,6 +236,7 @@ class ItemComponent extends Component {
                 }
                 break;
             case 40: // down
+                e.preventDefault();
                 y = info.y + workspace.project.config.cellHeight;
                 if ((y + rect.height) <= container.height) {
                     info.y = y;
@@ -249,7 +257,7 @@ class ItemComponent extends Component {
                 value: info
             });
 
-            await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
+            await this.projectService.put(workspace.id, workspace.project.project_id, workspace.project);
         }
     }
 
@@ -286,7 +294,7 @@ class ItemComponent extends Component {
 
         delete items[this.props.uid];
 
-        await this.projectService.put(workspace.id, workspace.project.id, workspace.project);
+        await this.projectService.put(workspace.id, workspace.project.project_id, workspace.project);
 
         this.props.updateProjectItems(items);
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { store } from '../../../../common/config/redux/redux.store';
+import { store } from '../../config/redux/redux.store';
 import { updateProjectConfig } from '../../config/redux/redux.actions';
 
 import HeaderSizeComponent from './header-size.component';
@@ -42,7 +42,7 @@ class HeaderComponent extends Component {
             headerText: e.target.value
         }));
 
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
             ui: Object.assign({}, workspace.project.config.ui, {
                 add: Object.assign({}, workspace.project.config.ui.add, {
@@ -54,7 +54,7 @@ class HeaderComponent extends Component {
 
     render() {
         const { inputClassName, dropdownClassName, headerSizes } = this.state;
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
 
         var headerSize = (<h6>{this.state.headerText}</h6>);

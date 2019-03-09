@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { store } from '../../../../common/config/redux/redux.store';
+import { store } from '../../config/redux/redux.store';
 import { updateProjectConfig } from '../../config/redux/redux.actions';
 
 const mapStateToProps = (state) => state;
@@ -23,7 +23,7 @@ class HeaderSizeComponent extends Component {
     }
 
     handleHeaderSizeClick() {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
             ui: Object.assign({}, workspace.project.config.ui, {
                 add: Object.assign({}, workspace.project.config.ui.add, {
@@ -34,7 +34,7 @@ class HeaderSizeComponent extends Component {
     }
 
     render() {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
 
         var headerSize = null;

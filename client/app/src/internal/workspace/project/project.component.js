@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { store } from '../../../../../common/config/redux/redux.store';
+import { store } from '../../../config/redux/redux.store';
 import { connect } from 'react-redux';
-import { ProjectService } from '../../../../../common/services/project.service';
+import { ProjectService } from '../../../shared/services/project.service';
 import Loadable from 'react-loadable';
 
-import LoadingComponent from '../../../shared/loading.component';
+import LoadingComponent from '../../../shared/components/loading.component';
 
 const EngineComponent = Loadable({
     loader: () => import ('../../../../../engine/src/index'),
@@ -36,6 +36,26 @@ class ProjectComponent extends Component {
         }).catch(e => {
 
         });
+
+        this.handleProjectUpdate = this.handleProjectUpdate.bind(this);
+    }
+
+    componentDidMount() {
+        this.project.addEventListener('sf.workspace.project.update', this.handleProjectUpdate, false);
+    }
+
+    componentWillUnmount() {
+        this.project.removeEventListener('sf.workspace.project.update', this.handleProjectUpdate, false);
+    }
+
+    async handleProjectUpdate(e) {
+        const { workspace_id, project } = e.detail;
+
+        try {
+            await this.projectService.put(workspace_id, project.project_id, project);
+        } catch (e) {
+
+        }
     }
 
     render() {
@@ -43,7 +63,7 @@ class ProjectComponent extends Component {
         const { project } = this.state;
         
         return (
-            <div className="project-container">
+            <div className="project-container" ref={project => this.project = project}>
                 <h2><span className="user-icon"></span>Workspace</h2>
                 { project ?
                 <EngineComponent 

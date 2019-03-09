@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { store } from '../../../common/config/redux/redux.store';
+import { store } from '../config/redux/redux.store';
 import { updateProjectContainer, updateProjectItems, initProject, updateProjectConfig } from '../config/redux/redux.actions';
 import { connect } from 'react-redux';
 import Loadable from 'react-loadable';
@@ -55,7 +55,7 @@ class GridComponent extends Component {
     }
 
     handleMouseMove(e) {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const { config } = workspace.project;
 
         if (config.ui.add.component) {
@@ -74,7 +74,7 @@ class GridComponent extends Component {
     }
 
     render() {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
 
         var render_items = [];

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { store } from '../../../common/config/redux/redux.store';
+import { store } from '../config/redux/redux.store';
 
 const mapStateToProps = (state) => state;
 
@@ -14,7 +14,7 @@ class ProjectOutputComponent extends Component {
     }
 
     render() {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
 
         return (

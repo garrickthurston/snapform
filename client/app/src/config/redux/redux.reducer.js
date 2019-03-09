@@ -7,7 +7,7 @@ const initialState = {
     user: token ? jwt.decode(token) : null
 };
 
-export const appReducer = (state = initialState, action) => {
+export const reducer = (state = initialState, action) => {
     switch (action.type) {
         case UPDATE_TOKEN:
             if (action.payload) {

@@ -15,7 +15,7 @@ const initialState = {
     }
 };
 
-export const engineReducer = (state = initialState, action) => {
+export const reducer = (state = initialState, action) => {
     var workspace = Object.assign({}, state.workspace);
 
     switch (action.type) {

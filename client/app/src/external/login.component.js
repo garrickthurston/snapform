@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { updateToken } from '../config/redux/redux.actions';
-import { store } from '../../../common/config/redux/redux.store';
+import { store } from '../config/redux/redux.store';
 import { connect } from 'react-redux';
-import { Http } from '../../../common/http';
+import { Http } from '../shared/utils/http';
 import { withRouter } from 'react-router-dom';
-import { Qs } from '../../../common/qs';
+import { Qs } from '../shared/utils/qs';
 
 import bg_1 from '../../assets/images/login-background-1.jpg';
 import bg_2 from '../../assets/images/login-background-2.jpg';

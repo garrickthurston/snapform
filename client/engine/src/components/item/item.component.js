@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { store } from '../../../../common/config/redux/redux.store';
+import { store } from '../../config/redux/redux.store';
 import { updateProject, updateProjectItems, updateProjectConfig } from '../../config/redux/redux.actions';
-import { ProjectService } from '../../../../common/services/project.service';
 
 import '../../../assets/style/components/item/item.scss';
 
@@ -33,7 +32,7 @@ class ItemComponent extends Component {
             tag = (<TagName value={this.props.tag.value}></TagName>)
         }
 
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
         
         this.state = {
@@ -41,8 +40,6 @@ class ItemComponent extends Component {
             itemContainerClassName: defaultItemContainerClassName,
             tag
         };
-
-        this.projectService = new ProjectService();
 
         this.handleItemContainerClick = this.handleItemContainerClick.bind(this);
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
@@ -91,7 +88,7 @@ class ItemComponent extends Component {
             itemContainerClassName: defaultItemContainerClassName + ' focus'
         }));
 
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         var items = workspace.project.items;
 
         if (items[this.props.uid]) {
@@ -117,7 +114,7 @@ class ItemComponent extends Component {
         e.dataTransfer.setDragImage(this.dragImg, 0, 0);
         e.target.style.cursor = 'move';
 
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const container = workspace.project.container.getBoundingClientRect();
         const item = workspace.project.items[this.props.uid];
 
@@ -138,7 +135,7 @@ class ItemComponent extends Component {
 
     async handleDragEnd(e) {
         var info = this.drag(e);
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
 
         this.dragging = false;
 
@@ -153,11 +150,17 @@ class ItemComponent extends Component {
             value: info
         });
 
-        await this.projectService.put(workspace.id, workspace.project.project_id, workspace.project);
+        this.item.dispatchEvent(new CustomEvent('sf.workspace.project.update', {
+            bubbles: true,
+            detail: { 
+                workspace_id: workspace.id,
+                project: workspace.project 
+            }
+        }));
     }
 
     drag(e) {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const container = workspace.project.container.getBoundingClientRect();
         const defaultWidth = workspace.project.config.cellWidth;
         const defaultHeight = workspace.project.config.cellHeight;
@@ -204,7 +207,7 @@ class ItemComponent extends Component {
         }
 
         const rect = this.item.getBoundingClientRect();
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const container = workspace.project.container.getBoundingClientRect();
         var info = this.state.info;
 
@@ -257,7 +260,14 @@ class ItemComponent extends Component {
                 value: info
             });
 
-            await this.projectService.put(workspace.id, workspace.project.project_id, workspace.project);
+            const updated_workspace = store.getState().workspace;
+            this.item.dispatchEvent(new CustomEvent('sf.workspace.project.update', {
+                bubbles: true,
+                detail: { 
+                    workspace_id: updated_workspace.id,
+                    project: updated_workspace.project 
+                }
+            }));
         }
     }
 
@@ -277,7 +287,7 @@ class ItemComponent extends Component {
         e.preventDefault();
         e.stopPropagation();
 
-        var { workspace } = store.getState().engineReducer;
+        var { workspace } = store.getState();
         var project = workspace.project;
         var items = project.items;
 
@@ -294,9 +304,16 @@ class ItemComponent extends Component {
 
         delete items[this.props.uid];
 
-        await this.projectService.put(workspace.id, workspace.project.project_id, workspace.project);
-
         this.props.updateProjectItems(items);
+
+        const updated_workspace = store.getState().workspace;
+        this.item.dispatchEvent(new CustomEvent('sf.workspace.project.update', {
+            bubbles: true,
+            detail: { 
+                workspace_id: updated_workspace.id,
+                project: updated_workspace.project 
+            }
+        }));
     }
 
     render() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { store } from '../../../common/config/redux/redux.store';
+import { store } from '../config/redux/redux.store';
 import { connect } from 'react-redux';
 import { updateProjectConfig } from '../config/redux/redux.actions';
 
@@ -23,7 +23,7 @@ class GComponent extends Component {
     }
 
     handleClick(e) {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
 
         var x = Math.floor(e.nativeEvent.offsetX / project.config.cellWidth) * project.config.cellWidth;
@@ -50,7 +50,7 @@ class GComponent extends Component {
     }
 
     render() {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
         
         return (

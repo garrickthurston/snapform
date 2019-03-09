@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { store } from '../../../../common/config/redux/redux.store';
+import { store } from '../../config/redux/redux.store';
 import { connect } from 'react-redux';
-import { WorkspaceService } from '../../../../common/services/workspace.service';
+import { WorkspaceService } from '../../shared/services/workspace.service';
 import Loadable from 'react-loadable';
 
-import LoadingComponent from '../../shared/loading.component';
+import LoadingComponent from '../../shared/components/loading.component';
 
 const ProjectComponent = Loadable({
     loader: () => import('./project/project.component'),

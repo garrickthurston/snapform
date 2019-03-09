@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { store } from '../../../../common/config/redux/redux.store';
+import { store } from '../../config/redux/redux.store';
 import { connect } from 'react-redux';
 import { updateProject, updateProjectConfig } from '../../config/redux/redux.actions'; 
 import Loadable from 'react-loadable';
-import { ProjectService } from '../../../../common/services/project.service';
+import { ProjectService } from '../../../../app/src/shared/services/project.service';
 
 const uuid = require('uuid');
 
@@ -81,7 +81,7 @@ class AddComponent extends Component {
             return;
         }
 
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
             ui: Object.assign({}, workspace.project.config.ui, {
                 g_class_list: 'gid',
@@ -95,7 +95,7 @@ class AddComponent extends Component {
     }
 
     handleCloseClick() {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
             ui: Object.assign({}, workspace.project.config.ui, {
                 g_class_list: 'gid',
@@ -112,7 +112,7 @@ class AddComponent extends Component {
         const value = e.target.name;
         const text = e.target.innerText;
 
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
 
         var selectedInputComponent = null;
         switch (value) {
@@ -145,7 +145,7 @@ class AddComponent extends Component {
     }
 
     async handleAddClick() {
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
 
         var item = {
@@ -191,12 +191,19 @@ class AddComponent extends Component {
 
         this.handleCloseClick();
 
-        await this.projectService.put(workspace.id, workspace.project.project_id, project);
+        const updated_workspace = store.getState().workspace;
+        this.add.dispatchEvent(new CustomEvent('sf.workspace.project.update', {
+            bubbles: true,
+            detail: { 
+                workspace_id: updated_workspace.id,
+                project: updated_workspace.project 
+            }
+        }));
     }
 
     render() {
         const { selectedInputComponent, selectedInputType } = this.state;
-        const { workspace } = store.getState().engineReducer;
+        const { workspace } = store.getState();
         const project = workspace.project;
 
         return (

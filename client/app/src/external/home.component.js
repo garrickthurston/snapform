@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { store } from '../config/redux/redux.store';
 
 const mapStateToProps = (state) => state;
 

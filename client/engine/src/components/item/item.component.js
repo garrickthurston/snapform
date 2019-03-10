@@ -20,27 +20,15 @@ class ItemComponent extends Component {
     dragging = false;
     dragOffsetX = 0;
     dragOffsetY = 0;
+    defaultTagClassName = 'g-border-color';
 
     constructor(props) {
         super(props);
 
-        const TagName = `${this.props.tag.name}`;
-        var tag = null;
-        if (this.props.tag.innerValue) {
-            tag = (<TagName>{this.props.tag.value}</TagName>)
-        } else {
-            tag = (<TagName value={this.props.tag.value}></TagName>)
-        }
-
         const { workspace } = store.getState();
         const project = workspace.project;
-        
-        this.state = {
-            info: project.items[this.props.uid],
-            itemContainerClassName: defaultItemContainerClassName,
-            tag
-        };
 
+        this.handleReadOnlyValueChanged = this.handleReadOnlyValueChanged.bind(this);
         this.handleItemContainerClick = this.handleItemContainerClick.bind(this);
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
         this.drag = this.drag.bind(this);
@@ -52,6 +40,12 @@ class ItemComponent extends Component {
         this.handleMouseEnter = this.handleMouseEnter.bind(this);
         this.handleMouseLeave = this.handleMouseLeave.bind(this);
         this.removeItem = this.removeItem.bind(this);
+
+        this.state = {
+            info: project.items[this.props.uid],
+            itemContainerClassName: defaultItemContainerClassName,
+            readOnlyValue: ''
+        };
     }
 
     componentWillMount() {
@@ -69,6 +63,12 @@ class ItemComponent extends Component {
         document.removeEventListener('mousedown', this.handleOutsideClick, false);
         document.removeEventListener('mousemove', this.mousemouve, false);
         document.removeEventListener('keydown', this.handleKeyDown, false);
+    }
+
+    handleReadOnlyValueChanged(e) {
+        this.setState(Object.assign({}, this.state, {
+            readOnlyValue: e.target.value
+        }));
     }
 
     handleOutsideClick(e) {
@@ -317,7 +317,20 @@ class ItemComponent extends Component {
     }
 
     render() {
-        const { itemContainerClassName, info, tag, hover, hasFocus } = this.state;
+        const { itemContainerClassName, info, hover, hasFocus } = this.state;
+
+        const TagName = this.props.tag.name;
+        var tag = null;
+        if (this.props.tag.innerValue) {
+            tag = (<TagName>{this.props.tag.value}</TagName>);
+        } else {
+            var tagClassName = this.defaultTagClassName + (this.state.readOnlyValue && this.state.readOnlyValue.length ? ' g-valid' : '');
+            tag = (<div className="input-component">
+                        <TagName className={tagClassName} type="text" name={this.props.tag.value.toLowerCase().replace(' ', '_')} 
+                            value={this.state.readOnlyValue} onChange={this.handleReadOnlyValueChanged}></TagName>
+                        <span className="g-login-form-input-placeholder">{this.props.tag.value}</span>
+                    </div>);
+        }
 
         return (
             <div 

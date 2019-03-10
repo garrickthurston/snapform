@@ -126,6 +126,15 @@ class AddComponent extends Component {
                 break;
             case 'text':
                 selectedInputComponent = (<TextComponent />);
+                this.props.updateProjectConfig(Object.assign({}, workspace.project.config, {
+                    ui: Object.assign({}, workspace.project.config.ui, {
+                        add: Object.assign({}, workspace.project.config.ui.add, {
+                            tag: 'input',
+                            value: '',
+                            type: 'text'
+                        })
+                    })
+                }));
                 break;
             case 'text-area':
                 selectedInputComponent = (<TextAreaComponent />);

@@ -10,7 +10,7 @@ class EngineComponent extends Component {
         const { workspace_id, project } = this.props;
         return (
             <Provider store={store}>
-                <div id="snapgrid">
+                <div className="snapgrid">
                     <GridComponent 
                         workspace_id={workspace_id}
                         project={project} />

@@ -32,3 +32,8 @@ $fa-font-path: '~font-awesome/fonts';
     @extend .fa;
     @extend .fa-user;
 }
+
+.debug-icon {
+    @extend .fa;
+    @extend .fa-bug;
+}

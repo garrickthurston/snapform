@@ -1,6 +1,7 @@
 # snapform
 
 #### TODO:
-###### -Custom algorithms to process main JSON obj of form to appear on snap grid ("load form") and to export to html ("export form") - use to toggle views
-###### -Implement corner and y dragging for textareas - add and update h property to overall model
-###### -Implement <select> control
+###### Make enums/meta endpoint and originate everything in db, add roles to that
+###### Finish off auth functionality (keep signed in, ui for session timing out)
+###### Error/logs dictionary
+###### Remove passhash endpoint

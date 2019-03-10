@@ -3,7 +3,6 @@ import { store } from '../../config/redux/redux.store';
 import { connect } from 'react-redux';
 import { updateProject, updateProjectConfig } from '../../config/redux/redux.actions'; 
 import Loadable from 'react-loadable';
-import { ProjectService } from '../../../../app/src/shared/services/project.service';
 
 const uuid = require('uuid');
 
@@ -59,8 +58,6 @@ class AddComponent extends Component {
             selectedInputComponent: null
 
         };
-
-        this.projectService = new ProjectService();
 
         this.handleOutsideClick = this.handleOutsideClick.bind(this);
         this.handleCloseClick = this.handleCloseClick.bind(this);

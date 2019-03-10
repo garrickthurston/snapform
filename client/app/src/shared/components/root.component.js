@@ -12,27 +12,27 @@ const AppComponent = Loadable({
     loading: LoadingComponent
 });
 const LoginComponent = Loadable({
-    loader: () => import ('../../external/login.component'),
+    loader: () => import ('../../components/external/login.component'),
     loading: LoadingComponent
 });
 const WorkspaceComponent = Loadable({
-    loader: () => import ('../../internal/workspace/workspace.component'),
+    loader: () => import ('../../components/internal/workspace/workspace.component'),
     loading: LoadingComponent
 });
 const DocsComponent = Loadable({
-    loader: () => import ('../../external/docs.component'),
+    loader: () => import ('../../components/external/docs.component'),
     loading: LoadingComponent
 });
 const HomeComponent = Loadable({
-    loader: () => import ('../../external/home.component'),
+    loader: () => import ('../../components/external/home.component'),
     loading: LoadingComponent
 });
 const BlogComponent = Loadable({
-    loader: () => import ('../../external/blog.component'),
+    loader: () => import ('../../components/external/blog.component'),
     loading: LoadingComponent
 });
 const TutorialComponent = Loadable({
-    loader: () => import ('../../external/tutorial.component'),
+    loader: () => import ('../../components/external/tutorial.component'),
     loading: LoadingComponent
 });
 

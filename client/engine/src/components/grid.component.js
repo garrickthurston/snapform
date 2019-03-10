@@ -21,10 +21,6 @@ const mapDispatchToProps = (dispatch) => {
     };
 }
 
-const ProjectOutputComponent = Loadable({
-    loader: () => import ('./project-output.component'),
-    loading: LoadingComponent
-});
 const ItemComponent = Loadable({
     loader: () => import('./item/item.component'),
     loading: LoadingComponent
@@ -89,8 +85,7 @@ class GridComponent extends Component {
 
         const { smallGridPath, gridPath } = this.state;
         return (
-            <div>
-                <ProjectOutputComponent />
+            <div className="grid-container" style={{ width: project.config.viewWidth, height: project.config.viewHeight }}>
                 <div className="add-container" ref={container => this.container = container}>
                     <svg ref={node => this.node = node} className="view-svg" width={project.config.viewWidth} height={project.config.viewHeight} xmlns="http://www.w3.org/2000/svg">
                         <defs>

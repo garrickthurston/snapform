@@ -15,6 +15,16 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const defaultItemContainerClassName = 'item-container';
+const _resizeTypes = {
+    right_only: 0,
+    left_only: 1,
+    top_only: 2,
+    bottom_only: 3,
+    top_right: 4,
+    top_left: 5,
+    bottom_right: 6,
+    bottom_left: 7
+};
 
 class ItemComponent extends Component {
     dragging = false;
@@ -41,10 +51,15 @@ class ItemComponent extends Component {
         this.handleMouseLeave = this.handleMouseLeave.bind(this);
         this.removeItem = this.removeItem.bind(this);
 
+        this.handleResizeMouseDown = this.handleResizeMouseDown.bind(this);
+        this.handleResizeMouseMove = this.handleResizeMouseMove.bind(this);
+        this.handleResizeMouseUp = this.handleResizeMouseUp.bind(this);
+
         this.state = {
             info: project.items[this.props.uid],
             itemContainerClassName: defaultItemContainerClassName,
-            readOnlyValue: ''
+            readOnlyValue: '',
+            draggable: true
         };
     }
 
@@ -63,6 +78,19 @@ class ItemComponent extends Component {
         document.removeEventListener('mousedown', this.handleOutsideClick, false);
         document.removeEventListener('mousemove', this.mousemouve, false);
         document.removeEventListener('keydown', this.handleKeyDown, false);
+    }
+
+    isResizeTarget(e) {
+        return (this.resizeTop && this.resizeTop.contains(e.target)) ||
+            (this.resizeRight && this.resizeRight.contains(e.target)) || 
+            (this.resizeBottom && this.resizeBottom.contains(e.target)) || 
+            (this.resizeLeft && this.resizeLeft.contains(e.target)) || 
+            (this.resizeTopRight && this.resizeTopRight.contains(e.target)) || 
+            (this.resizeTopLeft && this.resizeTopLeft.contains(e.target)) ||
+            (this.resizeBottomRight && this.resizeBottomRight.contains(e.target)) || 
+            (this.resizeBottomLeft && this.resizeBottomLeft.contains(e.target));
+            
+
     }
 
     handleReadOnlyValueChanged(e) {
@@ -109,6 +137,10 @@ class ItemComponent extends Component {
     }
 
     handleDragStart(e) {
+        if (this.isResizeTarget(e)) {
+            return;
+        }
+
         this.handleItemContainerClick();
 
         e.dataTransfer.setDragImage(this.dragImg, 0, 0);
@@ -133,7 +165,7 @@ class ItemComponent extends Component {
         this.drag(e);
     }
 
-    async handleDragEnd(e) {
+    handleDragEnd(e) {
         var info = this.drag(e);
         const { workspace } = store.getState();
 
@@ -201,7 +233,7 @@ class ItemComponent extends Component {
         }
     }
 
-    async handleKeyDown(e) {
+    handleKeyDown(e) {
         if (!this.state.hasFocus) {
             return;
         }
@@ -283,7 +315,7 @@ class ItemComponent extends Component {
         }));
     }
 
-    async removeItem(e) {
+    removeItem(e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -316,8 +348,101 @@ class ItemComponent extends Component {
         }));
     }
 
+    handleResizeMouseDown(e, resizeType) {
+        e.preventDefault();
+
+        document.addEventListener('mousemove', this.handleResizeMouseMove, false);
+        document.addEventListener('mouseup', this.handleResizeMouseUp, false);
+
+        const item = this.item.getBoundingClientRect();
+
+        this.itemWidth = item.width;
+        this.itemHeight = item.height;
+        this.startClientX = e.clientX;
+        this.startClientY = e.clientY;
+
+        this.setState(Object.assign({}, this.state, {
+            draggable: false,
+            resizeType
+        }));
+    }
+
+    handleResizeMouseMove(e) {
+        e.preventDefault();
+
+        if (this.state.draggable) {
+            return;
+        }
+
+        var width = this.itemWidth;
+
+        const { workspace } = store.getState();
+        const config = workspace.project.config;
+
+        switch (this.state.resizeType) {
+            case _resizeTypes.right_only:
+                width += e.clientX - this.startClientX;
+                width = Math.floor(width / config.cellWidth) * config.cellWidth;
+                break;
+            case _resizeTypes.left_only:
+                break;
+            case _resizeTypes.top_only:
+                break;
+            case _resizeTypes.bottom_only:
+                break;
+            case _resizeTypes.top_right:
+                break;
+            case _resizeTypes.top_left:
+                break;
+            case _resizeTypes.bottom_right:
+                break;
+            case _resizeTypes.bottom_left:
+                break;
+        }
+
+        const info = Object.assign({}, this.state.info, {
+            width
+        });
+
+        this.setState(Object.assign({}, this.state, {
+            info
+        }));
+    }
+
+    handleResizeMouseUp(e) {
+        document.removeEventListener('mousemove', this.handleResizeMouseMove, false);
+        document.removeEventListener('mouseup', this.handleResizeMouseUp, false);
+
+        var info = this.state.info;
+        const { workspace } = store.getState();
+
+        this.props.updateProject({
+            path: this.props.uid,
+            value: info
+        });
+
+        this.item.dispatchEvent(new CustomEvent('sf.workspace.project.update', {
+            bubbles: true,
+            detail: { 
+                workspace_id: workspace.id,
+                project: workspace.project 
+            }
+        }));
+        
+        this.setState(Object.assign({}, this.state, {
+            draggable: true,
+            resizeType: null
+        }));
+        
+        this.itemWidth = null;
+        this.itemHeight = null;
+        this.startClientX = null;
+        this.startClientY = null;
+    }
+
     render() {
-        const { itemContainerClassName, info, hover, hasFocus } = this.state;
+        const { itemContainerClassName, info, hover, hasFocus, draggable } = this.state;
+        const { resize } = this.props;
 
         const TagName = this.props.tag.name;
         var tag = null;
@@ -326,18 +451,17 @@ class ItemComponent extends Component {
         } else {
             var tagClassName = this.defaultTagClassName + (this.state.readOnlyValue && this.state.readOnlyValue.length ? ' g-valid' : '');
             tag = (<div className="input-component">
-                        <TagName className={tagClassName} type="text" name={this.props.tag.value.toLowerCase().replace(' ', '_')} 
+                        <TagName style={{width: info.width, height: info.height}} className={tagClassName} type={this.props.tag.type} name={this.props.tag.value.toLowerCase().replace(' ', '_')} 
                             value={this.state.readOnlyValue} onChange={this.handleReadOnlyValueChanged}></TagName>
                         <span className="g-login-form-input-placeholder">{this.props.tag.value}</span>
                     </div>);
         }
-
         return (
             <div 
                 className={itemContainerClassName}
                 ref={item => this.item = item}
                 onClick={this.handleItemContainerClick}
-                draggable={true}
+                draggable={draggable}
                 onDragStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onDragEnd={this.handleDragEnd}
@@ -346,8 +470,6 @@ class ItemComponent extends Component {
                 style={{ 
                     top: info.y, 
                     left: info.x,
-                    width: info.width,
-                    height: info.height,
                     zIndex: info.z + 100
                 }}>
                 {tag}
@@ -358,6 +480,14 @@ class ItemComponent extends Component {
                     </div>
                 </div>
                 : null}
+                {resize.top ? <div style={{zIndex: info.z + 100}} ref={resizeTop => this.resizeTop = resizeTop} className="resize top" onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.top_only)}></div> : null}
+                {resize.right ? <div style={{zIndex: info.z + 100}} ref={resizeRight => this.resizeRight = resizeRight} className="resize right" onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.right_only)}></div> : null}
+                {resize.bottom ? <div style={{zIndex: info.z + 100}} ref={resizeBottom => this.resizeBottom = resizeBottom} className="resize bottom" onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.bottom_only)}></div> : null}
+                {resize.left ? <div style={{zIndex: info.z + 100}} ref={resizeLeft => this.resizeLeft = resizeLeft} className="resize left" onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.left_only)}></div> : null}
+                {resize.top && resize.right ? <div style={{zIndex: info.z + 101}} ref={resizeTopRight = this.resizeTopRight = resizeTopRight} onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.top_right)}></div> : null}
+                {resize.top && resize.left ? <div style={{zIndex: info.z + 101}} ref={resizeTopLeft = this.resizeTopLeft = resizeTopLeft} onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.top_left)}></div> : null}
+                {resize.bottom && resize.right ? <div style={{zIndex: info.z + 101}} ref={resizeBottomRight = this.resizeBottomRight = resizeBottomRight} onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.bottom_right)}></div> : null}
+                {resize.bottom && resize.left ? <div style={{zIndex: info.z + 101}} ref={resizeBottomLeft = this.resizeBottomLeft = resizeBottomLeft} onMouseDown={(e) => this.handleResizeMouseDown.call(this, e, _resizeTypes.bottom_left)}></div> : null}
             </div>
         );
     }

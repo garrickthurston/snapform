@@ -179,13 +179,33 @@ class AddComponent extends Component {
             case "header":
                 item.w = 'auto';
                 item.tag.innerValue = true;
+                item.resize = {
+                    top: false,
+                    right: true,
+                    bottom: false,
+                    left: true
+                };
                 break;
             case "text":
                 item.w = 200;
+                item.tag.type = 'text';
+                item.resize = {
+                    top: false,
+                    right: true,
+                    bottom: false,
+                    left: true
+                };
                 item.tag.innerValue = false;
                 break;
             case "text-area":
                 item.w = 200;
+                item.h = 100;
+                item.resize = {
+                    top: true,
+                    right: true,
+                    bottom: true,
+                    left: true
+                }
                 item.tag.innerValue = false;
                 break;
         }

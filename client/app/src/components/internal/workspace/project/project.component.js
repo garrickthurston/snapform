@@ -78,7 +78,7 @@ class ProjectComponent extends Component {
                 <div className="engine-container">
                     <EngineComponent 
                         workspace_id={workspace_id}
-                        project={project} />
+                        project={project}/>
                 </div>
                 : null }
             </div>

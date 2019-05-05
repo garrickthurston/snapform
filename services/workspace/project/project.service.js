@@ -3,6 +3,7 @@ const config = require('../../../config/env.' + env);
 
 const db = require('../../../common/db');
 const queries = require('../../../sql/app_code/services/workspace/project/project.service.sql');
+const defaults = require('../../../common/defaults');
 
 const get = (project_id) => new Promise(async (resolve, reject) => {
     try {
@@ -21,6 +22,7 @@ const get = (project_id) => new Promise(async (resolve, reject) => {
         if (record.items && record.config) {
             record.items = JSON.parse(record.items);
             record.config = JSON.parse(record.config);
+            record.config = Object.assign({}, defaults.workspace.project.config, record.config);
         }
 
         resolve(record);

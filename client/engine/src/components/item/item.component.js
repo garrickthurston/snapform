@@ -193,6 +193,7 @@ class ItemComponent extends Component {
 
     drag(e) {
         const { workspace } = store.getState();
+        const config = workspace.project.config;
         const container = workspace.project.container.getBoundingClientRect();
         const defaultWidth = workspace.project.config.cellWidth;
         const defaultHeight = workspace.project.config.cellHeight;
@@ -207,12 +208,12 @@ class ItemComponent extends Component {
         const itemOffsetLeft = left + rect.width;
         const itemOffsetTop = top + rect.height;
 
-        if (itemOffsetLeft > container.width) {
-            left = Math.floor((container.width - rect.width) / defaultWidth) * defaultWidth;
+        if (itemOffsetLeft >= config.viewWidth) {
+            left = Math.floor((config.viewWidth - rect.width) / defaultWidth) * defaultWidth;
         }
 
-        if (itemOffsetTop > container.height) {
-            top = Math.floor((container.height - rect.height) / defaultHeight) * defaultHeight;
+        if (itemOffsetTop >= config.viewHeight) {
+            top = Math.floor((config.viewHeight - rect.height) / defaultHeight) * defaultHeight;
         }
 
         const info = Object.assign({}, this.state.info, {
@@ -375,6 +376,7 @@ class ItemComponent extends Component {
         }
 
         var width = this.itemWidth;
+        var x = this.state.info.x;
 
         const { workspace } = store.getState();
         const config = workspace.project.config;
@@ -383,8 +385,21 @@ class ItemComponent extends Component {
             case _resizeTypes.right_only:
                 width += e.clientX - this.startClientX;
                 width = Math.floor(width / config.cellWidth) * config.cellWidth;
+                if (x + width > (config.viewWidth - (4 * config.cellWidth))) {
+
+                    this.props.updateProjectConfig(Object.assign({}, config, {
+                        viewWidth: x + width + (12 * config.cellWidth)
+                    }));
+                }
                 break;
             case _resizeTypes.left_only:
+                width -= e.clientX - this.startClientX;
+                width = Math.floor(width / config.cellWidth) * config.cellWidth;
+                x -= width - this.state.info.width;
+                if (x < 0) {
+                    x = 0;
+                    return;
+                }
                 break;
             case _resizeTypes.top_only:
                 break;
@@ -401,6 +416,7 @@ class ItemComponent extends Component {
         }
 
         const info = Object.assign({}, this.state.info, {
+            x,
             width
         });
 

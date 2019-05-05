@@ -1,4 +1,12 @@
 .view-svg {
+    position: relative;
+    border-top: 0.4px solid #B0B0B0;
+    border-left: 0.4px solid #B0B0B0;
+    border-bottom: 1px solid #B0B0B0;
+    border-right: 1px solid #B0B0B0;
+    margin-right: 5px;
+    margin-left: 5px;
+
     .gid {
         fill: #B0B0B0;
         display: none;
@@ -17,15 +25,43 @@
             display: block;
         }
     }
-
-    border-right: 0.8px solid #B0B0B0;
-    border-bottom: 0.8px solid #B0B0B0;
 }
 
 .add-container {
     position:relative;
+
+    .resize {
+        position: absolute;
+
+        &.right {
+            cursor: w-resize;
+            top: 0;
+            bottom: 0;
+            right: -4px;
+            width: 8px;
+        }
+
+        &.bottom {
+            cursor: n-resize;
+            left: 0;
+            right: 0;
+            height: 8px;
+            bottom: -4px;
+        }
+
+        &.bottom-right {
+            cursor: nw-resize;
+            bottom: -4px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
+        }
+    }
 }
 
-.grid-container {
-    margin: 0 auto;
-}
+// .grid-container {
+//     margin: 0 auto;
+//     width: 100%;
+//     height: 100%;
+//     position: relative;
+// }

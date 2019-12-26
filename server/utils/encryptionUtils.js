@@ -7,9 +7,7 @@ export const hashString = (string) => {
         throw new Error('Must provide string to encrypt')
     }
 
-    const { encryption_secret } = config;
-
-    return crypto.createHmac('sha256', encryption_secret).update(string).digest('hex');
+    return crypto.createHmac('sha256', config.encryption_secret).update(string).digest('hex');
 };
 
 export const guid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {

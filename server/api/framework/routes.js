@@ -1,5 +1,6 @@
 import middleware from './middleware';
 import AuthController from '../controllers/auth';
+import UserWorkspaceController from '../controllers/workspace/user.workspace';
 
 const routes = {
     register: (app) => {
@@ -7,6 +8,11 @@ const routes = {
 
         // routes
         app.post('/api/v1/auth', cors, (new AuthController()).authenticateUser);
+        app.put('/api/v1/auth', cors, (new AuthController()).updatePassword);
+
+        app.get('/api/v1/workspaces', cors, validToken, (new UserWorkspaceController()).getAllUserWorkspaces);
+        app.post('/api/v1/workspaces', cors, validToken, (new UserWorkspaceController()).postUserWorkspace);
+        app.get('/api/v1/workspaces/:workspaceId', cors, validToken, (new UserWorkspaceController()).getUserWorkspace);
 
         // provide application index
         app.get('/*', function (req, res) {

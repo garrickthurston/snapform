@@ -28,7 +28,7 @@ export default function AuthDbService() {
         ];
         const result = await executeQuery(_queries.getUserIdByUsername, params);
 
-        if (result && result.recordset && result.recordset.length) {
+        if (result.recordset.length) {
             return {
                 userId: result.recordset[0].user_id,
                 currentPassHash

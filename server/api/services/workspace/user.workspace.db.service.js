@@ -7,9 +7,9 @@ export default function UserWorkspaceDbService() {
             { name: 'user_id', type: dataTypes.UniqueIdentifier, value: userId }
         ];
 
-        const results = await executeQuery(_queries.getAllUserWorkspaces, params);
+        const result = await executeQuery(_queries.getAllUserWorkspaces, params);
 
-        return results.recordset || [];
+        return result.recordset;
     };
 
     this.initiateUserWorkspace = async (userId, workspace) => {
@@ -46,7 +46,7 @@ export default function UserWorkspaceDbService() {
             { name: 'items', type: dataTypes.NVarChar, value: JSON.stringify(workspace.project.items) }
         ];
 
-        const result = await executeQuery(_queries.initiateUserWorkspace, params);
+        await executeQuery(_queries.initiateUserWorkspace, params);
 
         return this.getUserWorkspace(userId, workspace.workspace_id);
     };
@@ -58,7 +58,7 @@ export default function UserWorkspaceDbService() {
         ];
 
         const result = await executeQuery(_queries.getUserWorkspace, params);
-        if (result && result.recordset && result.recordset.length) {
+        if (result.recordset.length) {
             return result.recordset[0];
         }
 

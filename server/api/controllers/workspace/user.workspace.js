@@ -37,10 +37,7 @@ export default function UserWorkspaceController() {
     this.postUserWorkspace = async (req, res) => {
         try {
             const { sub } = req.payload;
-            const { workspace } = req.body;
-            if (!workspace) {
-                throw new Error('Post Body Required');
-            }
+            const { ...workspace } = req.body;
 
             const result = await this.userWorkspaceDbService.initiateUserWorkspace(sub, workspace);
             if (!result) {

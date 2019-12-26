@@ -7,7 +7,6 @@ const routes = {
 
         // routes
         app.post('/api/v1/auth', cors, (new AuthController()).authenticateUser);
-        app.get('/api/v1/auth/hash', cors, (new AuthController()).hashMessage);
 
         // provide application index
         app.get('/*', function (req, res) {

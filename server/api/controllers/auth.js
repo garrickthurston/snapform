@@ -1,4 +1,3 @@
-import { hashString } from '../../utils/encryptionUtils';
 import { generateToken } from '../../utils/tokenUtils';
 import AuthDbService from '../services/auth/auth.db.service';
 
@@ -20,21 +19,6 @@ function AuthController() {
             res.status(403).json({
                 error: e.message || 'Unauthorized'
             });
-        }
-    };
-
-    this.hashMessage = async (req, res) => {
-        try {
-            const { message } = req.body;
-
-            const hash = hashString(message);
-
-            res.status(200).json({ hash });
-        } catch (e) {
-            res.status(500).json({
-                error: e.message || 'Error Hashing Message',
-                stack: e.stack
-            })
         }
     };
 };

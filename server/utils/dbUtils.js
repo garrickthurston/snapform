@@ -3,24 +3,16 @@ const config = require('../config/env.' + env);
 
 import mssql from 'mssql';
 
-function DatabasePool() {
-    this.sql = mssql;
-};
-DatabasePool.prototype.pool = () => new mssql.ConnectionPool(config.connection_string)
-    .connect()
-    .then(pool => {
-        console.log('=== DB POOL CONNECTED ===');
-        return pool;
-    })
-    .catch(error => {
-        console.log('=== DB POOL CONNECTION FAILED ===')
-        console.log(error);
-    });
-
 let pool;
 const getPool = async () => {
     if (!pool) {
-        pool = await (new DatabasePool()).pool();
+        try {
+            pool = await (new mssql.ConnectionPool(config.connection_string)).connect();
+            console.log('=== DB POOL CONNECTED ===');
+        } catch (e) {
+            console.log('=== DB POOL CONNECTION FAILED ===')
+            console.log(e);
+        }
     }
 
     return pool;
@@ -45,15 +37,11 @@ export const executeQuery = async (query, params = null) => {
 
         return result;
     } catch (e) {
-        if (ps) {
-            try {
-                await ps.unprepare();
-            } catch (ex) {
-                console.log(ex);
-            }
-        }
-
         console.log(e);
+    } finally {
+        if (ps && ps.unprepare) {
+            await ps.unprepare();
+        }
     }
 };
 
@@ -72,15 +60,11 @@ export const executeSproc = async (sproc, params = null) => {
 
         return result;
     } catch (e) {
-        if (ps && ps.unprepare) {
-            try {
-                await ps.unprepare();
-            } catch (ex) {
-                console.log(ex);
-            }
-        }
-
         console.log(e);
+    } finally {
+        if (ps && ps.unprepare) {
+            await ps.unprepare();
+        }
     }
 };
 

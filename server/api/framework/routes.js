@@ -18,10 +18,7 @@ const routes = {
         app.get('/api/v1/workspaces/:workspaceId/projects/:projectId', cors, validToken, (new ProjectController()).getProject);
         app.put('/api/v1/workspaces/:workspaceId/projects/:projectId', cors, validToken, (new ProjectController()).updateProject);
 
-        // provide application index
-        app.get('/*', function (req, res) {
-            res.sendFile('index.html', { root: '../client/dist/' });
-        });
+        middleware.provideClientIndex(app);
 
         //default error handler
         app.use((err, req, res, next) => {

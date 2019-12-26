@@ -6,8 +6,6 @@ const port = process.env.PORT || 81;
 const app = express();
 const server = http.createServer(app);
 
-app.use(express.static('../client/dist'));
-
 routes.register(app);
 
 server.listen(port, () => {

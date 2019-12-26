@@ -1,0 +1,80 @@
+{
+    "extends": ["airbnb", "plugin:sonarjs/recommended"],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "env": {
+        "amd": true,
+        "browser": true,
+        "node": true,
+        "es6": true,
+        "worker": true,
+        "mocha": true
+    },
+    "settings": {
+        "import/resolver": {
+            "webpack": {
+                "config": "./webpack.base.config.js"
+            }
+        }
+    },
+    "plugins": [
+        "react-hooks", "sonarjs"
+    ],
+    "rules": {
+        "arrow-body-style": ["error", "as-needed"],
+        "comma-dangle": ["error", "never"],
+        "eqeqeq": "warn",
+        "func-names": "off",
+        "no-case-declarations": "off",
+        "no-console": [ "error", { "allow": [ "warn", "error" ] } ],
+        "no-debugger": "off",
+        "no-loop-func": "off",
+        "no-unused-expressions": "off",
+        "quotes": [ "error", "single" ],
+        "import/no-extraneous-dependencies": [
+            "error",
+             {
+                 "devDependencies": [
+                    "testFramework/*.js",
+                    "**/*.spec.js",
+                    "webpack**",
+                    "postcss.config.js"
+                ]
+            }
+        ],
+        "import/no-unresolved": "off",
+        "indent": [ "error",  4, { "SwitchCase": 1 } ],
+        "jsx-a11y/label-has-for": "off",
+        "linebreak-style": "off",
+        "max-len": "off",
+        "no-plusplus": "off",
+        "no-underscore-dangle": "off",
+        "no-bitwise": "off",
+        "no-restricted-globals": "off",
+        "object-shorthand": "off",
+        "react/forbid-prop-types": "off",
+        "react/no-did-update-set-state": "off",
+        "react/jsx-filename-extension": "off",
+        "react/jsx-indent": ["error", 4],
+        "react/jsx-indent-props": ["error", 4],
+        "react/prop-types": "off",
+        "react/require-default-props": "off",
+        "react-hooks/exhaustive-deps": "warn",
+        "react-hooks/rules-of-hooks": "error",
+        "semi": [ "error", "always" ],
+        "sonarjs/cognitive-complexity": "off"
+    },
+    "globals": {
+        "shallow": true,
+        "render": true,
+        "mount": true,
+        "expect": true
+    },
+    "root": true
+}

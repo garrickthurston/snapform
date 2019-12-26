@@ -1,0 +1,27 @@
+{
+    "name": "snapform-api",
+    "version": "1.0.0",
+    "description": "Snapform API",
+    "private": true,
+    "author": "Garrick Thurston",
+    "scripts": {
+        "dev": "nodemon --exec babel-node --inspect-brk=5858 server.js",
+        "prod": "babel-node server.js"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.7.7",
+        "@babel/node": "^7.7.7",
+        "@babel/preset-env": "^7.7.7",
+        "concurrently": "^5.0.2",
+        "mocha": "^6.2.2",
+        "nodemon": "^2.0.2",
+        "sinon": "^8.0.1"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "express-jwt": "^5.3.1",
+        "morgan": "^1.9.1",
+        "mssql": "^6.0.1"
+    }
+}

@@ -1,5 +1,7 @@
-config/.config.json
 prev
-prev/*
-.vscode
-.vscode/*
+node_modules
+dist
+.config.json
+run_migration.local.bat
+LOCAL.0000_add_local_user.env.sql
+old

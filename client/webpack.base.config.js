@@ -4,6 +4,7 @@ const merge = require('webpack-merge');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = () => merge([{
     entry: {
@@ -74,9 +75,6 @@ module.exports = () => merge([{
             loader: 'file-loader?name=[name].[ext]'
         }]
     },
-    externals: {
-        jquery: 'jQuery'
-    },
     plugins: [
         new CleanWebpackPlugin(['dist'], { verbose: false }),
         new MiniCssExtractPlugin(),
@@ -84,6 +82,10 @@ module.exports = () => merge([{
             favicon: 'assets/favicon.ico',
             template: 'src/index.html'
         }),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+        })
     ],
     resolveLoader: {
         moduleExtensions: ['-loader'],

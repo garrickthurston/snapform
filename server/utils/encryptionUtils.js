@@ -4,6 +4,10 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('../config/env.' + env);
 
 export const hashString = (string) => {
+    if (!string) {
+        throw new Error('Must provide string to encrypt')
+    }
+
     const { encryption_secret } = config;
 
     return crypto.createHmac('sha256', encryption_secret).update(string).digest('hex');

@@ -5,3 +5,4 @@ dist
 run_migration.local.bat
 LOCAL.0000_add_local_user.env.sql
 old
+0001_alter_application_user.sql

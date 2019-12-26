@@ -84,4 +84,4 @@ export const executeSproc = async (sproc, params = null) => {
     }
 };
 
-export const types = mssql;
+export const dataTypes = mssql;

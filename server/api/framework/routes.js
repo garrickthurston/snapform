@@ -6,6 +6,7 @@ const routes = {
         const { cors, validToken } = middleware.register(app);
 
         // routes
+        app.post('/api/v1/auth', cors, (new AuthController()).authenticateUser);
         app.get('/api/v1/auth/hash', cors, (new AuthController()).hashMessage);
 
         // provide application index

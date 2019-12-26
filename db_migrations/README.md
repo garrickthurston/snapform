@@ -1,4 +1,4 @@
 To Run Migrations:
 
 - cd tools
-- run a command that looks like `rh.exe -c {local_connection_string} -f ..\scripts -cds ..\scripts\custom_db_create.sql --silent true --vf .\_buildInfo.xml --env LOCAL`
+- rh.exe -c {local_connection_string} -f ..\scripts -cds ..\scripts\custom_db_create.sql --silent true --vf .\_buildInfo.xml --env LOCAL`

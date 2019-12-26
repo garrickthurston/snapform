@@ -12,7 +12,6 @@
         "@babel/core": "^7.7.7",
         "@babel/node": "^7.7.7",
         "@babel/preset-env": "^7.7.7",
-        "concurrently": "^5.0.2",
         "mocha": "^6.2.2",
         "nodemon": "^2.0.2",
         "sinon": "^8.0.1"

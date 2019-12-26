@@ -8,7 +8,7 @@ export default {
         morgan.register(app);
 
         const cors = origin.register(app);
-        const validToken = jwt.register(app);
+        const validToken = jwt.register();
 
         bodyParser.register(app);
 

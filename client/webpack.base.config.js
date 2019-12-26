@@ -71,7 +71,7 @@ module.exports = () => merge([{
         },
         {
             test: /\.ico$/,
-            loader: 'file-loader?name=[name].[ext]'  // <-- retain original file name
+            loader: 'file-loader?name=[name].[ext]'
         }]
     },
     externals: {

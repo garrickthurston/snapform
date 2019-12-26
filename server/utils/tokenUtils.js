@@ -19,7 +19,7 @@ export const generateToken = (sub, incomingPayload) => {
     const expIn = 3600 * 24 * 1000;
     const keepSignedIn = false; // TODO
     const options = {
-        ...(keepSignedIn ? {} : { expiresIn: (expIn / 1000 )})
+        ...(keepSignedIn ? {} : { expiresIn: (expIn / 1000) })
     };
 
     return jwt.sign(payload, config.token_secret, options);

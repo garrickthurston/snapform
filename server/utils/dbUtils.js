@@ -1,7 +1,6 @@
+import mssql from 'mssql';
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/env.' + env);
-
-import mssql from 'mssql';
 
 let pool;
 const getPool = async () => {

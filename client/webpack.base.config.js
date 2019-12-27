@@ -57,18 +57,14 @@ module.exports = () => merge([{
             loader: 'svg-inline-loader'
         },
         {
-            test: /\.(png|jpg|gif)$/,
-            use: [
-                {
-                    loader: 'url-loader',
-                    options: {
-                        fallback: 'file-loader',
-                        name: '[name][md5:hash].[ext]',
-                        outputPath: 'assets/',
-                        publicPath: '/assets/'
-                    }
+            test: /\.(png|svg|jpg|gif)$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'file-loader',
+                options: {
+                    name: '[path][name].[ext]'
                 }
-            ]
+            }]
         },
         {
             test: /\.ico$/,

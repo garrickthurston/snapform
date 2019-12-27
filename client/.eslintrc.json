@@ -1,5 +1,5 @@
 {
-    "extends": ["airbnb", "plugin:sonarjs/recommended"],
+    "extends": ["airbnb"],
     "parser": "babel-eslint",
     "parserOptions": {
         "ecmaVersion": 2018,
@@ -24,7 +24,7 @@
         }
     },
     "plugins": [
-        "react-hooks", "sonarjs"
+        "react-hooks"
     ],
     "rules": {
         "arrow-body-style": ["error", "as-needed"],
@@ -67,8 +67,7 @@
         "react/require-default-props": "off",
         "react-hooks/exhaustive-deps": "warn",
         "react-hooks/rules-of-hooks": "error",
-        "semi": [ "error", "always" ],
-        "sonarjs/cognitive-complexity": "off"
+        "semi": [ "error", "always" ]
     },
     "globals": {
         "shallow": true,

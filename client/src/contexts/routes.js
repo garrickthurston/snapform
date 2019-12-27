@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 
-const LoginComponent = React.lazy(() => import(/* webpackChunkName: 'login' */'../components/external/LoginComponent'));
+const AuthFlowComponent = React.lazy(() => import(/* webpackChunkName: 'authflow' */'../components/external/AuthFlow/AuthFlowComponent'));
 const DocsComponent = React.lazy(() => import(/* webpackChunkName: 'docs' */'../components/external/DocsComponent'));
 const BlogComponent = React.lazy(() => import(/* webpackChunkName: 'blog' */'../components/external/BlogComponent'));
 const TutorialComponent = React.lazy(() => import(/* webpackChunkName: 'tutorial' */'../components/external/TutorialComponent'));
@@ -11,7 +11,7 @@ const DashboardComponent = React.lazy(() => import(/* webpackChunkName: 'dashboa
 export const wrapSuspense = (children) => (<Suspense fallback={<div>Loading...</div>}>{children}</Suspense>);
 
 export default {
-    '/login': () => wrapSuspense(<LoginComponent />),
+    '/login': () => wrapSuspense(<AuthFlowComponent display="login" />),
     '/docs': () => wrapSuspense(<DocsComponent />),
     '/blog': () => wrapSuspense(<BlogComponent />),
     '/tutorial': () => wrapSuspense(<TutorialComponent />),

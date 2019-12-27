@@ -1,27 +1,59 @@
 import React, { useReducer, useContext } from 'react';
 import UserContext from '../UserContext';
+import authApi from '../../services/auth.api.service';
 
 export const userActionTypes = {
-
+    authenticateUser: 'AUTHENTICATE_USER',
+    unauthenticateUser: 'UNAUTHENTICATE_USER'
 };
 
-export function userReducer(state/* , action */) {
-    // switch (action.type) {
-    //     default:
-    //         return state;
-    // }
-
-    return state;
+function authenticateUser(dispatch) {
+    return async (username, password) => {
+        let payload = {};
+        try {
+            payload = await authApi.authenticateUser(username, password);
+        } finally {
+            dispatch({ type: userActionTypes.authenticateUser, payload });
+        }
+    };
 }
 
-function UserContextProvider({ children/* , initialState = {} */ }) {
-    const [state/* , dispatch */] = useReducer(userReducer, {
-        userId: undefined
+function unauthenticateUser(dispatch) {
+    return () => {
+        authApi.unauthenticateUser();
+        dispatch({ type: userActionTypes.unauthenticateUser });
+    };
+}
+
+export function userReducer(state, action) {
+    switch (action.type) {
+        case userActionTypes.authenticateUser:
+            return {
+                ...state,
+                data: {
+                    ...action.payload
+                }
+            };
+        case userActionTypes.unauthenticateUser:
+            return {
+                ...state,
+                data: null
+            };
+        default:
+            return state;
+    }
+}
+
+function UserContextProvider({ children, initialState = {} }) {
+    const [state, dispatch] = useReducer(userReducer, {
+        data: authApi.getUser(),
+        ...initialState
     });
     const context = {
         ...state,
         actions: {
-
+            authenticateUser: authenticateUser(dispatch, state),
+            unauthenticateUser: unauthenticateUser(dispatch, state)
         }
     };
 

@@ -1,0 +1,10 @@
+.login-form {
+    width: 308px;
+    padding-top: 22px;
+    text-align: center;
+
+    > button[type=submit] {
+        width: 50%;
+        background: #FFF;
+    }
+}

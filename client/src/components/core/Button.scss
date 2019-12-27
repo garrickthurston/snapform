@@ -1,0 +1,71 @@
+@import './variables.scss';
+
+.sf-btn {
+    background-image: linear-gradient(-180deg, rgba(255,255,255,0.20) 0, rgba(255,255,255,0.02) 100%) !important;
+    border: 1px solid $default-accent;
+    border-radius: $radius;
+    color: 1px solid $default-accent;
+    cursor: pointer !important;
+    display: inline-block;
+    font-size: $body-font-size;
+    height: $control-height;
+    outline: none;
+    padding: 6px 20px;
+    position: relative;
+    transition: all 0.2s;
+    width: 200px;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        padding: 6px 3px;
+        font-size: 1.05em;
+    }
+
+    &.sf-btn-secondary {
+        background-color: $secondary-text;
+        border-color: $secondary-border;
+    }
+
+    &:hover {
+        background-image: linear-gradient(-180deg, rgba(255,255,255,0.25) 0, rgba(255,255,255,0.25) 100%) !important;
+    }
+
+    &:active {
+        color: $white !important;
+        box-shadow: none;
+    }
+
+    &:focus {
+        color: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid rgba(0, 0, 0, 0.4) !important;
+        outline: none !important;
+    }
+
+    &.disabled,
+    &:disabled {
+        cursor: default;
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    &.sf-btn-sm {
+        padding: 2px 10px;
+        height: 30px;
+        width: auto;
+    }
+
+    &.sf-btn-loading {
+        cursor: default;
+        pointer-events: none;
+
+        .pulsating-circle.btn-loading-content {
+            display: block;
+            width: 15px;
+            height: 15px;
+
+            &:before {
+                background-color: $default-accent !important;
+            }
+        }
+    }
+}

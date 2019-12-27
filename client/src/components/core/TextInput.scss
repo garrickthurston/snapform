@@ -1,0 +1,78 @@
+@import './variables.scss';
+
+.sf-form-group {
+    display: block;
+    position: relative;
+    text-align: left;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+
+    .sf-form-control {
+        align-items: flex-start;
+        transition: 0.2s;
+        font-size: $input-font-size;
+        height: $control-height;
+        border: 1px solid $border-color;
+        border-radius: $radius;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 6.5px 12px;
+
+        &.value,
+        &:focus {
+            background-color: $white;
+            box-shadow: none;
+            border-color: $border-color;
+            outline: none;
+        }
+
+        &:focus {
+            border: 1px solid $default-accent;
+        }
+
+        &.value[disabled],
+        &[disabled] {
+            box-shadow: none;
+            border-color: $border-color;
+            background-color: $disabled-grey;
+            cursor: not-allowed;
+
+            & + .placeholder {
+                display: none;
+            }
+        }
+    }
+
+    &.with-placeholder {
+        .sf-form-control:not([disabled]) {
+            padding: 17px 10px 6px 10px;
+        }
+    }
+
+    & > .placeholder {
+        box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        bottom: 6.5px;
+        padding: 6.5px 12px;
+        width: 100%;
+        height: $control-height;
+        line-height: $control-height;
+        color: $border-color;
+        transition: 0.2s;
+        pointer-events: none;
+        z-index: 99;
+        text-transform: capitalize;
+    }
+
+    .sf-form-control:focus + .placeholder,
+    .sf-form-control.value + .placeholder {
+        bottom: 15px;
+        font-size: 0.72em;
+        color: $default-accent;
+    }
+
+    option {
+        padding: 0;
+    }
+}

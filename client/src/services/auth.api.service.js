@@ -1,18 +1,13 @@
 import api from '../utils/api';
-import { decodeToken } from '../utils/tokenUtils';
 
 async function authenticateUser(username, password) {
     const { token } = await api.post('auth', { username, password });
 
-    let user = null;
     if (token) {
         api.setToken(token);
-
-        user = decodeToken(token);
-        api.setUser(user);
     }
 
-    return user;
+    return api.decodeToken();
 }
 
 function unauthenticateUser() {
@@ -21,7 +16,7 @@ function unauthenticateUser() {
 }
 
 function getUser() {
-    return api.getUser();
+    return api.decodeToken();
 }
 
 export default {

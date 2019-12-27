@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { getCookie, createCookie, deleteCookie } from './domUtils';
+import { decodeToken } from './tokenUtils';
 
 const _baseApiPath = '/api/';
 const _apiVersion = 'v1';
 const _tokenCookieName = '__authx__';
-const _userCookieName = '__authx_user__';
 
 function Api(baseApiPath = null, apiVersion = null) {
     this.baseApiPath = baseApiPath || _baseApiPath;
@@ -87,20 +87,16 @@ function Api(baseApiPath = null, apiVersion = null) {
         createCookie(_tokenCookieName, token);
     };
     this.clearToken = () => deleteCookie(_tokenCookieName);
-
-    this.getUser = () => {
-        if (!this.user) {
-            const user = getCookie(_userCookieName);
-            this.user = user ? JSON.parse(user) : null;
+    /* eslint-disable react/no-this-in-sfc */
+    this.decodeToken = () => {
+        const token = this.getToken();
+        if (token) {
+            return decodeToken(token);
         }
 
-        return this.user;
+        return null;
     };
-    this.setUser = (user) => {
-        this.user = user;
-        createCookie(_userCookieName, JSON.stringify(user));
-    };
-    this.clearUser = () => deleteCookie(_userCookieName);
+    /* eslint-disable react/no-this-in-sfc */
 
     this.get = (url, data) => _request({
         method: 'get',

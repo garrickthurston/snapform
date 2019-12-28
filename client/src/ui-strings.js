@@ -4,5 +4,7 @@ export default {
     docs: 'Docs',
     tutorial: 'Tutorial',
     blog: 'Blog',
-    logIn: 'Log in'
+    logIn: 'Log in',
+    logOut: 'Log out',
+    invalidUsernameOrPassword: 'Invalid Username or Password'
 };

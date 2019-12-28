@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
-import { useQueryParams } from 'hookrouter';
+import { useHistory } from 'react-router-dom';
+import { useQueryParams } from '../../../hooks/routeHooks';
 import LoginComponent from './LoginComponent';
 import { useUser } from '../../../contexts/providers/UserContextProvider';
 
@@ -15,31 +16,37 @@ const _displayComponents = {
 
 export default function AuthFlowComponent({ display }) {
     const user = useUser();
-    const [queryParams] = useQueryParams();
+    const queryParams = useQueryParams();
+    const history = useHistory();
 
     useEffect(() => {
-        if (queryParams.l && queryParams.l === '1' && user.data) {
-            user.actions.unauthenticateUser();
+        if (user.data) {
+            if (queryParams && queryParams.l === '1') {
+                user.actions.unauthenticateUser();
+                history.push('/login');
+            } else {
+                history.push('/workspace');
+            }
         }
-    }, [queryParams, user]);
+    }, [queryParams, user, user.data, history]);
 
     const renderDisplayComponent = useMemo(() => {
         if (_displayComponents[display]) {
             return _displayComponents[display];
         }
 
-        return null;
+        return _displayComponents.login;
     }, [display]);
 
-    const renderBackground = () => {
+    const renderBackground = useMemo(() => {
         const bg = _backgrounds[Math.floor(Math.random() * _backgrounds.length)];
 
         return (<div id="background" className="bg" style={{ background: `url('${bg}')`, backgroundSize: 'cover' }} />);
-    };
+    }, []);
 
     return (
         <div className="auth-flow-container">
-            {renderBackground()}
+            {renderBackground}
             <div className="flow-component">
                 <div className="flow-logo" />
                 {renderDisplayComponent}

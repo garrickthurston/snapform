@@ -1,5 +1,9 @@
 import api from '../utils/api';
 
+function getUser() {
+    return api.decodeToken();
+}
+
 async function authenticateUser(username, password) {
     const { token } = await api.post('auth', { username, password });
 
@@ -7,16 +11,11 @@ async function authenticateUser(username, password) {
         api.setToken(token);
     }
 
-    return api.decodeToken();
+    return getUser();
 }
 
 function unauthenticateUser() {
     api.clearToken();
-    api.clearUser();
-}
-
-function getUser() {
-    return api.decodeToken();
 }
 
 export default {

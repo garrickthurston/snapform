@@ -24,8 +24,6 @@ export default function AuthFlowComponent({ display }) {
             if (queryParams && queryParams.l === '1') {
                 user.actions.unauthenticateUser();
                 history.push('/login');
-            } else {
-                history.push('/workspace');
             }
         }
     }, [queryParams, user, user.data, history]);

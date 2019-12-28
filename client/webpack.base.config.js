@@ -73,7 +73,9 @@ module.exports = () => merge([{
     },
     plugins: [
         new CleanWebpackPlugin(['dist'], { verbose: false }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: '[name].[hash].css'
+        }),
         new HtmlWebpackPlugin({
             favicon: 'assets/favicon.ico',
             template: 'src/index.html'

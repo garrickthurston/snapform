@@ -1,0 +1,14 @@
+.sf-grid-bg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-left: -1px;
+
+    .grid-children {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+}

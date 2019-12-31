@@ -37,8 +37,16 @@ function getWorkspace(dispatch) {
             }
 
             const fetchedProject = await workspaceApi.getWorkspaceProject(workspaceId, projectIdToFetch);
+            projects.map((item) => {
+                const project = item;
+                project.active = false;
+                return project;
+            });
             const project = projects.find((x) => x.projectId === projectIdToFetch);
-            projects.splice(projects.indexOf(project), 1, fetchedProject);
+            projects.splice(projects.indexOf(project), 1, {
+                ...fetchedProject,
+                active: true
+            });
         } finally {
             dispatch({ type: workspaceActionTypes.getWorkspace, payload });
         }

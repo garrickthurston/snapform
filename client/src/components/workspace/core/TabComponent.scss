@@ -1,0 +1,37 @@
+.project-tab-outer {
+    height: 100%;
+    background: #FFF;
+
+    &.active {
+        z-index: 0;
+
+        .project-tab-inner {
+            border-bottom: 1px solid #FFF;
+        }
+    }
+
+    &.add {
+        margin-left: -4px;
+
+        .project-tab-inner {
+            line-height: 1;
+
+            svg {
+                font-size: 0.8em;
+                opacity: 0.8;
+                margin-top: 6px;
+                margin-left: 2px;
+            }
+        }
+    }
+
+    .project-tab-inner {
+        height: calc(100% - 4px);
+        margin-top: 5px;
+        border: 1px solid #AAA;
+        padding: 0 8px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        cursor: pointer;
+    }
+}

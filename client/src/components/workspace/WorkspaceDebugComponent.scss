@@ -11,6 +11,8 @@
         background: rgba(240, 240, 240, 0.9);
         padding: 6px;
         margin-bottom: 0;
+        margin-right: 10px;
+        z-index: 100;
 
         .string { color: darkorange; }
         .number { color: green; }

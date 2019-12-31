@@ -1,7 +1,6 @@
 import React, {
     useMemo,
     useState,
-    useCallback,
     useEffect,
     useRef
 } from 'react';
@@ -51,9 +50,7 @@ export default function WorkspaceDebugComponent() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     });
 
-    const handleDebugAnchorClick = useCallback(() => {
-        setDebugWindowOpen(!debugWindowOpen);
-    }, [debugWindowOpen]);
+    const handleDebugAnchorClick = () => setDebugWindowOpen(true);
 
     const renderWorkspaceJson = useMemo(() => {
         if (debugWindowOpen && workspace) {

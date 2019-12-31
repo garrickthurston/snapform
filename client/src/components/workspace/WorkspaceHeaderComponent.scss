@@ -1,0 +1,16 @@
+.workspace-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding-left: 10px;
+
+    .title-default {
+        h4 {
+            font-weight: 400;
+            font-size: 24px;
+            margin: 0;
+            display: inline-block;
+        }
+    }
+}

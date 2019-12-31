@@ -6,5 +6,7 @@ export default {
     blog: 'Blog',
     logIn: 'Log in',
     logOut: 'Log out',
-    invalidUsernameOrPassword: 'Invalid Username or Password'
+    invalidUsernameOrPassword: 'Invalid Username or Password',
+    untitledWorkspace: 'Untitled Workspace',
+    untitledProject: 'Untitled Project'
 };

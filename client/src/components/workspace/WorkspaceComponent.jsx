@@ -49,6 +49,9 @@ export default function WorkspaceComponent() {
         return null;
     }, [user.data]);
 
+    const activeProject = workspace.workspace
+        && workspace.workspace.projects
+        && workspace.workspace.projects.find((item) => item.active);
     return (
         <div className="workspace-container">
             <div className="workspace">
@@ -64,7 +67,7 @@ export default function WorkspaceComponent() {
                             <WorkspaceTabsComponent />
                         </div>
                         <div className="workspace-editor-body">
-                            {workspace.workspaceLoaded ? <GridComponent /> : <LoadingComponent />}
+                            {workspace.workspaceLoaded ? <GridComponent project={activeProject} /> : <LoadingComponent />}
                         </div>
                     </div>
                 </div>

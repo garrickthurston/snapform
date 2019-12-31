@@ -6,7 +6,8 @@ export const workspaceActionTypes = {
     getWorkspaces: 'GET_WORKSPACES',
     getWorkspace: 'GET_WORKSPACE',
     updateWorkspacesLoading: 'UPDATE_WORKSPACES_LOADING',
-    updateWorkspaceLoading: 'UPDATE_WORKSPACE_LOADING'
+    updateWorkspaceLoading: 'UPDATE_WORKSPACE_LOADING',
+    setProjectTabActive: 'SET_PROJECT_TAB_ACTIVE'
 };
 
 function getWorkspaces(dispatch) {
@@ -40,15 +41,40 @@ function getWorkspace(dispatch) {
             projects.map((item) => {
                 const project = item;
                 project.active = false;
+                project.tabActive = false;
                 return project;
             });
             const project = projects.find((x) => x.projectId === projectIdToFetch);
             projects.splice(projects.indexOf(project), 1, {
                 ...fetchedProject,
-                active: true
+                active: true,
+                tabActive: true
             });
         } finally {
             dispatch({ type: workspaceActionTypes.getWorkspace, payload });
+        }
+    };
+}
+
+function setProjectTabActive(dispatch, state) {
+    return (projectId, tabActive) => {
+        const { workspace } = state;
+        if (workspace) {
+            const { projects } = workspace;
+            const updatedProjects = [...projects];
+            const project = updatedProjects.find((item) => item.projectId === projectId);
+            updatedProjects.splice(updatedProjects.indexOf(project), 1, {
+                ...project,
+                tabActive,
+                active: false
+            });
+            dispatch({
+                type: workspaceActionTypes.setProjectTabActive,
+                payload: {
+                    ...workspace,
+                    projects: updatedProjects
+                }
+            });
         }
     };
 }
@@ -81,6 +107,11 @@ export function workspaceReducer(state, action) {
                 ...state,
                 workspaceLoading: action.payload
             };
+        case workspaceActionTypes.setProjectTabActive:
+            return {
+                ...state,
+                workspace: action.payload
+            };
         default:
             return state;
     }
@@ -94,6 +125,7 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
         workspace: undefined,
         workspaceLoading: false,
         workspaceLoaded: false,
+        project: undefined,
         ...initialState
     });
 
@@ -101,7 +133,8 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
         ...state,
         actions: {
             getWorkspaces: getWorkspaces(dispatch, state),
-            getWorkspace: getWorkspace(dispatch, state)
+            getWorkspace: getWorkspace(dispatch, state),
+            setProjectTabActive: setProjectTabActive(dispatch, state)
         }
     };
 

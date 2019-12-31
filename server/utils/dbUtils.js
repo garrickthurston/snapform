@@ -22,6 +22,8 @@ export const executeQuery = async (query, params = null) => {
     if (!params) { params = []; }
     const ps = new mssql.PreparedStatement(await getPool());
 
+    let e;
+    let result;
     try {
         const source = {};
         params.map(param => {
@@ -32,22 +34,29 @@ export const executeQuery = async (query, params = null) => {
         });
 
         await ps.prepare(query);
-        const result = await ps.execute(source);
-
-        return result;
-    } catch (e) {
+        result = await ps.execute(source);
+    } catch (err) {
+        e = err;
         console.log(e);
     } finally {
         if (ps && ps.unprepare) {
             await ps.unprepare();
         }
     }
+
+    if (e) {
+        throw e;
+    }
+
+    return result;
 };
 
 export const executeSproc = async (sproc, params = null) => {
     if (!params) { params = []; }
     const ps = new mssql.Request(await getPool());
 
+    let e;
+    let result;
     try {
         params.map(param => {
             if (param.name && param.type) {
@@ -55,16 +64,21 @@ export const executeSproc = async (sproc, params = null) => {
             }
         });
 
-        const result = await ps.execute(sproc);
-
-        return result;
-    } catch (e) {
+        result = await ps.execute(sproc);
+    } catch (err) {
+        e = err;
         console.log(e);
     } finally {
         if (ps && ps.unprepare) {
             await ps.unprepare();
         }
     }
+
+    if (e) {
+        throw e;
+    }
+
+    return result;
 };
 
 export const dataTypes = mssql;

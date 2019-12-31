@@ -13,7 +13,7 @@ export default function UserWorkspaceDbService() {
         result.recordset.forEach((item) => {
             const workspace = results.find(x => x.workspaceId === item.workspace_id);
             if (workspace) {
-                workspace.project.push({
+                workspace.projects.push({
                     projectId: item.project_id,
                     projectName: item.project_name
                 });
@@ -83,7 +83,7 @@ export default function UserWorkspaceDbService() {
             result.recordset.forEach((item) => {
                 const workspace = results.find(x => x.workspaceId === item.workspace_id);
                 if (workspace) {
-                    workspace.project.push({
+                    workspace.projects.push({
                         projectId: item.project_id,
                         projectName: item.project_name
                     });
@@ -99,7 +99,7 @@ export default function UserWorkspaceDbService() {
                 }
             });
             
-            return results[0];
+            return results.find(x => x.workspaceId === workspace_id);
         }
 
         return {};

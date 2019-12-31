@@ -6,17 +6,22 @@
     "author": "Garrick Thurston",
     "scripts": {
         "dev": "nodemon --exec babel-node --inspect-brk=5858 server.js",
+        "test": "mocha --require @babel/register --colors test/**/*.js --no-timeout -w --inspect-brk=9229",
         "prod": "babel-node server.js"
     },
     "devDependencies": {
+        "@babel/cli": "^7.7.7",
         "@babel/core": "^7.7.7",
         "@babel/node": "^7.7.7",
+        "@babel/plugin-transform-runtime": "^7.7.6",
         "@babel/preset-env": "^7.7.7",
+        "@babel/register": "^7.7.7",
         "mocha": "^6.2.2",
         "nodemon": "^2.0.2",
         "sinon": "^8.0.1"
     },
     "dependencies": {
+        "@babel/runtime": "^7.7.7",
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "express-jwt": "^5.3.1",

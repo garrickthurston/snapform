@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import UserWorkspaceController from '../../../../../api/controllers/workspace/user.workspace';
+import UserWorkspaceController from '../../../../api/controllers/workspace/user.workspace';
 
 const { assert } = sinon;
 

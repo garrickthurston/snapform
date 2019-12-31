@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import ProjectController from '../../../../../api/controllers/workspace/project';
+import ProjectController from '../../../../api/controllers/workspace/project';
 
 const { assert } = sinon;
 

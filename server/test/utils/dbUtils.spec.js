@@ -1,4 +1,4 @@
-import * as db from '../../../utils/dbUtils';
+import * as db from '../../utils/dbUtils';
 import sinon from 'sinon';
 import mssql from 'mssql';
 

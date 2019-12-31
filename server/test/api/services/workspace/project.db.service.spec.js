@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import ProjectDbService from '../../../../../api/services/workspace/project.db.service';
-import * as db from '../../../../../utils/dbUtils';
+import ProjectDbService from '../../../../api/services/workspace/project.db.service';
+import * as db from '../../../../utils/dbUtils';
 
 const { assert } = sinon;
 

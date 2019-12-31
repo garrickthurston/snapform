@@ -1,7 +1,7 @@
 import sinon from 'sinon';
-import AuthDbService from '../../../../../api/services/auth/auth.db.service';
-import * as db from '../../../../../utils/dbUtils';
-import * as crypt from '../../../../../utils/encryptionUtils';
+import AuthDbService from '../../../../api/services/auth/auth.db.service';
+import * as db from '../../../../utils/dbUtils';
+import * as crypt from '../../../../utils/encryptionUtils';
 
 const { assert } = sinon;
 

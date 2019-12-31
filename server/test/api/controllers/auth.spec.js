@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import AuthController from '../../../../api/controllers/auth';
+import AuthController from '../../../api/controllers/auth';
 
 const { assert } = sinon;
 

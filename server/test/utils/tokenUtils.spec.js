@@ -1,4 +1,4 @@
-import * as token from '../../../utils/tokenUtils';
+import * as token from '../../utils/tokenUtils';
 import sinon from 'sinon';
 
 const { assert } = sinon;

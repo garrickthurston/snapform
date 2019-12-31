@@ -11,7 +11,7 @@ const AuthFlowComponent = React.lazy(() => import(/* webpackChunkName: 'authflow
 const DocsComponent = React.lazy(() => import(/* webpackChunkName: 'docs' */'./external/DocsComponent'));
 const BlogComponent = React.lazy(() => import(/* webpackChunkName: 'blog' */'./external/BlogComponent'));
 const TutorialComponent = React.lazy(() => import(/* webpackChunkName: 'tutorial' */'./external/TutorialComponent'));
-const WorkspaceComponent = React.lazy(() => import(/* webpackChunkName: 'workspace' */'./workspace/WorkspaceComponent'));
+const WorkspaceRootComponent = React.lazy(() => import(/* webpackChunkName: 'workspace' */'./workspace/WorkspaceRootComponent'));
 const DashboardComponent = React.lazy(() => import(/* webpackChunkName: 'dashboard' */'./external/DashboardComponent'));
 
 export default function Routes({ children }) {
@@ -26,7 +26,7 @@ export default function Routes({ children }) {
                     <Route path="/docs" component={DocsComponent} />
                     <Route path="/blog" component={BlogComponent} />
                     <Route path="/tutorial" component={TutorialComponent} />
-                    <AuthedRoute path="/workspace/:workspaceId?/:projectId?" component={WorkspaceComponent} />
+                    <AuthedRoute path="/workspace/:workspaceId?/:projectId?" component={WorkspaceRootComponent} />
                     <Route render={() => <Redirect to="/" />} />
                 </Switch>
             </Suspense>

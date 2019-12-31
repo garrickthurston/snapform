@@ -17,7 +17,7 @@ export const generateToken = (sub, incomingPayload) => {
 
     // 24 Hours
     const expIn = 3600 * 24 * 1000;
-    const keepSignedIn = false; // TODO
+    const keepSignedIn = true; // TODO
     const options = {
         ...(keepSignedIn ? {} : { expiresIn: (expIn / 1000) })
     };

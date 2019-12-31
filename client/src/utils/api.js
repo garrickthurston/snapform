@@ -86,7 +86,10 @@ function Api(baseApiPath = null, apiVersion = null) {
         this.token = token;
         createCookie(_tokenCookieName, token);
     };
-    this.clearToken = () => deleteCookie(_tokenCookieName);
+    this.clearToken = () => {
+        this.token = null;
+        deleteCookie(_tokenCookieName);
+    };
     /* eslint-disable react/no-this-in-sfc */
     this.decodeToken = () => {
         const token = this.getToken();

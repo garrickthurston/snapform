@@ -1,0 +1,28 @@
+.workspace-debug-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+
+    .workspace-debug-window {
+        max-width: 600px;
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #aaa;
+        background: rgba(240, 240, 240, 0.9);
+        padding: 6px;
+        margin-bottom: 0;
+
+        .string { color: darkorange; }
+        .number { color: green; }
+        .boolean { color: blue; }
+        .null { color: blue; }
+        .key { color: blue; }
+    }
+
+    .workspace-debug-anchor {
+        border: 0;
+        background: transparent;
+        zoom: 0.75;
+        float: right;
+    }
+}

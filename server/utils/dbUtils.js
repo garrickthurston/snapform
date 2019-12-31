@@ -55,7 +55,7 @@ export const executeSproc = async (sproc, params = null) => {
             }
         });
 
-        const result = await ps.execute(source);
+        const result = await ps.execute(sproc);
 
         return result;
     } catch (e) {

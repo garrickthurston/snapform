@@ -61,6 +61,7 @@
         "react/forbid-prop-types": "off",
         "react/no-did-update-set-state": "off",
         "react/jsx-filename-extension": "off",
+        "react/button-has-type": "off",
         "react/jsx-indent": ["error", 4],
         "react/jsx-indent-props": ["error", 4],
         "react/prop-types": "off",

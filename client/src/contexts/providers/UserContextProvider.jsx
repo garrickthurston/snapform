@@ -45,8 +45,13 @@ export function userReducer(state, action) {
 }
 
 function UserContextProvider({ children, initialState = {} }) {
+    const user = authApi.getUser();
+
     const [state, dispatch] = useReducer(userReducer, {
-        data: authApi.getUser(),
+        data: {
+            ...user,
+            isAdmin: user && user.role === 'admin'
+        },
         ...initialState
     });
     const context = {
@@ -70,7 +75,7 @@ export const useUser = () => {
     const context = useContext(UserContext);
 
     if (!context.actions) {
-        throw new Error('useUser can\'t be used outside of a UserProvider');
+        throw new Error('useUser can\'t be used outside of a UserContextProvider');
     }
 
     return context;

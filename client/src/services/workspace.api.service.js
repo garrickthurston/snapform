@@ -8,7 +8,12 @@ function getWorkspace(workspaceId) {
     return api.get(`workspaces/${workspaceId}`);
 }
 
+function getWorkspaceProject(workspaceId, projectId) {
+    return api.get(`workspaces/${workspaceId}/projects/${projectId}`);
+}
+
 export default {
     getWorkspaces,
-    getWorkspace
+    getWorkspace,
+    getWorkspaceProject
 };

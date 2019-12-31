@@ -28,6 +28,7 @@
     ],
     "rules": {
         "arrow-body-style": ["error", "as-needed"],
+        "camelcase": "off",
         "comma-dangle": ["error", "never"],
         "eqeqeq": "warn",
         "func-names": "off",

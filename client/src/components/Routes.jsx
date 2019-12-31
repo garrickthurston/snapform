@@ -6,6 +6,7 @@ import {
     Redirect
 } from 'react-router-dom';
 import AuthedRoute from './core/AuthedRoute';
+import LoadingComponent from './core/LoadingComponent';
 
 const AuthFlowComponent = React.lazy(() => import(/* webpackChunkName: 'authflow' */'./external/AuthFlow/AuthFlowComponent'));
 const DocsComponent = React.lazy(() => import(/* webpackChunkName: 'docs' */'./external/DocsComponent'));
@@ -18,8 +19,7 @@ export default function Routes({ children }) {
     return (
         <BrowserRouter>
             {children}
-            {/* TODO - add actual loading component */}
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingComponent fullScreen />}>
                 <Switch>
                     <Route exact path="/" component={DashboardComponent} />
                     <Route path="/login" component={AuthFlowComponent} />

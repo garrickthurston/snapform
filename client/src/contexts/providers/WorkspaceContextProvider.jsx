@@ -6,7 +6,7 @@ export const workspaceActionTypes = {
     getWorkspaces: 'GET_WORKSPACES',
     getWorkspace: 'GET_WORKSPACE',
     updateWorkspacesLoading: 'UPDATE_WORKSPACES_LOADING',
-    setWorkspace: 'SET_WORKSPACE'
+    updateWorkspaceLoading: 'UPDATE_WORKSPACE_LOADING'
 };
 
 function getWorkspaces(dispatch) {
@@ -23,19 +23,25 @@ function getWorkspaces(dispatch) {
 }
 
 function getWorkspace(dispatch) {
-    return async (workspaceId) => {
+    return async (workspaceId, projectId) => {
+        dispatch({ type: workspaceActionTypes.updateWorkspaceLoading, payload: true });
+
         let payload;
         try {
             payload = await workspaceApi.getWorkspace(workspaceId);
+            const { projects } = payload;
+
+            let projectIdToFetch = projectId;
+            if (!projectIdToFetch) {
+                projectIdToFetch = projects[0].projectId;
+            }
+
+            const fetchedProject = await workspaceApi.getWorkspaceProject(workspaceId, projectIdToFetch);
+            const project = projects.find((x) => x.projectId === projectIdToFetch);
+            projects.splice(projects.indexOf(project), 1, fetchedProject);
         } finally {
             dispatch({ type: workspaceActionTypes.getWorkspace, payload });
         }
-    };
-}
-
-function setWorkspace(dispatch) {
-    return (workspace) => {
-        dispatch({ type: workspaceActionTypes.setWorkspace, payload: workspace });
     };
 }
 
@@ -58,16 +64,14 @@ export function workspaceReducer(state, action) {
         case workspaceActionTypes.getWorkspace:
             return {
                 ...state,
-                workspace: action.payload
-                    ? {
-                        ...action.payload
-                    }
-                    : undefined
+                workspace: action.payload,
+                workspaceLoading: false,
+                workspaceLoaded: true
             };
-        case workspaceActionTypes.setWorkspace:
+        case workspaceActionTypes.updateWorkspaceLoading:
             return {
                 ...state,
-                workspace: action.payload
+                workspaceLoading: action.payload
             };
         default:
             return state;
@@ -80,6 +84,8 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
         workspacesLoaded: false,
         workspaces: [],
         workspace: undefined,
+        workspaceLoading: false,
+        workspaceLoaded: false,
         ...initialState
     });
 
@@ -87,8 +93,7 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
         ...state,
         actions: {
             getWorkspaces: getWorkspaces(dispatch, state),
-            getWorkspace: getWorkspace(dispatch, state),
-            setWorkspace: setWorkspace(dispatch, state)
+            getWorkspace: getWorkspace(dispatch, state)
         }
     };
 

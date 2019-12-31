@@ -9,9 +9,11 @@ export default function ProjectDbService() {
 
         const result = await executeQuery(_queries.getProject, params);
         if (result.recordset.length) {
-            const project = result.recordset[0];
+            const { project_id, project_name, workspace_id, ...project } = result.recordset[0];
             return {
-                ...project,
+                projectId: project_id,
+                projectName: project_name,
+                workspaceId: workspace_id,
                 ...(project.config ? { config: JSON.parse(project.config) } : {}),
                 ...(project.items ? { items: JSON.parse(project.items) } : {})
             };

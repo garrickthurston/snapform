@@ -8,6 +8,7 @@ import WorkspaceDebugComponent from './WorkspaceDebugComponent';
 import './WorkspaceComponent.scss';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
 import { useUser } from '../../contexts/providers/UserContextProvider';
+import LoadingComponent from '../core/LoadingComponent';
 
 export default function WorkspaceComponent() {
     // eslint-disable-next-line no-unused-vars
@@ -22,10 +23,22 @@ export default function WorkspaceComponent() {
     }, [workspace.workspacesLoading, workspace.workspacesLoaded, workspace.actions]);
 
     useEffect(() => {
-        if (workspace.workspacesLoaded && workspace.workspaces.length && !workspace.workspace) {
-            workspace.actions.setWorkspace(workspace.workspaces[0]);
+        if (workspace.workspacesLoaded
+            && workspace.workspaces.length
+            && !workspace.workspaceLoaded
+            && !workspace.workspaceLoading) {
+            const { workspaceId } = workspace.workspaces[0];
+            workspace.actions.getWorkspace(params.workspaceId || workspaceId);
         }
-    }, [workspace.workspacesLoaded, workspace.workspaces, workspace.workspace, workspace.actions]);
+    }, [
+        workspace.workspacesLoaded,
+        workspace.workspaces,
+        workspace.workspace,
+        workspace.workspaceLoading,
+        workspace.workspaceLoaded,
+        workspace.actions,
+        params
+    ]);
 
     const renderDebugComponent = useMemo(() => {
         const { isAdmin } = user.data;
@@ -51,7 +64,7 @@ export default function WorkspaceComponent() {
                             <WorkspaceTabsComponent />
                         </div>
                         <div className="workspace-editor-body">
-                            <GridComponent />
+                            {workspace.workspaceLoaded ? <GridComponent /> : <LoadingComponent />}
                         </div>
                     </div>
                 </div>

@@ -9,7 +9,27 @@ export default function UserWorkspaceDbService() {
 
         const result = await executeQuery(_queries.getAllUserWorkspaces, params);
 
-        return result.recordset;
+        const results = [];
+        result.recordset.forEach((item) => {
+            const workspace = results.find(x => x.workspaceId === item.workspace_id);
+            if (workspace) {
+                workspace.project.push({
+                    projectId: item.project_id,
+                    projectName: item.project_name
+                });
+            } else {
+                results.push({
+                    workspaceId: item.workspace_id,
+                    workspaceName: item.workspace_name,
+                    projects: [{
+                        projectId: item.project_id,
+                        projectName: item.project_name
+                    }]
+                });
+            }
+        });
+
+        return results;
     };
 
     this.initiateUserWorkspace = async (userId, workspace) => {
@@ -59,7 +79,27 @@ export default function UserWorkspaceDbService() {
 
         const result = await executeQuery(_queries.getUserWorkspace, params);
         if (result.recordset.length) {
-            return result.recordset[0];
+            const results = [];
+            result.recordset.forEach((item) => {
+                const workspace = results.find(x => x.workspaceId === item.workspace_id);
+                if (workspace) {
+                    workspace.project.push({
+                        projectId: item.project_id,
+                        projectName: item.project_name
+                    });
+                } else {
+                    results.push({
+                        workspaceId: item.workspace_id,
+                        workspaceName: item.workspace_name,
+                        projects: [{
+                            projectId: item.project_id,
+                            projectName: item.project_name
+                        }]
+                    });
+                }
+            });
+            
+            return results[0];
         }
 
         return {};

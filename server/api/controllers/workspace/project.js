@@ -37,7 +37,7 @@ export default function ProjectController() {
     this.postProject = async (req, res) => {
         try {
             const { workspaceId } = req.params;
-            const { projectName = null } = req.body;
+            const { projectName = null } = req.body || {};
 
             const result = await this.projectDbService.initiateProject(workspaceId, projectName);
 

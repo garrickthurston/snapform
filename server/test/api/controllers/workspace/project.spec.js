@@ -66,7 +66,7 @@ describe('Project Controller', () => {
         });
     });
 
-    describe('getProject', () => {
+    describe('updateProject', () => {
         it('should update project', async () => {
             const controller = new ProjectController();
 
@@ -124,6 +124,108 @@ describe('Project Controller', () => {
                 projectId: 'project_id',
                 projectName: 'project_name'
             });
+            assert.calledWith(resSpy, 500);
+        });
+    });
+
+    describe('postProject', () => {
+        it('should post project without defaults', async () => {
+            const controller = new ProjectController();
+
+            projectDbServiceStub = sinon.stub(controller.projectDbService, 'initiateProject').resolves({
+                workspaceId: 'workspace_id',
+                workspaceName: 'workspace_name',
+                projects: [{
+                    projectId: 'project_id',
+                    projectName: 'project_name',
+                    config: {},
+                    items: {}
+                }]
+            });
+            resSpy = sinon.spy(res, 'status');
+            resJsonSpy = sinon.spy(res, 'json');
+            const req = {
+                params: {
+                    workspaceId: 'workspace_id'
+                }
+            };
+
+            await controller.postProject(req, res);
+
+            assert.match(projectDbServiceStub.callCount, 1);
+            assert.match(projectDbServiceStub.args[0][0], 'workspace_id');
+            assert.match(projectDbServiceStub.args[0][1], null);
+            assert.calledWith(resSpy, 201);
+            assert.calledWith(resJsonSpy, {
+                workspaceId: 'workspace_id',
+                workspaceName: 'workspace_name',
+                projects: [{
+                    projectId: 'project_id',
+                    projectName: 'project_name',
+                    config: {},
+                    items: {}
+                }]
+            });
+        });
+
+        it('should post project with defaults', async () => {
+            const controller = new ProjectController();
+
+            projectDbServiceStub = sinon.stub(controller.projectDbService, 'initiateProject').resolves({
+                workspaceId: 'workspace_id',
+                workspaceName: 'workspace_name',
+                projects: [{
+                    projectId: 'project_id',
+                    projectName: 'some-other-name',
+                    config: {},
+                    items: {}
+                }]
+            });
+            resSpy = sinon.spy(res, 'status');
+            resJsonSpy = sinon.spy(res, 'json');
+            const req = {
+                params: {
+                    workspaceId: 'workspace_id'
+                },
+                body: {
+                    projectName: 'some-other-name'
+                }
+            };
+
+            await controller.postProject(req, res);
+
+            assert.match(projectDbServiceStub.callCount, 1);
+            assert.match(projectDbServiceStub.args[0][0], 'workspace_id');
+            assert.match(projectDbServiceStub.args[0][1], 'some-other-name');
+            assert.calledWith(resSpy, 201);
+            assert.calledWith(resJsonSpy, {
+                workspaceId: 'workspace_id',
+                workspaceName: 'workspace_name',
+                projects: [{
+                    projectId: 'project_id',
+                    projectName: 'some-other-name',
+                    config: {},
+                    items: {}
+                }]
+            });
+        });
+
+        it('should return 500 if query fails', async () => {
+            const controller = new ProjectController();
+
+            projectDbServiceStub = sinon.stub(controller.projectDbService, 'initiateProject').throws();
+            resSpy = sinon.spy(res, 'status');
+            const req = {
+                params: {
+                    workspaceId: 'workspace_id'
+                }
+            };
+
+            await controller.postProject(req, res);
+
+            assert.match(projectDbServiceStub.callCount, 1);
+            assert.match(projectDbServiceStub.args[0][0], 'workspace_id');
+            assert.match(projectDbServiceStub.args[0][1], null);
             assert.calledWith(resSpy, 500);
         });
     });

@@ -27,7 +27,7 @@ export default function ProjectDbService() {
         const params = [
             { name: 'workspace_id', type: dataTypes.UniqueIdentifier, value: workspaceId },
             { name: 'project_id', type: dataTypes.UniqueIdentifier, value: projectId },
-            { name: 'project_name', type: dataTypes.NVarChar, value: project.project_name },
+            { name: 'project_name', type: dataTypes.NVarChar, value: project.projectName },
             { name: 'config', type: dataTypes.NVarChar, value: JSON.stringify(project.config) },
             { name: 'items', type: dataTypes.NVarChar, value: JSON.stringify(project.items) }
         ];
@@ -37,7 +37,7 @@ export default function ProjectDbService() {
         return this.getProject(workspaceId, projectId);
     };
 
-    this.initiateProject = async (workspaceId, projectName = null) => {
+    this.initiateProject = async (workspaceId, projectName) => {
         const project = {
             project_id: guid(),
             project_name: projectName || 'Untitled Project',

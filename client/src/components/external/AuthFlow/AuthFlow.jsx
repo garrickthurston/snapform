@@ -1,20 +1,20 @@
 import React, { useMemo, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQueryParams } from '../../../hooks/routeHooks';
-import LoginComponent from './LoginComponent';
 import { useUser } from '../../../contexts/providers/UserContextProvider';
+import LoginForm from './LoginForm';
 
-import './AuthFlowComponent.scss';
+import './AuthFlow.scss';
 import '../../../../assets/images/login-background-1.jpg';
 import '../../../../assets/images/login-background-2.jpg';
 import '../../../../assets/images/mgt-logo-2.png';
 
 const _backgrounds = ['/assets/images/login-background-1.jpg', '/assets/images/login-background-2.jpg'];
 const _displayComponents = {
-    login: <LoginComponent />
+    login: <LoginForm />
 };
 
-export default function AuthFlowComponent({ display }) {
+export default function AuthFlow({ display }) {
     const user = useUser();
     const queryParams = useQueryParams();
     const history = useHistory();

@@ -1,11 +1,11 @@
 import React from 'react';
 import WorkspaceContextProvider from '../../contexts/providers/WorkspaceContextProvider';
-import WorkspaceComponent from './WorkspaceComponent';
+import Workspace from './Workspace';
 
-export default function WorkspaceRootComponent() {
+export default function WorkspaceRoot() {
     return (
         <WorkspaceContextProvider>
-            <WorkspaceComponent />
+            <Workspace />
         </WorkspaceContextProvider>
     );
 }

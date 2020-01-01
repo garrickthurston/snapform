@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
 import uiStrings from '../../ui-strings';
-import './WorkspaceHeaderComponent.scss';
+import './WorkspaceHeader.scss';
 
-export default function WorkspaceHeaderComponent() {
+export default function WorkspaceHeader() {
     const workspace = useWorkspace();
     const [workspaceTitle] = useState((workspace && workspace.workspaceName) || uiStrings.untitledWorkspace);
 

@@ -1,11 +1,11 @@
 import React, { useRef, useState, useCallback } from 'react';
-import PositionSelectorComponent from './PositionSelectorComponent';
-import './GridComponent.scss';
+import PositionSelector from './PositionSelector';
+import './ProjectGrid.scss';
 
 const _defaultCellWidth = 8;
 const _defaultLargeCallWidth = _defaultCellWidth * 10;
 
-export default function GridComponent({ loading }) {
+export default function ProjectGrid({ loading }) {
     const gridRef = useRef(null);
     const [positionSelectorTransform, setPositionSelectorTransform] = useState(null);
     const [positionSelectorClassName, setPositionSelectorClassName] = useState('hidden');
@@ -51,7 +51,7 @@ export default function GridComponent({ loading }) {
                 <rect width="100%" height="100%" fill="url(#largeGrid)" />
             </svg>
             <div className="grid-children">
-                <PositionSelectorComponent transform={positionSelectorTransform} hoverClass={positionSelectorClassName} />
+                <PositionSelector transform={positionSelectorTransform} hoverClass={positionSelectorClassName} />
             </div>
         </div>
     );

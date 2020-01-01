@@ -1,6 +1,7 @@
 import React from 'react';
+import './Dashboard.scss';
 
-export default function DashboardComponent() {
+export default function Dashboard() {
     return (
         <div>DASHBOARD</div>
     );

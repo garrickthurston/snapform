@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import uiStrings from '../ui-strings';
 import { useUser } from '../contexts/providers/UserContextProvider';
-import './MenuComponent.scss';
+import './Menu.scss';
 
-export default function MenuComponent() {
+export default function Menu() {
     const user = useUser();
 
     const renderAuthSection = useMemo(() => {

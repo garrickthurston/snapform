@@ -1,6 +1,7 @@
 import React from 'react';
+import './Blog.scss';
 
-export default function BlogComponent() {
+export default function Blog() {
     return (
         <div>BLOG</div>
     );

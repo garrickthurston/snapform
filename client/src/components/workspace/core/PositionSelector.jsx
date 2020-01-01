@@ -1,7 +1,7 @@
 import React from 'react';
-import './PositionSelectorComponent.scss';
+import './PositionSelector.scss';
 
-export default function PositionSelectorComponent({ transform, hoverClass }) {
+export default function PositionSelector({ transform, hoverClass }) {
     return (
         <svg className={`position-selector ${hoverClass}`}>
             <g>

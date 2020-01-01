@@ -1,25 +1,25 @@
 import React, { useMemo } from 'react';
-import TabComponent from './core/TabComponent';
+import ProjectTab from './core/ProjectTab';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
-import './WorkspaceTabsComponent.scss';
+import './WorkspaceTabs.scss';
 
-export default function WorkspaceTabsComponent() {
+export default function WorkspaceTabs() {
     const workspace = useWorkspace();
 
     const renderTabs = useMemo(() => {
         if (workspace.workspace) {
             const { projects } = workspace.workspace;
             const activeProjects = projects.filter((project) => project.tabStatus);
-            return activeProjects.map((project) => (<TabComponent key={project.projectId} project={project} active={activeProjects.length === 1 || project.active} />));
+            return activeProjects.map((project) => (<ProjectTab key={project.projectId} project={project} active={activeProjects.length === 1 || project.active} />));
         }
 
-        return (<TabComponent empty active />);
+        return (<ProjectTab empty active />);
     }, [workspace.workspace]);
 
     return (
         <div className="project-tabs">
             {renderTabs}
-            <TabComponent add />
+            <ProjectTab add />
         </div>
     );
 }

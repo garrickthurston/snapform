@@ -1,17 +1,16 @@
 import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import WorkspaceHeaderComponent from './WorkspaceHeaderComponent';
-import WorkspaceNavComponent from './WorkspaceNavComponent';
-import WorkspaceTabsComponent from './WorkspaceTabsComponent';
-import GridComponent from './core/GridComponent';
-import WorkspaceDebugComponent from './WorkspaceDebugComponent';
-import './WorkspaceComponent.scss';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
 import { useUser } from '../../contexts/providers/UserContextProvider';
-import LoadingComponent from '../core/LoadingComponent';
+import WorkspaceHeader from './WorkspaceHeader';
+import WorkspaceNav from './WorkspaceNav';
+import WorkspaceTabs from './WorkspaceTabs';
+import ProjectGrid from './core/ProjectGrid';
+import WorkspaceDebug from './WorkspaceDebug';
+import LoadingPulse from '../core/LoadingPulse';
+import './Workspace.scss';
 
-export default function WorkspaceComponent() {
-    // eslint-disable-next-line no-unused-vars
+export default function Workspace() {
     const params = useParams();
     const user = useUser();
     const workspace = useWorkspace();
@@ -43,7 +42,7 @@ export default function WorkspaceComponent() {
     const renderDebugComponent = useMemo(() => {
         const { isAdmin } = user.data;
         if (isAdmin) {
-            return (<WorkspaceDebugComponent />);
+            return (<WorkspaceDebug />);
         }
 
         return null;
@@ -53,7 +52,7 @@ export default function WorkspaceComponent() {
         if (!workspace.workspaceLoaded) {
             return (
                 <div className="workspace-editor-body">
-                    <LoadingComponent />
+                    <LoadingPulse />
                 </div>
             );
         }
@@ -65,15 +64,15 @@ export default function WorkspaceComponent() {
         if (workspace.projectLoading) {
             return (
                 <div className="workspace-editor-body">
-                    <GridComponent project={activeProject} loading={workspace.projectLoading} />
-                    <LoadingComponent />
+                    <ProjectGrid project={activeProject} loading={workspace.projectLoading} />
+                    <LoadingPulse />
                 </div>
             );
         }
 
         return (
             <div className="workspace-editor-body">
-                <GridComponent project={activeProject} />
+                <ProjectGrid project={activeProject} />
             </div>
         );
     }, [workspace]);
@@ -82,15 +81,15 @@ export default function WorkspaceComponent() {
         <div className="workspace-container">
             <div className="workspace">
                 <div className="workspace-head">
-                    <WorkspaceHeaderComponent />
+                    <WorkspaceHeader />
                 </div>
                 <div className="workspace-body">
                     <div className="workspace-nav">
-                        <WorkspaceNavComponent />
+                        <WorkspaceNav />
                     </div>
                     <div className="workspace-editor">
                         <div className="workspace-tabs">
-                            <WorkspaceTabsComponent loading={workspace.workspaceLoading || workspace.projectLoading} />
+                            <WorkspaceTabs loading={workspace.workspaceLoading || workspace.projectLoading} />
                         </div>
                         {renderGridView}
                     </div>

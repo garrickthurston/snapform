@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useUser } from '../../../contexts/providers/UserContextProvider';
 import TextInput from '../../core/TextInput';
 import Button from '../../core/Button';
-import { useUser } from '../../../contexts/providers/UserContextProvider';
 import uiStrings from '../../../ui-strings';
-import './LoginComponent.scss';
+import './LoginForm.scss';
 
-export default function LoginComponent() {
+export default function LoginForm() {
     const user = useUser();
     const history = useHistory();
     const [username, setUsername] = useState('');

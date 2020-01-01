@@ -112,8 +112,14 @@ function initiateProject(dispatch, state) {
     return async (workspaceId, projectName = null) => {
         dispatch({ type: workspaceActionTypes.setProjectLoading, payload: true });
 
-        const { workspace } = state;
+        const { workspace, workspaces } = state;
         let updatedProjects = [];
+        let updatedWorkspace = {
+            ...workspace
+        };
+        const updatedWorkspaces = [
+            ...workspaces
+        ];
         try {
             const project = {
                 ...await workspaceApi.postWorkspaceProject(workspaceId, projectName),
@@ -131,12 +137,19 @@ function initiateProject(dispatch, state) {
                     project
                 ];
             }
+            updatedWorkspace = {
+                ...updatedWorkspace,
+                projects: updatedProjects || workspace.projects
+            };
+            updatedWorkspaces.splice(updatedWorkspaces.indexOf(updatedWorkspaces.find((x) => x.workspaceId === workspace.workspaceId)), 1, {
+                ...updatedWorkspace
+            });
         } finally {
             dispatch({
                 type: workspaceActionTypes.initiateProject,
                 payload: {
-                    ...workspace,
-                    projects: updatedProjects || workspace.projects
+                    workspace: updatedWorkspace,
+                    workspaces: updatedWorkspaces
                 }
             });
         }
@@ -189,7 +202,8 @@ export function workspaceReducer(state, action) {
         case workspaceActionTypes.initiateProject:
             return {
                 ...state,
-                workspace: action.payload,
+                workspace: action.payload.workspace,
+                workspaces: action.payload.workspaces,
                 projectLoading: false
             };
         default:

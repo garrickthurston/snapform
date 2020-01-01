@@ -1,14 +1,14 @@
 import React from 'react';
 import UserProvider from '../contexts/providers/UserContextProvider';
-import MenuComponent from './MenuComponent';
+import Menu from './Menu';
 import Routes from './Routes';
-import './AppComponent.scss';
+import './App.scss';
 
-export default function AppComponent() {
+export default function App() {
     return (
         <UserProvider initialState={{}}>
             <Routes>
-                <MenuComponent />
+                <Menu />
             </Routes>
         </UserProvider>
     );

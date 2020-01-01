@@ -1,8 +1,8 @@
 import React from 'react';
-import './LoadingComponent.scss';
+import './LoadingPulse.scss';
 
 const _loadingClassName = 'loading-pulse';
-export default function LoadingComponent({ fullScreen }) {
+export default function LoadingPulse({ fullScreen }) {
     const pulseClassName = `${_loadingClassName} ${fullScreen ? 'full-screen' : ''}`;
 
     return (

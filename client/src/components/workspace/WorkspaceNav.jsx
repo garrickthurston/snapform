@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
-import './WorkspaceNavComponent.scss';
+import './WorkspaceNav.scss';
+import WorkspaceNavList from './WorkspaceNavList';
 
-export default function WorkspaceNavComponent() {
+export default function WorkspaceNav() {
     const workspace = useWorkspace();
 
     const renderWorkspaces = useMemo(() => {
@@ -11,24 +12,10 @@ export default function WorkspaceNavComponent() {
         return workspaces.map((item) => {
             const { projects } = item;
 
-            const renderProjects = () => {
-                if (projects.length) {
-                    return (
-                        <ul>
-                            {projects.map((project) => (
-                                <li key={project.projectId}>{project.projectName}</li>
-                            ))}
-                        </ul>
-                    );
-                }
-
-                return null;
-            };
-
             return (
                 <li key={item.workspaceId}>
                     {item.workspaceName}
-                    {renderProjects()}
+                    {projects ? <WorkspaceNavList workspaceId={item.workspaceId} /> : null}
                 </li>
             );
         });

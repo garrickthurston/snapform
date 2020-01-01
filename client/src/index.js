@@ -1,9 +1,8 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'jquery';
 import 'bootstrap';
 
-import AppComponent from './components/AppComponent';
+import App from './components/App';
 
-ReactDOM.render(<AppComponent />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));

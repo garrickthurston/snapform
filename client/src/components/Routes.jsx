@@ -6,27 +6,27 @@ import {
     Redirect
 } from 'react-router-dom';
 import AuthedRoute from './core/AuthedRoute';
-import LoadingComponent from './core/LoadingComponent';
+import LoadingPulse from './core/LoadingPulse';
 
-const AuthFlowComponent = React.lazy(() => import(/* webpackChunkName: 'authflow' */'./external/AuthFlow/AuthFlowComponent'));
-const DocsComponent = React.lazy(() => import(/* webpackChunkName: 'docs' */'./external/DocsComponent'));
-const BlogComponent = React.lazy(() => import(/* webpackChunkName: 'blog' */'./external/BlogComponent'));
-const TutorialComponent = React.lazy(() => import(/* webpackChunkName: 'tutorial' */'./external/TutorialComponent'));
-const WorkspaceRootComponent = React.lazy(() => import(/* webpackChunkName: 'workspace' */'./workspace/WorkspaceRootComponent'));
-const DashboardComponent = React.lazy(() => import(/* webpackChunkName: 'dashboard' */'./external/DashboardComponent'));
+const AuthFlow = React.lazy(() => import(/* webpackChunkName: 'authflow' */'./external/AuthFlow/AuthFlow'));
+const Docs = React.lazy(() => import(/* webpackChunkName: 'docs' */'./external/Docs'));
+const Blog = React.lazy(() => import(/* webpackChunkName: 'blog' */'./external/Blog'));
+const Tutorial = React.lazy(() => import(/* webpackChunkName: 'tutorial' */'./external/Tutorial'));
+const WorkspaceRoot = React.lazy(() => import(/* webpackChunkName: 'workspace' */'./workspace/WorkspaceRoot'));
+const Dashboard = React.lazy(() => import(/* webpackChunkName: 'dashboard' */'./external/Dashboard'));
 
 export default function Routes({ children }) {
     return (
         <BrowserRouter>
             {children}
-            <Suspense fallback={<LoadingComponent fullScreen />}>
+            <Suspense fallback={<LoadingPulse fullScreen />}>
                 <Switch>
-                    <Route exact path="/" component={DashboardComponent} />
-                    <Route path="/login" component={AuthFlowComponent} />
-                    <Route path="/docs" component={DocsComponent} />
-                    <Route path="/blog" component={BlogComponent} />
-                    <Route path="/tutorial" component={TutorialComponent} />
-                    <AuthedRoute path="/workspace/:workspaceId?/:projectId?" component={WorkspaceRootComponent} />
+                    <Route exact path="/" component={Dashboard} />
+                    <Route path="/login" component={AuthFlow} />
+                    <Route path="/docs" component={Docs} />
+                    <Route path="/blog" component={Blog} />
+                    <Route path="/tutorial" component={Tutorial} />
+                    <AuthedRoute path="/workspace/:workspaceId?/:projectId?" component={WorkspaceRoot} />
                     <Route render={() => <Redirect to="/" />} />
                 </Switch>
             </Suspense>

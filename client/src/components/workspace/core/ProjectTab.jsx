@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useWorkspace } from '../../../contexts/providers/WorkspaceContextProvider';
 import uiStrings from '../../../ui-strings';
-import './TabComponent.scss';
+import './ProjectTab.scss';
 
 const _tabClassName = 'project-tab-outer';
-export default function TabComponent({ project, active, add }) {
+export default function Tab({ project, active, add }) {
     const workspace = useWorkspace();
     const loading = workspace.workspaceLoading || workspace.projectLoading;
     const tabClassName = `${_tabClassName} ${(project && project.active) || active ? 'active' : ''} ${add ? 'add' : ''}`;

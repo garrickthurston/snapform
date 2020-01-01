@@ -7,7 +7,7 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBug } from '@fortawesome/free-solid-svg-icons';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
-import './WorkspaceDebugComponent.scss';
+import './WorkspaceDebug.scss';
 
 const _jsonSyntaxFormat = (json) => {
     let formattedJson = json;
@@ -32,7 +32,7 @@ const _jsonSyntaxFormat = (json) => {
     });
 };
 
-export default function WorkspaceDebugComponent() {
+export default function WorkspaceDebug() {
     const { workspace } = useWorkspace();
     const [debugWindowOpen, setDebugWindowOpen] = useState(false);
     const windowRef = useRef(null);

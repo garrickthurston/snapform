@@ -1,4 +1,5 @@
 import { executeQuery, dataTypes } from '../../../utils/dbUtils';
+import { guid } from '../../../utils/encryptionUtils';
 
 export default function ProjectDbService() {
     this.getProject = async (workspaceId, projectId) => {
@@ -35,6 +36,27 @@ export default function ProjectDbService() {
 
         return this.getProject(workspaceId, projectId);
     };
+
+    this.initiateProject = async (workspaceId, projectName = null) => {
+        const project = {
+            project_id: guid(),
+            project_name: projectName || 'Untitled Project',
+            config: {},
+            items: {}
+        };
+        
+        const params = [
+            { name: 'workspace_id', type: dataTypes.UniqueIdentifier, value: workspaceId },
+            { name: 'project_id', type: dataTypes.UniqueIdentifier, value: project.project_id },
+            { name: 'project_name', type: dataTypes.NVarChar, value: project.project_name },
+            { name: 'config', type: dataTypes.NVarChar, value: JSON.stringify(project.config) },
+            { name: 'items', type: dataTypes.NVarChar, value: JSON.stringify(project.items) }
+        ];
+
+        await executeQuery(_queries.insertProject, params);
+
+        return this.getProject(workspaceId, project.project_id);
+    };
 };
 
 const _queries = {
@@ -51,5 +73,9 @@ const _queries = {
             p.items = @items
         FROM [app].[project] p
         WHERE p.workspace_id = @workspace_id AND p.project_id = @project_id
+    `,
+    insertProject: `
+        INSERT [app].[project] (project_id, workspace_id, project_name, config, items)
+        VALUES (@project_id, @workspace_id, @project_name, @config, @items)
     `
 };

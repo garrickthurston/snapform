@@ -33,4 +33,20 @@ export default function ProjectController() {
             });
         }
     };
+
+    this.postProject = async (req, res) => {
+        try {
+            const { workspaceId } = req.params;
+            const { projectName = null } = req.body;
+
+            const result = await this.projectDbService.initiateProject(workspaceId, projectName);
+
+            res.status(201).json(result);
+        } catch (e) {
+            res.status(500).json({
+                error: e.message || 'Error Posting Project',
+                stack: e.stack
+            });
+        }
+    };
 };

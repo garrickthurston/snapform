@@ -12,8 +12,13 @@ function getWorkspaceProject(workspaceId, projectId) {
     return api.get(`workspaces/${workspaceId}/projects/${projectId}`);
 }
 
+function postWorkspaceProject(workspaceId, projectName = null) {
+    return api.post(`workspaces/${workspaceId}/projects`, { projectName });
+}
+
 export default {
     getWorkspaces,
     getWorkspace,
-    getWorkspaceProject
+    getWorkspaceProject,
+    postWorkspaceProject
 };

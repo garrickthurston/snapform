@@ -51,6 +51,8 @@
         ],
         "import/no-unresolved": "off",
         "indent": [ "error",  4, { "SwitchCase": 1 } ],
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/interactive-supports-focus": "off",
         "jsx-a11y/label-has-for": "off",
         "linebreak-style": "off",
         "max-len": "off",

@@ -1,29 +1,40 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import PositionSelectorComponent from './PositionSelectorComponent';
 import './GridComponent.scss';
 
 const _defaultCellWidth = 8;
 const _defaultLargeCallWidth = _defaultCellWidth * 10;
 
-export default function GridComponent() {
+export default function GridComponent({ loading }) {
     const gridRef = useRef(null);
     const [positionSelectorTransform, setPositionSelectorTransform] = useState(null);
     const [positionSelectorClassName, setPositionSelectorClassName] = useState('hidden');
 
-    const handleGridMouseEnter = () => {
+    const handleGridMouseEnter = useCallback(() => {
+        if (loading) {
+            return;
+        }
+
         setPositionSelectorClassName('');
-    };
-    const handleGridMouseExit = () => {
+    }, [loading]);
+    const handleGridMouseExit = useCallback(() => {
+        if (loading) {
+            return;
+        }
+
         setPositionSelectorClassName('hidden');
-    };
-    const handleGridMouseMove = (evt) => {
+    }, [loading]);
+    const handleGridMouseMove = useCallback((evt) => {
+        if (loading) {
+            return;
+        }
         const { offsetX, offsetY } = evt.nativeEvent;
 
         const x = Math.floor(offsetX / _defaultCellWidth) * _defaultCellWidth;
         const y = Math.floor(offsetY / _defaultCellWidth) * _defaultCellWidth;
 
         setPositionSelectorTransform(`translate(${x},${y})`);
-    };
+    }, [loading]);
 
     return (
         <div className="sf-grid-bg" onMouseMove={handleGridMouseMove} onMouseEnter={handleGridMouseEnter} onMouseLeave={handleGridMouseExit}>

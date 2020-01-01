@@ -49,9 +49,35 @@ export default function WorkspaceComponent() {
         return null;
     }, [user.data]);
 
-    const activeProject = workspace.workspace
-        && workspace.workspace.projects
-        && workspace.workspace.projects.find((item) => item.active);
+    const renderGridView = useMemo(() => {
+        if (!workspace.workspaceLoaded) {
+            return (
+                <div className="workspace-editor-body">
+                    <LoadingComponent />
+                </div>
+            );
+        }
+
+        const activeProject = workspace.workspace
+            && workspace.workspace.projects
+            && workspace.workspace.projects.find((item) => item.active);
+
+        if (workspace.projectLoading) {
+            return (
+                <div className="workspace-editor-body">
+                    <GridComponent project={activeProject} loading={workspace.projectLoading} />
+                    <LoadingComponent />
+                </div>
+            );
+        }
+
+        return (
+            <div className="workspace-editor-body">
+                <GridComponent project={activeProject} />
+            </div>
+        );
+    }, [workspace]);
+
     return (
         <div className="workspace-container">
             <div className="workspace">
@@ -64,11 +90,9 @@ export default function WorkspaceComponent() {
                     </div>
                     <div className="workspace-editor">
                         <div className="workspace-tabs">
-                            <WorkspaceTabsComponent />
+                            <WorkspaceTabsComponent loading={workspace.workspaceLoading || workspace.projectLoading} />
                         </div>
-                        <div className="workspace-editor-body">
-                            {workspace.workspaceLoaded ? <GridComponent project={activeProject} /> : <LoadingComponent />}
-                        </div>
+                        {renderGridView}
                     </div>
                 </div>
             </div>

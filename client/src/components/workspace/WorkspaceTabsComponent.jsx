@@ -9,8 +9,8 @@ export default function WorkspaceTabsComponent() {
     const renderTabs = useMemo(() => {
         if (workspace.workspace) {
             const { projects } = workspace.workspace;
-            const activeProjects = projects.filter((project) => project.tabActive);
-            return activeProjects.map((project) => (<TabComponent key={project.projectId} project={project} active={activeProjects.length === 1} />));
+            const activeProjects = projects.filter((project) => project.tabStatus);
+            return activeProjects.map((project) => (<TabComponent key={project.projectId} project={project} active={activeProjects.length === 1 || project.active} />));
         }
 
         return (<TabComponent empty active />);

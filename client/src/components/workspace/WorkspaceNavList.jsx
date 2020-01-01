@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
 import './WorkspaceNavList.scss';
 
@@ -6,13 +6,15 @@ export default function WorkspaceNavList({ workspaceId }) {
     const workspace = useWorkspace();
     const { projects } = (workspace && workspace.workspaces && workspace.workspaces.find((x) => x.workspaceId === workspaceId)) || {};
 
+    const renderProjects = useMemo(() => (projects.map((project) => (
+        <li className="ws-project-item" key={project.projectId}>
+            <span>{project.projectName}</span>
+        </li>
+    ))), [projects]);
+
     return (
-        <div className="workspace-nav-list">
-            <ul>
-                {projects.map((project) => (
-                    <li key={project.projectId}>{project.projectName}</li>
-                ))}
-            </ul>
-        </div>
+        <ul className="workspace-nav-list">
+            {renderProjects}
+        </ul>
     );
 }

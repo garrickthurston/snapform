@@ -22,10 +22,8 @@
             width: 100%;
 
             .workspace-nav {
-                display: table;
-                flex: 1 1 auto;
-                height: 100%;
-                width: 224px;
+                flex: 1 0 auto;
+                width: 178px;
                 border-right: 1px solid #aaa;
                 position: relative;
             }

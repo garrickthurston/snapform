@@ -6,4 +6,15 @@
     left: 0;
     overflow: auto;
     margin: 0;
+    list-style-type: none;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding-inline-start: 0.5em;
+
+    .ws-item {
+        width: calc(100%);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 }

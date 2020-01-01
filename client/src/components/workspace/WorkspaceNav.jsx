@@ -13,8 +13,8 @@ export default function WorkspaceNav() {
             const { projects } = item;
 
             return (
-                <li key={item.workspaceId}>
-                    {item.workspaceName}
+                <li className="ws-item" key={item.workspaceId}>
+                    <span>{item.workspaceName}</span>
                     {projects ? <WorkspaceNavList workspaceId={item.workspaceId} /> : null}
                 </li>
             );

@@ -1,3 +1,5 @@
+@import '../../core/variables.scss';
+
 .auth-flow-container {
     position: absolute;
     top: 0;
@@ -21,7 +23,7 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%,-50%);
-        background-color: rgba(255, 255, 255, .9);
+        background-color: $ninety-opaque-white;
         z-index: 60;
         padding: 34px 12px 18px;
         @media (max-width: 600px) {

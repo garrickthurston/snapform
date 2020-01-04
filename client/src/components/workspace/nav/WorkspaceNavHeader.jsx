@@ -7,7 +7,9 @@ import './WorkspaceNavHeader.scss';
 export default function WorkspaceNavHeader() {
     return (
         <div className="workspace-nav-header">
-            <span className="header-text">{uiStrings.workspaces}</span>
+            <div className="workspace-nav-header-text">
+                <span className="header-text">{uiStrings.workspaces}</span>
+            </div>
             <div className="header-actions">
                 <button className="add-workspace">
                     <FontAwesomeIcon icon={faPlus} />

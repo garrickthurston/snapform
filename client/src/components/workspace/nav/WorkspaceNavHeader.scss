@@ -1,19 +1,23 @@
 .workspace-nav-header {
-    position: relative;
     padding-left: 0.6em;
-    width: 100%;
+    position: relative;
+    display: flex;
 
-    .header-text {
-        font-size: 0.9em;
-        font-weight: 500;
+    &-text {
+        flex: 1;
         cursor: default;
+        width: calc(100%);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        .header-text {
+            font-size: 0.9em;
+            font-weight: 500;
+        }
     }
 
     .header-actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-
         button {
             background: transparent;
             border: 0;

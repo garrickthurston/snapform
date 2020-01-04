@@ -1,6 +1,8 @@
+@import '../../core/variables.scss';
+
 .project-tab-outer {
     height: 31px;
-    background: #FFF;
+    background: $white;
     overflow: hidden;
     margin-top: 4px;
     margin-right: -3px;
@@ -18,7 +20,7 @@
         }
 
         .project-tab-inner {
-            border-bottom: 1px solid #FFF;
+            border-bottom: 1px solid $white;
         }
     }
 
@@ -42,7 +44,7 @@
 
     .project-tab-inner {
         height: calc(100% - 4px);
-        border: 1px solid #AAA;
+        border: 1px solid $semi-dark-border-color;
         padding: 0 0 0 8px;
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;

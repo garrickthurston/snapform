@@ -1,3 +1,5 @@
+@import '../../core/variables.scss';
+
 .workspace-nav-list {
     list-style-type: none;
     margin-block-start: 0;
@@ -25,16 +27,16 @@
 
         &.tab-active {
             .ws-project-item-text {
-                color: rgb(0, 123, 255);
+                color: $blue;
             }
 
             .fa-circle {
-                color: rgb(0, 123, 255);
+                color: $blue;
             }
         }
 
         &:hover {
-            background: #eee;
+            background: $light-hover-color;
         }
     }
 }

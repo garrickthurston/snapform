@@ -1,9 +1,11 @@
+@import '../../core/variables.scss';
+
 .position-selector {
     width: 100%;
     height: 100%;
 
     > g {
-        fill: #B0B0B0;
+        fill: $selector-fill;
         display: none;
     }
 

@@ -1,3 +1,5 @@
+@import '../../core/variables.scss';
+
 .login-form {
     width: 308px;
     padding-top: 22px;
@@ -5,12 +7,12 @@
 
     > button[type=submit] {
         width: 50%;
-        background: #FFF;
+        background: $white;
     }
 
     .error-message-container {
         margin-top: 12px;
-        color: #FF1212;
+        color: $red;
         opacity: 0.8;
     }
 }

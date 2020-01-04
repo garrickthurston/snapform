@@ -1,3 +1,5 @@
+@import '../core/variables.scss';
+
 .workspace-container {
     display: table-row;
     width: 100%;
@@ -12,8 +14,20 @@
         .workspace-nav {
             flex: 1 0 auto;
             width: 178px;
-            border-right: 1px solid #aaa;
+            border-right: 1px solid $semi-dark-border-color;
             position: relative;
+            max-width: 644px;
+            min-width: 114px;
+
+            .ws-nav-resize {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: -4px;
+                width: 8px;
+                cursor: ew-resize;
+                z-index: 1;
+            }
         }
 
         .workspace-body {
@@ -29,7 +43,7 @@
             }
 
             .workspace-editor {
-                border-top: 1px solid #aaa;
+                border-top: 1px solid $semi-dark-border-color;
                 display: flex;
                 flex-direction: column;
                 flex: 1 1 auto;
@@ -43,7 +57,7 @@
                 }
 
                 .workspace-editor-body { 
-                    border-top: 1px solid #aaa;
+                    border-top: 1px solid $semi-dark-border-color;
                     display: flex;
                     flex: 1 1 auto;
                     height: 100%;

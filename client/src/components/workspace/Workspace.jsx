@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, {
+    useEffect,
+    useMemo,
+    useCallback,
+    useState,
+    useRef
+} from 'react';
 // import { useParams } from 'react-router-dom';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
 import { useUser } from '../../contexts/providers/UserContextProvider';
@@ -15,6 +21,9 @@ export default function Workspace() {
     // const params = useParams();
     const user = useUser();
     const { workspaces, ...workspace } = useWorkspace();
+    const [navStyle, setNavStyle] = useState({});
+    const [navResizing, setNavResizing] = useState(null);
+    const navRef = useRef(null);
 
     useEffect(() => {
         if (!workspace.workspacesLoading && !workspace.workspacesLoaded) {
@@ -25,6 +34,63 @@ export default function Workspace() {
         workspace.workspacesLoaded,
         workspace.actions
     ]);
+
+    const handleResizeMouseDown = useCallback(() => {
+        if (!navRef.current) {
+            return;
+        }
+
+        const { offsetWidth } = navRef.current;
+
+        setNavResizing(true);
+        setNavStyle({
+            ...navStyle,
+            width: offsetWidth
+        });
+    }, [
+        navStyle,
+        setNavStyle,
+        navRef,
+        setNavResizing
+    ]);
+
+    const handleResizeMouseMove = useCallback((evt) => {
+        if (!navResizing || !navRef.current) {
+            return;
+        }
+
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        const { clientX } = evt;
+
+        setNavStyle({
+            ...navStyle,
+            width: clientX
+        });
+    }, [
+        navRef,
+        navStyle,
+        setNavStyle,
+        navResizing
+    ]);
+
+    const handleResizeMouseUp = useCallback((evt) => {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        setNavResizing(false);
+    }, [setNavResizing]);
+
+    useEffect(() => {
+        document.addEventListener('mousemove', handleResizeMouseMove);
+        document.addEventListener('mouseup', handleResizeMouseUp);
+
+        return () => {
+            document.removeEventListener('mousemove', handleResizeMouseMove);
+            document.removeEventListener('mouseup', handleResizeMouseUp);
+        };
+    });
 
     const renderDebugComponent = useMemo(() => {
         const { isAdmin } = user.data;
@@ -74,8 +140,14 @@ export default function Workspace() {
     return (
         <div className="workspace-container">
             <div className="workspace">
-                <div className="workspace-nav">
+                <div className="workspace-nav" ref={navRef} style={navStyle}>
                     <WorkspaceNav />
+                    <div
+                        role="button"
+                        className="ws-nav-resize"
+                        onMouseDown={handleResizeMouseDown}
+                        onMouseMove={handleResizeMouseMove}
+                    />
                 </div>
                 <div className="workspace-body">
                     <div className="workspace-head">

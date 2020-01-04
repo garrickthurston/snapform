@@ -52,6 +52,7 @@
         "import/no-unresolved": "off",
         "indent": [ "error",  4, { "SwitchCase": 1 } ],
         "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/control-has-associated-label": "off",
         "jsx-a11y/interactive-supports-focus": "off",
         "jsx-a11y/label-has-for": "off",
         "jsx-a11y/no-noninteractive-element-to-interactive-role": "off",

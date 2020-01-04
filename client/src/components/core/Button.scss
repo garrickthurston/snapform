@@ -1,7 +1,7 @@
 @import './variables.scss';
 
 .sf-btn {
-    background-image: linear-gradient(-180deg, rgba(255,255,255,0.20) 0, rgba(255,255,255,0.02) 100%) !important;
+    background-image: linear-gradient(-180deg, $twenty-opaque-white 0, $twenty-five-opaque-white 100%) !important;
     border: 1px solid $default-accent;
     border-radius: $radius;
     color: 1px solid $default-accent;
@@ -27,7 +27,7 @@
     }
 
     &:hover {
-        background-image: linear-gradient(-180deg, rgba(255,255,255,0.25) 0, rgba(255,255,255,0.25) 100%) !important;
+        background-image: linear-gradient(-180deg, $twenty-opaque-white 0, $twenty-five-opaque-white 100%) !important;
     }
 
     &:active {
@@ -36,8 +36,8 @@
     }
 
     &:focus {
-        color: rgba(0, 0, 0, 0.4) !important;
-        border: 1px solid rgba(0, 0, 0, 0.4) !important;
+        color: $forty-opaque-black !important;
+        border: 1px solid $forty-opaque-black !important;
         outline: none !important;
     }
 

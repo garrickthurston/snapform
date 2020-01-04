@@ -1,3 +1,5 @@
+@import '../core/variables.scss';
+
 .workspace-debug-container {
     position: fixed;
     bottom: 0;
@@ -7,8 +9,8 @@
         max-width: 600px;
         max-height: 400px;
         overflow-y: auto;
-        border: 1px solid #aaa;
-        background: rgba(240, 240, 240, 0.9);
+        border: 1px solid $semi-dark-border-color;
+        background: $opaque-light-gray;
         padding: 6px;
         margin-bottom: 0;
         margin-right: 10px;
@@ -16,9 +18,9 @@
 
         .string { color: darkorange; }
         .number { color: green; }
-        .boolean { color: blue; }
-        .null { color: blue; }
-        .key { color: blue; }
+        .boolean { color: $blue; }
+        .null { color: $blue; }
+        .key { color: $blue; }
     }
 
     .workspace-debug-anchor {

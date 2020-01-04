@@ -20,10 +20,10 @@ export default function Tab({ project, active, add }) {
         const { activeWorkspaceId } = workspace.config;
         const activeWorkspace = workspace.workspaces.find((item) => item.workspaceId === activeWorkspaceId);
 
-        let activeProjectId = project.projectId;
+        let { activeProjectId } = activeWorkspace.config;
         const { activeProjectTabs } = activeWorkspace.config;
         if (activeProjectId.toLowerCase() === project.projectId.toLowerCase()) {
-            activeProjectId = activeProjectTabs.length > 1 ? activeProjectTabs[activeProjectTabs.length - 1] : null;
+            activeProjectId = activeProjectTabs.length > 1 ? activeProjectTabs[activeProjectTabs.length - 2] : null;
         }
 
         const projectId = activeProjectTabs.find((x) => x.toLowerCase() === project.projectId);

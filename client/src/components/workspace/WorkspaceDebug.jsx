@@ -33,7 +33,7 @@ const _jsonSyntaxFormat = (json) => {
 };
 
 export default function WorkspaceDebug() {
-    const { workspace } = useWorkspace();
+    const workspace = useWorkspace();
     const [debugWindowOpen, setDebugWindowOpen] = useState(false);
     const windowRef = useRef(null);
 

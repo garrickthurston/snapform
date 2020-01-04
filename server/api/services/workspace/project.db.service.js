@@ -2,9 +2,8 @@ import { executeQuery, dataTypes } from '../../../utils/dbUtils';
 import { guid } from '../../../utils/encryptionUtils';
 
 export default function ProjectDbService() {
-    this.getProject = async (workspaceId, projectId) => {
+    this.getProject = async (projectId) => {
         const params = [
-            { name: 'workspace_id', type: dataTypes.UniqueIdentifier, value: workspaceId },
             { name: 'project_id', type: dataTypes.UniqueIdentifier, value: projectId }
         ];
 
@@ -34,7 +33,7 @@ export default function ProjectDbService() {
 
         await executeQuery(_queries.updateProject, params);
 
-        return this.getProject(workspaceId, projectId);
+        return this.getProject(projectId);
     };
 
     this.initiateProject = async (workspaceId, projectName) => {
@@ -55,7 +54,7 @@ export default function ProjectDbService() {
 
         await executeQuery(_queries.insertProject, params);
 
-        return this.getProject(workspaceId, project.project_id);
+        return this.getProject(project.project_id);
     };
 };
 
@@ -64,7 +63,7 @@ const _queries = {
         SELECT p.*
         FROM [app].[project] p
         JOIN [app].[workspace] w ON p.workspace_id = w.workspace_id
-        WHERE w.workspace_id = @workspace_id AND p.project_id = @project_id
+        WHERE p.project_id = @project_id
     `,
     updateProject: `
         UPDATE p

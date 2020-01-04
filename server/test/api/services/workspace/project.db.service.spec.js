@@ -15,7 +15,7 @@ describe('Project DB Service', () => {
     });
 
     describe('getProject', () => {
-        it('should retrieve project', async () => {
+        it('should return project', async () => {
             const service = new ProjectDbService();
 
             executeQueryStub = sinon.stub(db, 'executeQuery').resolves({
@@ -28,7 +28,7 @@ describe('Project DB Service', () => {
                 }]
             });
 
-            const result = await service.getProject('workspace_id', 'project_id');
+            const result = await service.getProject('project_id');
 
             assert.match(result, {
                 projectId: 'project_id',
@@ -38,8 +38,7 @@ describe('Project DB Service', () => {
                 items: {}
             });
             assert.match(executeQueryStub.callCount, 1);
-            assert.match(executeQueryStub.args[0][1][0].value, 'workspace_id');
-            assert.match(executeQueryStub.args[0][1][1].value, 'project_id');
+            assert.match(executeQueryStub.args[0][1][0].value, 'project_id');
         });
 
         it('should return null if no project', async () => {
@@ -49,12 +48,11 @@ describe('Project DB Service', () => {
                 recordset: []
             });
 
-            const result = await service.getProject('workspace_id', 'project_id');
+            const result = await service.getProject('project_id');
 
             assert.match(result, null);
             assert.match(executeQueryStub.callCount, 1);
-            assert.match(executeQueryStub.args[0][1][0].value, 'workspace_id');
-            assert.match(executeQueryStub.args[0][1][1].value, 'project_id');
+            assert.match(executeQueryStub.args[0][1][0].value, 'project_id');
         });
     });
 
@@ -90,8 +88,7 @@ describe('Project DB Service', () => {
             assert.match(executeQueryStub.args[0][1][2].value, 'updated_project_name');
             assert.match(executeQueryStub.args[0][1][3].value, JSON.stringify(project.config));
             assert.match(executeQueryStub.args[0][1][4].value, JSON.stringify(project.items));
-            assert.match(executeQueryStub.args[1][1][0].value, 'workspace_id');
-            assert.match(executeQueryStub.args[1][1][1].value, 'project_id');
+            assert.match(executeQueryStub.args[1][1][0].value, 'project_id');
         });
     });
 
@@ -128,8 +125,7 @@ describe('Project DB Service', () => {
             assert.match(executeQueryStub.args[0][1][2].value, 'Untitled Project');
             assert.match(executeQueryStub.args[0][1][3].value, JSON.stringify(project.config));
             assert.match(executeQueryStub.args[0][1][4].value, JSON.stringify(project.items));
-            assert.match(executeQueryStub.args[1][1][0].value, 'workspace_id');
-            assert.match(executeQueryStub.args[1][1][1].value, 'project_id');
+            assert.match(executeQueryStub.args[1][1][0].value, 'project_id');
             assert.match(guidStub.callCount, 1);
         });
 
@@ -165,8 +161,7 @@ describe('Project DB Service', () => {
             assert.match(executeQueryStub.args[0][1][2].value, 'new-project-name');
             assert.match(executeQueryStub.args[0][1][3].value, JSON.stringify(project.config));
             assert.match(executeQueryStub.args[0][1][4].value, JSON.stringify(project.items));
-            assert.match(executeQueryStub.args[1][1][0].value, 'workspace_id');
-            assert.match(executeQueryStub.args[1][1][1].value, 'project_id');
+            assert.match(executeQueryStub.args[1][1][0].value, 'project_id');
             assert.match(guidStub.callCount, 1);
         });
     });

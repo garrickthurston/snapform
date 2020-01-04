@@ -17,8 +17,30 @@ export default function Tab({ project, active, add }) {
             return;
         }
 
-        workspace.actions.setProjectTabStatus(project.projectId, false);
-    }, [workspace.actions, project, loading]);
+        const { activeWorkspaceId } = workspace.config;
+        const activeWorkspace = workspace.workspaces.find((item) => item.workspaceId === activeWorkspaceId);
+
+        let activeProjectId = project.projectId;
+        const { activeProjectTabs } = activeWorkspace.config;
+        if (activeProjectId.toLowerCase() === project.projectId.toLowerCase()) {
+            activeProjectId = activeProjectTabs.length > 1 ? activeProjectTabs[activeProjectTabs.length - 1] : null;
+        }
+
+        const projectId = activeProjectTabs.find((x) => x.toLowerCase() === project.projectId);
+        activeProjectTabs.splice(activeProjectTabs.indexOf(projectId), 1);
+
+        workspace.actions.updateWorkspaceConfig(activeWorkspaceId, {
+            ...activeWorkspace.config,
+            activeProjectId,
+            activeProjectTabs
+        });
+    }, [
+        workspace.actions,
+        workspace.config,
+        workspace.workspaces,
+        project,
+        loading
+    ]);
 
     const renderTabText = useMemo(() => {
         if (project) { return project.projectName; }
@@ -44,9 +66,9 @@ export default function Tab({ project, active, add }) {
             return;
         }
 
+        const { activeWorkspaceId } = workspace.config;
         if (add && !workspace.projectLoading) {
-            const { workspaceId } = workspace.workspace;
-            workspace.actions.initiateProject(workspaceId);
+            workspace.actions.initiateProject(activeWorkspaceId);
             return;
         }
 
@@ -54,12 +76,21 @@ export default function Tab({ project, active, add }) {
             return;
         }
 
-        workspace.actions.setProjectActive(project.projectId);
+        const activeWorkspace = workspace.workspaces.find((item) => item.workspaceId === activeWorkspaceId);
+        if (activeWorkspace.config.activeProjectId.toLowerCase() === project.projectId.toLowerCase()) {
+            return;
+        }
+
+        workspace.actions.updateWorkspaceConfig(activeWorkspaceId, {
+            ...activeWorkspace.config,
+            activeProjectId: project.projectId
+        });
     }, [
         add,
+        workspace.config,
         workspace.projectLoading,
-        workspace.workspace,
         workspace.actions,
+        workspace.workspaces,
         project,
         closeRef,
         loading

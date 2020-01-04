@@ -1,20 +1,21 @@
-.ws-root-nav {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-    margin: 0;
+.workspace-nav-list {
     list-style-type: none;
     margin-block-start: 0;
     margin-block-end: 0;
-    padding-inline-start: 0.5em;
+    padding-inline-start: 0;
 
-    .ws-item {
+    .ws-project-item {
         width: calc(100%);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+
+        &-text {
+            padding-left: 2.25em;
+        }
+
+        &:hover {
+            background: #eee;
+        }
     }
 }

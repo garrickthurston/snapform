@@ -8,5 +8,6 @@ export default {
     logOut: 'Log out',
     invalidUsernameOrPassword: 'Invalid Username or Password',
     untitledWorkspace: 'Untitled Workspace',
-    untitledProject: 'Untitled Project'
+    untitledProject: 'Untitled Project',
+    workspaces: 'Workspaces'
 };

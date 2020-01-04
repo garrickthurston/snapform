@@ -5,6 +5,8 @@ const { assert } = sinon;
 
 describe('Project Controller', () => {
     let projectDbServiceStub;
+    let workspaceDbServiceGetStub;
+    let workspaceDbServiceUpdateStub;
     let resSpy;
     let resJsonSpy;
 
@@ -15,6 +17,8 @@ describe('Project Controller', () => {
 
     afterEach(() => {
         projectDbServiceStub && projectDbServiceStub.restore();
+        workspaceDbServiceGetStub && workspaceDbServiceGetStub.restore();
+        workspaceDbServiceUpdateStub && workspaceDbServiceUpdateStub.restore();
 
         resSpy && resSpy.restore();
         resJsonSpy && resJsonSpy.restore();
@@ -133,15 +137,21 @@ describe('Project Controller', () => {
             const controller = new ProjectController();
 
             projectDbServiceStub = sinon.stub(controller.projectDbService, 'initiateProject').resolves({
-                workspaceId: 'workspace_id',
-                workspaceName: 'workspace_name',
-                projects: [{
-                    projectId: 'project_id',
-                    projectName: 'project_name',
-                    config: {},
-                    items: {}
-                }]
+                projectId: 'project_id',
+                projectName: 'project_name',
+                config: {},
+                items: {}
             });
+            workspaceDbServiceGetStub = sinon.stub(controller.workspaceDbService, 'getWorkspace').resolves({
+                workspaceId: 'workspace_id',
+                userId: 'user_id',
+                workspaceName: 'workspace_name',
+                config: {
+                    activeProjectId: 'active_project_id',
+                    activeProjectTabs: ['active_project_id']
+                }
+            });
+            workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateWorkspace').resolves();
             resSpy = sinon.spy(res, 'status');
             resJsonSpy = sinon.spy(res, 'json');
             const req = {
@@ -155,16 +165,24 @@ describe('Project Controller', () => {
             assert.match(projectDbServiceStub.callCount, 1);
             assert.match(projectDbServiceStub.args[0][0], 'workspace_id');
             assert.match(projectDbServiceStub.args[0][1], null);
+            assert.match(workspaceDbServiceGetStub.callCount, 1);
+            assert.match(workspaceDbServiceGetStub.args[0][0], 'workspace_id');
+            assert.match(workspaceDbServiceUpdateStub.callCount, 1);
+            assert.match(workspaceDbServiceUpdateStub.args[0][0], {
+                workspaceId: 'workspace_id',
+                userId: 'user_id',
+                workspaceName: 'workspace_name',
+                config: {
+                    activeProjectId: 'project_id',
+                    activeProjectTabs: ['active_project_id', 'project_id']
+                }
+            });
             assert.calledWith(resSpy, 201);
             assert.calledWith(resJsonSpy, {
-                workspaceId: 'workspace_id',
-                workspaceName: 'workspace_name',
-                projects: [{
-                    projectId: 'project_id',
-                    projectName: 'project_name',
-                    config: {},
-                    items: {}
-                }]
+                projectId: 'project_id',
+                projectName: 'project_name',
+                config: {},
+                items: {}
             });
         });
 
@@ -172,15 +190,21 @@ describe('Project Controller', () => {
             const controller = new ProjectController();
 
             projectDbServiceStub = sinon.stub(controller.projectDbService, 'initiateProject').resolves({
-                workspaceId: 'workspace_id',
-                workspaceName: 'workspace_name',
-                projects: [{
-                    projectId: 'project_id',
-                    projectName: 'some-other-name',
-                    config: {},
-                    items: {}
-                }]
+                projectId: 'project_id',
+                projectName: 'some-other-name',
+                config: {},
+                items: {}
             });
+            workspaceDbServiceGetStub = sinon.stub(controller.workspaceDbService, 'getWorkspace').resolves({
+                workspaceId: 'workspace_id',
+                userId: 'user_id',
+                workspaceName: 'workspace_name',
+                config: {
+                    activeProjectId: 'active_project_id',
+                    activeProjectTabs: ['active_project_id']
+                }
+            });
+            workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateWorkspace').resolves();
             resSpy = sinon.spy(res, 'status');
             resJsonSpy = sinon.spy(res, 'json');
             const req = {
@@ -197,16 +221,24 @@ describe('Project Controller', () => {
             assert.match(projectDbServiceStub.callCount, 1);
             assert.match(projectDbServiceStub.args[0][0], 'workspace_id');
             assert.match(projectDbServiceStub.args[0][1], 'some-other-name');
+            assert.match(workspaceDbServiceGetStub.callCount, 1);
+            assert.match(workspaceDbServiceGetStub.args[0][0], 'workspace_id');
+            assert.match(workspaceDbServiceUpdateStub.callCount, 1);
+            assert.match(workspaceDbServiceUpdateStub.args[0][0], {
+                workspaceId: 'workspace_id',
+                userId: 'user_id',
+                workspaceName: 'workspace_name',
+                config: {
+                    activeProjectId: 'project_id',
+                    activeProjectTabs: ['active_project_id', 'project_id']
+                }
+            });
             assert.calledWith(resSpy, 201);
             assert.calledWith(resJsonSpy, {
-                workspaceId: 'workspace_id',
-                workspaceName: 'workspace_name',
-                projects: [{
-                    projectId: 'project_id',
-                    projectName: 'some-other-name',
-                    config: {},
-                    items: {}
-                }]
+                projectId: 'project_id',
+                projectName: 'some-other-name',
+                config: {},
+                items: {}
             });
         });
 

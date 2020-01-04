@@ -5,7 +5,7 @@ import './ProjectGrid.scss';
 const _defaultCellWidth = 8;
 const _defaultLargeCallWidth = _defaultCellWidth * 10;
 
-export default function ProjectGrid({ loading }) {
+export default function ProjectGrid({ loading/* , project */ }) {
     const gridRef = useRef(null);
     const [positionSelectorTransform, setPositionSelectorTransform] = useState(null);
     const [positionSelectorClassName, setPositionSelectorClassName] = useState('hidden');
@@ -17,6 +17,7 @@ export default function ProjectGrid({ loading }) {
 
         setPositionSelectorClassName('');
     }, [loading]);
+
     const handleGridMouseExit = useCallback(() => {
         if (loading) {
             return;
@@ -24,6 +25,7 @@ export default function ProjectGrid({ loading }) {
 
         setPositionSelectorClassName('hidden');
     }, [loading]);
+
     const handleGridMouseMove = useCallback((evt) => {
         if (loading) {
             return;

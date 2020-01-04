@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
-import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
-import uiStrings from '../../ui-strings';
+import React, { useMemo } from 'react';
 import './WorkspaceHeader.scss';
 
-export default function WorkspaceHeader() {
-    const workspace = useWorkspace();
-    const [workspaceTitle] = useState((workspace && workspace.workspaceName) || uiStrings.untitledWorkspace);
+export default function WorkspaceHeader({ activeWorkspace }) {
+    const renderWorkspaceName = useMemo(() => (activeWorkspace && activeWorkspace.workspaceName) || '', [activeWorkspace]);
 
     return (
         <div className="workspace-header">
             <div className="title-default">
-                <h4>{workspaceTitle}</h4>
+                <h4>{renderWorkspaceName}</h4>
             </div>
         </div>
     );

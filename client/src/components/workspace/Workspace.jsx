@@ -1,42 +1,29 @@
 import React, { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
 import { useUser } from '../../contexts/providers/UserContextProvider';
 import WorkspaceHeader from './WorkspaceHeader';
-import WorkspaceNav from './WorkspaceNav';
+import WorkspaceNav from './nav/WorkspaceNav';
 import WorkspaceTabs from './WorkspaceTabs';
-import ProjectGrid from './core/ProjectGrid';
+import ProjectGrid from './editor/ProjectGrid';
+import ProjectHeader from './editor/ProjectHeader';
 import WorkspaceDebug from './WorkspaceDebug';
 import LoadingPulse from '../core/LoadingPulse';
 import './Workspace.scss';
 
 export default function Workspace() {
-    const params = useParams();
+    // const params = useParams();
     const user = useUser();
-    const workspace = useWorkspace();
+    const { workspaces, ...workspace } = useWorkspace();
 
     useEffect(() => {
-        if (!workspace.workspacesLoaded && !workspace.workspacesLoading) {
+        if (!workspace.workspacesLoading && !workspace.workspacesLoaded) {
             workspace.actions.getWorkspaces();
         }
-    }, [workspace.workspacesLoading, workspace.workspacesLoaded, workspace.actions]);
-
-    useEffect(() => {
-        if (workspace.workspacesLoaded
-            && workspace.workspaces.length
-            && !workspace.workspaceLoaded
-            && !workspace.workspaceLoading) {
-            const { workspaceId } = workspace.workspaces[0];
-            workspace.actions.getWorkspace(params.workspaceId || workspaceId);
-        }
     }, [
+        workspace.workspacesLoading,
         workspace.workspacesLoaded,
-        workspace.workspaces,
-        workspace.workspace,
-        workspace.workspaceLoading,
-        workspace.workspaceLoaded,
-        workspace.actions,
-        params
+        workspace.actions
     ]);
 
     const renderDebugComponent = useMemo(() => {
@@ -48,50 +35,59 @@ export default function Workspace() {
         return null;
     }, [user.data]);
 
+    let activeWorkspace = {};
+    if (workspaces && workspaces.length) {
+        activeWorkspace = workspaces.find((x) => x.workspaceId === workspace.config.activeWorkspaceId) || {};
+    }
+
     const renderGridView = useMemo(() => {
-        if (!workspace.workspaceLoaded) {
-            return (
-                <div className="workspace-editor-body">
-                    <LoadingPulse />
-                </div>
-            );
+        if (!workspace.workspacesLoaded) {
+            return (<LoadingPulse />);
         }
 
-        const activeProject = workspace.workspace
-            && workspace.workspace.projects
-            && workspace.workspace.projects.find((item) => item.active);
+        if (!activeWorkspace.config || !activeWorkspace.config.activeProjectId) {
+            if (workspace.workspaceLoading || workspace.projectLoading) {
+                return (<LoadingPulse />);
+            }
 
-        if (workspace.projectLoading) {
-            return (
-                <div className="workspace-editor-body">
-                    <ProjectGrid project={activeProject} loading={workspace.projectLoading} />
-                    <LoadingPulse />
-                </div>
-            );
+            // TODO - Add "Create" CTA
+            return null;
         }
+
+        const activeProject = activeWorkspace
+            .projects
+            .find((x) => activeWorkspace.config.activeProjectId.toLowerCase() === x.projectId.toLowerCase());
 
         return (
-            <div className="workspace-editor-body">
-                <ProjectGrid project={activeProject} />
+            <div className="editor-container">
+                <div className="editor-header">
+                    <ProjectHeader project={activeProject} />
+                </div>
+                <div className="editor-grid">
+                    {(workspace.workspaceLoading || workspace.projectLoading) && (<LoadingPulse />)}
+                    <ProjectGrid project={activeProject} loading={workspace.workspaceLoading || workspace.projectLoading} />
+                </div>
             </div>
         );
-    }, [workspace]);
+    }, [workspace, activeWorkspace]);
 
     return (
         <div className="workspace-container">
             <div className="workspace">
-                <div className="workspace-head">
-                    <WorkspaceHeader />
+                <div className="workspace-nav">
+                    <WorkspaceNav />
                 </div>
                 <div className="workspace-body">
-                    <div className="workspace-nav">
-                        <WorkspaceNav />
+                    <div className="workspace-head">
+                        <WorkspaceHeader activeWorkspace={activeWorkspace} />
                     </div>
                     <div className="workspace-editor">
                         <div className="workspace-tabs">
-                            <WorkspaceTabs loading={workspace.workspaceLoading || workspace.projectLoading} />
+                            <WorkspaceTabs activeWorkspace={activeWorkspace} />
                         </div>
-                        {renderGridView}
+                        <div className="workspace-editor-body">
+                            {renderGridView}
+                        </div>
                     </div>
                 </div>
             </div>

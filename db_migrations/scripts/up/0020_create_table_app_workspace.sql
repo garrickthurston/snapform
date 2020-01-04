@@ -1,7 +1,8 @@
 CREATE TABLE [app].[workspace](
 	[workspace_id] [uniqueidentifier] NOT NULL,
     [user_id] [uniqueidentifier] NOT NULL,
-	[workspace_name] [nvarchar](1200) NOT NULL
+	[workspace_name] [nvarchar](1200) NOT NULL,
+	[config] [nvarchar](MAX) NOT NULL,
 CONSTRAINT [pk_app_workspace_workspace_id] PRIMARY KEY NONCLUSTERED 
 (
 	[workspace_id] ASC

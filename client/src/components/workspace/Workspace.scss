@@ -4,38 +4,40 @@
     height: 100%;
 
     .workspace {
-        display: table;
-        width: 100%;
+        display: flex;
+        flex: 1 1 auto;
         height: 100%;
+        width: 100%;
 
-        .workspace-head {
-            display: table-row;
-            width: 100%;
-            height: 46px;
+        .workspace-nav {
+            flex: 1 0 auto;
+            width: 178px;
+            border-right: 1px solid #aaa;
+            position: relative;
         }
 
         .workspace-body {
-            border-top: 1px solid #aaa;
-            display: flex;
+            display: table;
             flex: 1 1 auto;
             height: 100%;
             width: 100%;
 
-            .workspace-nav {
-                flex: 1 0 auto;
-                width: 178px;
-                border-right: 1px solid #aaa;
-                position: relative;
+            .workspace-head {
+                display: table-row;
+                width: 100%;
+                height: 46px;
             }
 
             .workspace-editor {
-                display: table;
+                border-top: 1px solid #aaa;
+                display: flex;
+                flex-direction: column;
                 flex: 1 1 auto;
                 height: 100%;
                 width: 100%;
 
                 .workspace-tabs {
-                    display: table-row;
+                    flex: 1 0 auto;
                     height: 30px;
                     width: 100%;
                 }
@@ -47,6 +49,25 @@
                     height: 100%;
                     width: 100%;
                     position: relative;
+
+                    .editor-container {
+                        display: table;
+                        height: 100%;
+                        width: 100%;
+
+                        .editor-header {
+                            display: table-row;
+                            height: 30px;
+                            width: 100%;
+                        }
+    
+                        .editor-grid {
+                            display: flex;
+                            flex: 1 1 auto;
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
                 }
             }
         }

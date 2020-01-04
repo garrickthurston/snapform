@@ -1,9 +1,21 @@
 .project-tab-outer {
-    height: 100%;
+    height: 31px;
     background: #FFF;
+    overflow: hidden;
+    margin-top: 4px;
+    margin-right: -3px;
+    margin-left: 0;
 
     &.active {
-        z-index: 0;
+        z-index: 1;
+        height: 32px;
+        margin-right: 0;
+        margin-left: 0;
+
+        & ~ .project-tab-outer {
+            margin-right: 0;
+            margin-left: -3px;
+        }
 
         .project-tab-inner {
             border-bottom: 1px solid #FFF;
@@ -11,7 +23,9 @@
     }
 
     &.add {
+        width: auto;
         margin-left: -4px;
+        min-width: 30px;
 
         .project-tab-inner {
             line-height: 1;
@@ -28,7 +42,6 @@
 
     .project-tab-inner {
         height: calc(100% - 4px);
-        margin-top: 5px;
         border: 1px solid #AAA;
         padding: 0 0 0 8px;
         border-top-left-radius: 4px;
@@ -38,6 +51,9 @@
 
         .tab-text {
             flex-grow: 1;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         .tab-close {

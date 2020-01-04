@@ -292,4 +292,56 @@ describe('User Workspace Controller', () => {
             
         });
     });
+
+    describe('updateUserWorkspaceConfig', () => {
+        it('should update user workspace config', async () => {
+            const controller = new WorkspaceController();
+
+            workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateUserWorkspaceConfig').resolves({
+                activeWorkspaceId: 'workspace_id'
+            });
+            resSpy = sinon.spy(res, 'status');
+            resJsonSpy = sinon.spy(res, 'json');
+            const req = {
+                payload: {
+                    sub: 'user_id'
+                },
+                body: {
+                    activeWorkspaceId: 'workspace_id'
+                }
+            };
+
+            await controller.updateUserWorkspaceConfig(req, res);
+
+            assert.match(workspaceDbServiceUpdateStub.callCount, 1);
+            assert.match(workspaceDbServiceUpdateStub.args[0][0], 'user_id');
+            assert.match(workspaceDbServiceUpdateStub.args[0][1], 'workspace_id');
+            assert.calledWith(resSpy, 200);
+            assert.calledWith(resJsonSpy, {
+                activeWorkspaceId: 'workspace_id'
+            });
+        });
+
+        it('should return 500 if update fails', async () => {
+            const controller = new WorkspaceController();
+
+            workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateUserWorkspaceConfig').throws();
+            resSpy = sinon.spy(res, 'status');
+            const req = {
+                payload: {
+                    sub: 'user_id'
+                },
+                body: {
+                    activeWorkspaceId: 'workspace_id'
+                }
+            };
+
+            await controller.updateUserWorkspaceConfig(req, res);
+
+            assert.match(workspaceDbServiceUpdateStub.callCount, 1);
+            assert.match(workspaceDbServiceUpdateStub.args[0][0], 'user_id');
+            assert.match(workspaceDbServiceUpdateStub.args[0][1], 'workspace_id');
+            assert.calledWith(resSpy, 500);
+        });
+    });
 });

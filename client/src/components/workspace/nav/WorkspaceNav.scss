@@ -48,6 +48,10 @@
                 svg {
                     font-size: 0.75em;
                     vertical-align: 0;
+
+                    &.fa-chevron-right {
+                        margin-left: 2.5px;
+                    }
                 }
 
                 .workspace-name {
@@ -56,6 +60,18 @@
 
                 &:last-of-type {
                     margin-bottom: 1em;
+                }
+
+                &.ws-active {
+                    > .ws-item-header {
+                        svg {
+                            color: rgb(0, 123, 255);
+                        }
+
+                        .workspace-name {
+                            color: rgb(0, 123, 255);
+                        }
+                    }
                 }
             }
         }

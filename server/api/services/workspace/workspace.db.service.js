@@ -72,7 +72,7 @@ export default function WorkspaceDbService() {
                 workspaceName: item.workspaceName,
                 workspaceConfig: JSON.parse(item.config)
             };
-            if (item.projectId === workspaceActiveProject.projectId) {
+            if (workspaceActiveProject && item.projectId === workspaceActiveProject.projectId) {
                 project = {
                     ...project,
                     config: workspaceActiveProject.config,
@@ -167,6 +167,17 @@ export default function WorkspaceDbService() {
 
         return this.getWorkspace(workspace.workspaceId);
     };
+
+    this.updateUserWorkspaceConfig = async (userId, activeWorkspaceId) => {
+        const params = [
+            { name: 'user_id', type: dataTypes.UniqueIdentifier, value: userId },
+            { name: 'active_workspace_id', type: dataTypes.UniqueIdentifier, value: activeWorkspaceId }
+        ];
+
+        await executeQuery(_queries.updateUserWorkspaceConfig, params);
+
+        return _getUserWorkspaceConfig(userId);
+    };
 }
 
 const _queries = {
@@ -242,5 +253,10 @@ const _queries = {
         SET config = @config,
             workspace_name = @workspace_name
         WHERE workspace_id = @workspace_id
+    `,
+    updateUserWorkspaceConfig: `
+        UPDATE [app].[user_workspace_config]
+        SET active_workspace_id = @active_workspace_id
+        WHERE user_id = @user_id
     `
 };

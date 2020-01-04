@@ -25,7 +25,7 @@ export default function Tab({ project, active, add }) {
             activeProjectId = activeProjectTabs.length > 1 ? activeProjectTabs[activeProjectTabs.length - 2] : null;
         }
 
-        const projectId = activeProjectTabs.find((x) => x.toLowerCase() === project.projectId);
+        const projectId = activeProjectTabs.find((x) => x.toLowerCase() === project.projectId.toLowerCase());
         activeProjectTabs.splice(activeProjectTabs.indexOf(projectId), 1);
 
         workspace.actions.updateWorkspaceConfig(activeWorkspaceId, {

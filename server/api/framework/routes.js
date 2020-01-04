@@ -13,6 +13,7 @@ const routes = {
 
         app.get('/api/v1/workspaces', cors, validToken, (new WorkspaceController()).getAllUserWorkspaces);
         app.post('/api/v1/workspaces', cors, validToken, (new WorkspaceController()).postUserWorkspace);
+        app.put('/api/v1/workspaces/config', cors, validToken, (new WorkspaceController()).updateUserWorkspaceConfig);
         app.put('/api/v1/workspaces/:workspaceId/config', cors, validToken, (new WorkspaceController()).updateWorkspaceConfig);
 
         app.post('/api/v1/workspaces/:workspaceId/projects', cors, validToken, (new ProjectController()).postProject);

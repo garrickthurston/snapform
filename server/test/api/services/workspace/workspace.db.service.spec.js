@@ -342,4 +342,28 @@ describe('User Workspace DB Service', () => {
             assert.match(executeQueryStub.args[1][1][0].value, 'workspace_id');
         });
     });
+
+    describe('updateUserWorkspaceConfig', () => {
+        it('should update user workspace config', async () => {
+            const service = new WorkspaceDbService();
+
+            executeQueryStub = sinon.stub(db, 'executeQuery');
+            executeQueryStub.onCall(0).resolves();
+            executeQueryStub.onCall(1).resolves({
+                recordset: [{
+                    activeWorkspaceId: 'workspace_id'
+                }]
+            });
+
+            const result = await service.updateUserWorkspaceConfig('user_id', 'workspace_id');
+
+            assert.match(result, {
+                activeWorkspaceId: 'workspace_id'
+            });
+            assert.match(executeQueryStub.callCount, 2);
+            assert.match(executeQueryStub.args[0][1][0].value, 'user_id');
+            assert.match(executeQueryStub.args[0][1][1].value, 'workspace_id');
+            assert.match(executeQueryStub.args[1][1][0].value, 'user_id');
+        });
+    });
 });

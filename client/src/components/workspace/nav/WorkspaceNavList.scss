@@ -9,9 +9,28 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        position: relative;
 
         &-text {
             padding-left: 2.25em;
+        }
+
+        .fa-circle {
+            position: absolute;
+            top: 8px;
+            font-size: 7px !important;
+            color: #787878;
+            left: 2.75em;
+        }
+
+        &.tab-active {
+            .ws-project-item-text {
+                color: rgb(0, 123, 255);
+            }
+
+            .fa-circle {
+                color: rgb(0, 123, 255);
+            }
         }
 
         &:hover {

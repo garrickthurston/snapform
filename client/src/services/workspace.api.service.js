@@ -28,6 +28,10 @@ function putWorkspaceConfig(workspaceId, config) {
     return api.put(`workspaces/${workspaceId}/config`, config);
 }
 
+function putUserWorkspaceConfig(config) {
+    return api.put('workspaces/config', config);
+}
+
 export default {
     getWorkspaces,
     getWorkspace,
@@ -35,5 +39,6 @@ export default {
     postWorkspace,
     getWorkspaceProject,
     postWorkspaceProject,
-    putWorkspaceProject
+    putWorkspaceProject,
+    putUserWorkspaceConfig
 };

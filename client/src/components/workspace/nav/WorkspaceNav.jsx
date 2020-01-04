@@ -1,29 +1,84 @@
-import React, { useMemo } from 'react';
+import React, {
+    useMemo,
+    useEffect,
+    useState,
+    useCallback
+} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { useWorkspace } from '../../../contexts/providers/WorkspaceContextProvider';
 import './WorkspaceNav.scss';
 import WorkspaceNavList from './WorkspaceNavList';
 import WorkspaceNavHeader from './WorkspaceNavHeader';
 
 export default function WorkspaceNav() {
-    const { workspaces } = useWorkspace();
+    const { workspaces, config } = useWorkspace();
+    const [openWorkspaces, setOpenWorkspaces] = useState([]);
+    const [openWorkspacesLoaded, setOpenWorkspacesLoaded] = useState(false);
+
+    useEffect(() => {
+        if (!workspaces.length || openWorkspacesLoaded) {
+            return;
+        }
+
+        const ws = [
+            ...openWorkspaces
+        ];
+
+        workspaces.forEach((item) => {
+            if (ws.indexOf(item.workspaceId) === -1) { ws.push(item.workspaceId); }
+        });
+
+        setOpenWorkspaces(ws);
+        setOpenWorkspacesLoaded(true);
+    }, [
+        workspaces,
+        openWorkspaces,
+        setOpenWorkspaces,
+        openWorkspacesLoaded,
+        setOpenWorkspacesLoaded
+    ]);
+
+    const handleWorkspaceHeaderClick = useCallback((evt) => {
+        const { wsid } = evt.target.dataset;
+
+        const ws = [
+            ...openWorkspaces
+        ];
+
+        if (ws.indexOf(wsid) > -1) {
+            ws.splice(ws.indexOf(wsid), 1);
+        } else {
+            ws.push(wsid);
+        }
+
+        setOpenWorkspaces(ws);
+    }, [openWorkspaces, setOpenWorkspaces]);
 
     const renderWorkspaces = useMemo(() => {
         if (!workspaces.length) {
             return (<li className="ws-item" />);
         }
 
-        return workspaces.map((item) => (
-            <li className="ws-item" key={item.workspaceId}>
-                <div className="ws-item-header">
-                    <FontAwesomeIcon icon={faChevronDown} />
-                    <span className="workspace-name">{item.workspaceName}</span>
-                </div>
-                <WorkspaceNavList activeWorkspace={item} />
-            </li>
-        ));
-    }, [workspaces]);
+        return workspaces.map((item) => {
+            const { workspaceId, workspaceName } = item;
+            const wsActive = openWorkspaces.indexOf(workspaceId) > -1;
+
+            const workspaceActive = !!config
+                && !!config.activeWorkspaceId
+                && config.activeWorkspaceId.toLowerCase() === workspaceId.toLowerCase();
+
+            return (
+                <li className={`ws-item ${workspaceActive ? 'ws-active' : ''}`} key={workspaceId} data-wsid={workspaceId}>
+                    <div className="ws-item-header" onClick={handleWorkspaceHeaderClick} data-wsid={workspaceId} role="button">
+                        <FontAwesomeIcon icon={wsActive ? faChevronDown : faChevronRight} data-wsid={workspaceId} />
+                        <span className="workspace-name" data-wsid={workspaceId}>{workspaceName}</span>
+                    </div>
+                    {wsActive && <WorkspaceNavList activeWorkspace={item} />}
+                </li>
+            );
+        });
+    }, [workspaces, config, openWorkspaces, handleWorkspaceHeaderClick]);
 
     return (
         <div className="ws-nav">

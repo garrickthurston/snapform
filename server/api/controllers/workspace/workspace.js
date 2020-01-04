@@ -56,4 +56,20 @@ export default function WorkspaceController() {
             });
         }
     };
+
+    this.updateUserWorkspaceConfig = async (req, res) => {
+        try {
+            const { sub } = req.payload;
+            const { activeWorkspaceId } = req.body;
+
+            const result = await this.workspaceDbService.updateUserWorkspaceConfig(sub, activeWorkspaceId);
+
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(500).json({
+                error: e.message || 'Error Updating User Workspace Config',
+                stack: e.statck
+            });
+        }
+    };
 };

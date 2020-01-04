@@ -65,10 +65,15 @@ function getProject(dispatch, state) {
 }
 
 function updateWorkspaceConfig(dispatch, state) {
-    return async (workspaceId, config) => {
+    return async (workspaceId, config, updateActiveWorkspace = false) => {
         dispatch({ type: workspaceActionTypes.setProjectLoading, payload: true });
 
-        let payload = state.workspaces;
+        let payload = {
+            ...state,
+            workspaces: [
+                ...state.workspaces
+            ]
+        };
         try {
             const workspace = state.workspaces.find((item) => item.workspaceId === workspaceId);
 
@@ -84,13 +89,22 @@ function updateWorkspaceConfig(dispatch, state) {
                 }
             }
 
-            payload = [
-                ...state.workspaces
-            ];
-            payload.splice(payload.indexOf(workspace), 1, {
+            let userConfig = payload.config;
+            if (updateActiveWorkspace && workspaceId.toLowerCase() !== payload.config.activeWorkspaceId.toLowerCase()) {
+                userConfig = await workspaceApi.putUserWorkspaceConfig({
+                    ...payload.config,
+                    activeWorkspaceId: workspaceId
+                });
+            }
+
+            payload.workspaces.splice(payload.workspaces.indexOf(workspace), 1, {
                 ...updatedWorkspace,
                 projects: workspace.projects
             });
+            payload = {
+                ...payload,
+                config: userConfig
+            };
         } finally {
             dispatch({ type: workspaceActionTypes.updateWorkspaceConfig, payload });
         }
@@ -169,10 +183,9 @@ function workspaceReducer(state, action) {
             };
         case workspaceActionTypes.updateWorkspaceConfig:
             return {
-                ...state,
+                ...action.payload,
                 projectLoading: false,
-                projectLoaded: true,
-                workspaces: action.payload
+                projectLoaded: true
             };
         case workspaceActionTypes.setProjectLoading:
             return {

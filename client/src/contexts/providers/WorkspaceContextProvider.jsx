@@ -73,6 +73,17 @@ function updateWorkspaceConfig(dispatch, state) {
             const workspace = state.workspaces.find((item) => item.workspaceId === workspaceId);
 
             const updatedWorkspace = await workspaceApi.putWorkspaceConfig(workspaceId, config);
+            if (updatedWorkspace.config.activeProjectId) {
+                const activeProject = workspace.projects.find((item) => item.projectId.toLowerCase() === updatedWorkspace.config.activeProjectId.toLowerCase());
+                if (!activeProject.config) {
+                    const project = await workspaceApi.getWorkspaceProject(workspaceId, activeProject.projectId);
+                    workspace.projects.splice(workspace.projects.indexOf(activeProject), 1, {
+                        ...activeProject,
+                        ...project
+                    });
+                }
+            }
+
             payload = [
                 ...state.workspaces
             ];

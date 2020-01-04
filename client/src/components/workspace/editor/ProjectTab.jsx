@@ -2,7 +2,6 @@ import React, { useMemo, useCallback, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useWorkspace } from '../../../contexts/providers/WorkspaceContextProvider';
-import uiStrings from '../../../ui-strings';
 import './ProjectTab.scss';
 
 const _tabClassName = 'project-tab-outer';
@@ -46,7 +45,7 @@ export default function Tab({ project, active, add }) {
         if (project) { return project.projectName; }
         if (add) { return (<FontAwesomeIcon icon={faPlus} />); }
 
-        return uiStrings.untitledProject;
+        return '';
     }, [project, add]);
 
     const renderTabClose = useMemo(() => {

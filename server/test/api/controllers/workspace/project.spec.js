@@ -43,8 +43,7 @@ describe('Project Controller', () => {
             await controller.getProject(req, res);
 
             assert.match(projectDbServiceStub.callCount, 1);
-            assert.match(projectDbServiceStub.args[0][0], 'workspace_id');
-            assert.match(projectDbServiceStub.args[0][1], 'project_id');
+            assert.match(projectDbServiceStub.args[0][0], 'project_id');
             assert.calledWith(resSpy, 200);
             assert.calledWith(resJsonSpy, { project: { projectId: 'project_id' } });
         });
@@ -64,8 +63,7 @@ describe('Project Controller', () => {
             await controller.getProject(req, res);
 
             assert.match(projectDbServiceStub.callCount, 1);
-            assert.match(projectDbServiceStub.args[0][0], 'workspace_id');
-            assert.match(projectDbServiceStub.args[0][1], 'project_id');
+            assert.match(projectDbServiceStub.args[0][0], 'project_id');
             assert.calledWith(resSpy, 500);
         });
     });

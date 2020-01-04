@@ -65,11 +65,20 @@ export default function WorkspaceDbService() {
         const results = [];
         projects.forEach((item) => {
             const workspaceActiveProject = activeProjects.find(x => x.workspaceId === item.workspaceId);
-            const project = {
-                ...item,
-                workspaceConfig: JSON.parse(item.config),
-                ...(workspaceActiveProject && item.projectId === workspaceActiveProject.projectId ? workspaceActiveProject : {})
+            let project = {
+                projectId: item.projectId,
+                projectName: item.projectName,
+                workspaceId: item.workspaceId,
+                workspaceName: item.workspaceName,
+                workspaceConfig: JSON.parse(item.config)
             };
+            if (item.projectId === workspaceActiveProject.projectId) {
+                project = {
+                    ...project,
+                    config: workspaceActiveProject.config,
+                    items: workspaceActiveProject.items
+                };
+            }
 
             const workspace = results.find(x => x.workspaceId.toLowerCase() === project.workspaceId.toLowerCase());
             if (workspace) {

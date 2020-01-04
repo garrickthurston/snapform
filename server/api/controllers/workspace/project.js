@@ -7,9 +7,9 @@ export default function ProjectController() {
 
     this.getProject = async (req, res) => {
         try {
-            const { workspaceId, projectId } = req.params;
+            const { projectId } = req.params;
 
-            const result = await this.projectDbService.getProject(workspaceId, projectId);
+            const result = await this.projectDbService.getProject(projectId);
 
             res.status(200).json(result);
         } catch (e) {

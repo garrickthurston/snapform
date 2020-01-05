@@ -25,7 +25,7 @@ export default function WorkspaceNavList({ currentWorkspace, active }) {
             activeProjectId: pid,
             activeProjectTabs: [
                 ...activeProjectTabs,
-                ...(active && activeProjectTabs.map((item) => item.toLowerCase()).indexOf(pid.toLowerCase()) === -1 ? [pid] : [])
+                ...(activeProjectTabs.map((item) => item.toLowerCase()).indexOf(pid.toLowerCase()) === -1 ? [pid] : [])
             ]
         };
 
@@ -35,8 +35,7 @@ export default function WorkspaceNavList({ currentWorkspace, active }) {
         config,
         activeProjectTabs,
         workspace.actions,
-        loading,
-        active
+        loading
     ]);
 
     const handleMouseEnter = useCallback((evt) => {

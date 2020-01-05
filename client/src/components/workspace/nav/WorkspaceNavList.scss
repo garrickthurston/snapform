@@ -7,13 +7,14 @@
     padding-inline-start: 0;
 
     .ws-project-item {
-        width: calc(100%);
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
         position: relative;
+        display: flex;
 
         &-text {
+            width: calc(100%);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
             padding-left: 2.25em;
         }
 
@@ -37,6 +38,20 @@
 
         &:hover {
             background: $light-hover-color;
+        }
+
+        .remove-project {
+            background: transparent;
+            opacity: 0.65;
+            border: 0;
+            font-size: 0.9em;
+            padding: 0 5px;
+            height: 20px;
+
+            svg {
+                margin: 0;
+                padding: 0;
+            }
         }
     }
 }

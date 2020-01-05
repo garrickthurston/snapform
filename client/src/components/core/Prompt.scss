@@ -1,0 +1,61 @@
+@import './variables.scss';
+
+.sf-dialog.prompt {
+    background: $white;
+    font-size: 16px;
+    position: relative;
+    padding: 35px 20px 20px 20px;
+    margin: 20px auto;
+    text-align: center;
+    max-width: 390px;
+
+    .graphic {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .fa {
+            font-size: 60px;
+            vertical-align: bottom;
+        }
+    }
+
+    h2 { font-weight: 600; }
+    p {
+        font-size: 18px;
+        margin: 0 5%;
+        color: $app-text;
+        font-weight: normal;
+    }
+
+    .button-container {
+        display: flex;
+
+        .sf-btn {
+            flex-grow: 1;
+            margin: 20px 10px 0 10px;
+            padding: 0;
+
+            &:first-child {
+                margin-left: 0;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+.ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+    opacity: 1;
+}
+
+.ReactModal__Overlay--before-close{
+    opacity: 0;
+}

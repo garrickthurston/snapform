@@ -32,6 +32,10 @@ function putUserWorkspaceConfig(config) {
     return api.put('workspaces/config', config);
 }
 
+function deleteWorkspaceProject(workspaceId, projectId) {
+    return api.del(`workspaces/${workspaceId}/projects/${projectId}`);
+}
+
 export default {
     getWorkspaces,
     getWorkspace,
@@ -40,5 +44,6 @@ export default {
     getWorkspaceProject,
     postWorkspaceProject,
     putWorkspaceProject,
-    putUserWorkspaceConfig
+    putUserWorkspaceConfig,
+    deleteWorkspaceProject
 };

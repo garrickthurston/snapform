@@ -1,14 +1,17 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useWorkspace } from '../../../contexts/providers/WorkspaceContextProvider';
+import useModal from '../../../hooks/useModal';
 import './WorkspaceNavList.scss';
 
 export default function WorkspaceNavList({ activeWorkspace }) {
     const workspace = useWorkspace();
+    const { ModalRoot, promptDelete } = useModal();
     const loading = workspace.workspaceLoading || workspace.projectLoading;
     const { workspaceId, projects, config } = activeWorkspace;
     const { activeProjectId, activeProjectTabs } = config;
+    const [hovering, setHovering] = useState(null);
 
     const handleProjectClick = useCallback((evt) => {
         if (loading) {
@@ -35,6 +38,20 @@ export default function WorkspaceNavList({ activeWorkspace }) {
         loading
     ]);
 
+    const handleMouseEnter = useCallback((evt) => {
+        if (loading) {
+            return;
+        }
+
+        const { pid } = evt.target.dataset;
+
+        setHovering(pid);
+    }, [setHovering, loading]);
+
+    const handleMouseLeave = useCallback(() => {
+        setHovering(null);
+    }, [setHovering]);
+
     const renderProjects = useMemo(() => {
         if (!activeWorkspace || !projects.length) {
             return (<li className="ws-project-item" />);
@@ -44,6 +61,33 @@ export default function WorkspaceNavList({ activeWorkspace }) {
             const tabOpen = activeProjectTabs && activeProjectTabs.find((x) => x.toLowerCase() === project.projectId.toLowerCase());
             const active = activeProjectId && activeProjectId.toLowerCase() === project.projectId.toLowerCase();
 
+            const removeProject = (evt) => {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                if (loading) {
+                    return;
+                }
+
+                const { projectId } = project;
+
+                if (activeWorkspace.workspaceId && projectId) {
+                    promptDelete().then(() => workspace.actions.deleteProject(activeWorkspace.workspaceId, projectId));
+                }
+            };
+
+            const renderHoverActions = () => {
+                if (hovering !== project.projectId) {
+                    return null;
+                }
+
+                return (
+                    <button className="remove-project" onClick={removeProject}>
+                        <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                );
+            };
+
             return (
                 <li
                     className={`ws-project-item ${active ? 'tab-active' : ''}`}
@@ -51,9 +95,14 @@ export default function WorkspaceNavList({ activeWorkspace }) {
                     data-pid={project.projectId}
                     onClick={handleProjectClick}
                     role="button"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                 >
                     {tabOpen ? <FontAwesomeIcon icon={faCircle} data-pid={project.projectId} /> : null}
-                    <span className="ws-project-item-text" data-pid={project.projectId}>{project.projectName}</span>
+                    <div data-pid={project.projectId} className="ws-project-item-text">
+                        <span data-pid={project.projectId}>{project.projectName}</span>
+                    </div>
+                    {renderHoverActions()}
                 </li>
             );
         });
@@ -62,12 +111,21 @@ export default function WorkspaceNavList({ activeWorkspace }) {
         projects,
         activeProjectId,
         activeProjectTabs,
-        handleProjectClick
+        handleProjectClick,
+        handleMouseEnter,
+        handleMouseLeave,
+        hovering,
+        promptDelete,
+        loading,
+        workspace.actions
     ]);
 
     return (
-        <ul className="workspace-nav-list">
-            {renderProjects}
-        </ul>
+        <React.Fragment>
+            <ul className="workspace-nav-list">
+                {renderProjects}
+            </ul>
+            <ModalRoot />
+        </React.Fragment>
     );
 }

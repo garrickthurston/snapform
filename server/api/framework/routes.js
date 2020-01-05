@@ -19,6 +19,7 @@ const routes = {
         app.post('/api/v1/workspaces/:workspaceId/projects', cors, validToken, (new ProjectController()).postProject);
         app.get('/api/v1/workspaces/:workspaceId/projects/:projectId', cors, validToken, (new ProjectController()).getProject);
         app.put('/api/v1/workspaces/:workspaceId/projects/:projectId', cors, validToken, (new ProjectController()).updateProject);
+        app.delete('/api/v1/workspaces/:workspaceId/projects/:projectId', cors, validToken, (new ProjectController()).deleteProject);
 
         middleware.provideClientIndex(app);
 

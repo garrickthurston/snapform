@@ -11,7 +11,7 @@ export default function WorkspaceTabs({ activeWorkspace }) {
                     <ProjectTab
                         key={projectId}
                         project={project}
-                        active={activeWorkspace.config.activeProjectTabs.length === 1 || activeWorkspace.config.activeProjectId === projectId}
+                        active={activeWorkspace.config.activeProjectTabs.length === 1 || activeWorkspace.config.activeProjectId.toLowerCase() === projectId.toLowerCase()}
                     />
                 );
             });

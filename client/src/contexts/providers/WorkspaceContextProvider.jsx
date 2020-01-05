@@ -10,7 +10,8 @@ export const workspaceActionTypes = {
     setProjectLoading: 'SET_PROJECT_LOADING',
     getProject: 'GET_PROJECT',
     initiateProject: 'INITIATE_PROJECT',
-    updateWorkspaceConfig: 'UPDATE_WORKSPACE_CONFIG'
+    updateWorkspaceConfig: 'UPDATE_WORKSPACE_CONFIG',
+    deleteProject: 'DELETE_PROJECT'
 };
 
 function initiateWorkspace(dispatch, state) {
@@ -146,6 +147,32 @@ function initiateProject(dispatch, state) {
     };
 }
 
+function deleteProject(dispatch, state) {
+    return async (workspaceId, projectId) => {
+        dispatch({ type: workspaceActionTypes.setProjectLoading, payload: true });
+
+        let payload = state.workspaces;
+        try {
+            const workspace = await workspaceApi.deleteWorkspaceProject(workspaceId, projectId);
+
+            const { projects } = payload.find((item) => item.workspaceId.toLowerCase() === workspaceId.toLowerCase());
+            const project = projects.find((item) => item.projectId.toLowerCase() === projectId.toLowerCase());
+            const updatedProjects = [...projects];
+            updatedProjects.splice(projects.indexOf(project), 1);
+            const updatedWorkspace = {
+                ...workspace,
+                projects: updatedProjects
+            };
+            payload = [
+                ...state.workspaces
+            ];
+            payload.splice(payload.indexOf(workspace), 1, updatedWorkspace);
+        } finally {
+            dispatch({ type: workspaceActionTypes.deleteProject, payload });
+        }
+    };
+}
+
 function workspaceReducer(state, action) {
     switch (action.type) {
         case workspaceActionTypes.setWorkspacesLoading:
@@ -199,6 +226,13 @@ function workspaceReducer(state, action) {
                 projectLoaded: true,
                 workspaces: action.payload
             };
+        case workspaceActionTypes.deleteProject:
+            return {
+                ...state,
+                projectLoading: false,
+                projectLoaded: true,
+                workspaces: action.payload
+            };
         default:
             return state;
     }
@@ -223,7 +257,8 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
             initiateWorkspace: initiateWorkspace(dispatch, state),
             getProject: getProject(dispatch, state),
             initiateProject: initiateProject(dispatch, state),
-            updateWorkspaceConfig: updateWorkspaceConfig(dispatch, state)
+            updateWorkspaceConfig: updateWorkspaceConfig(dispatch, state),
+            deleteProject: deleteProject(dispatch, state)
         }
     };
 

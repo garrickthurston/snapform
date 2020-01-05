@@ -1,4 +1,6 @@
 import WorkspaceDbService from '../../services/workspace/workspace.db.service';
+import { isGuid } from '../../../utils/encryptionUtils';
+
 
 export default function WorkspaceController() {
     this.workspaceDbService = new WorkspaceDbService();
@@ -7,6 +9,12 @@ export default function WorkspaceController() {
         try {
             const { workspaceId } = req.params;
             const { ...config } = req.body;
+
+            if (!workspaceId || !isGuid(workspaceId)) {
+                return res.status(400).json({
+                    error: 'Bad Request'
+                });
+            }
 
             const workspace = await this.workspaceDbService.getWorkspace(workspaceId);
             const results = await this.workspaceDbService.updateWorkspace({
@@ -61,6 +69,12 @@ export default function WorkspaceController() {
         try {
             const { sub } = req.payload;
             const { activeWorkspaceId } = req.body;
+
+            if (!activeWorkspaceId || !isGuid(activeWorkspaceId)) {
+                return res.status(400).json({
+                    error: 'Bad Request'
+                });
+            }
 
             const result = await this.workspaceDbService.updateUserWorkspaceConfig(sub, activeWorkspaceId);
 

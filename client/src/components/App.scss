@@ -11,4 +11,12 @@ body {
         height: 100%;
         overflow: auto;
     }
+
+    #dialog-close-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: transparent;
+        border: 0;
+    }
 }

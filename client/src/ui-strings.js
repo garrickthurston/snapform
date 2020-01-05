@@ -9,5 +9,10 @@ export default {
     invalidUsernameOrPassword: 'Invalid Username or Password',
     untitledWorkspace: 'Untitled Workspace',
     untitledProject: 'Untitled Project',
-    workspaces: 'Workspaces'
+    workspaces: 'Workspaces',
+    ok: 'OK',
+    cancel: 'Cancel',
+    deleteItemPromptMessage: 'Are you sure you want to delete this item?',
+    deleteItemTitleMessage: 'Are you sure?',
+    delete: 'Delete'
 };

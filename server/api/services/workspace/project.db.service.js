@@ -56,6 +56,14 @@ export default function ProjectDbService() {
 
         return this.getProject(project.project_id);
     };
+
+    this.deleteProject = async (projectId) => {
+        const params = [
+            { name: 'project_id', type: dataTypes.UniqueIdentifier, value: projectId }
+        ];
+
+        await executeQuery(_queries.deleteProject, params);
+    };
 };
 
 const _queries = {
@@ -76,5 +84,9 @@ const _queries = {
     insertProject: `
         INSERT [app].[project] (project_id, workspace_id, project_name, config, items)
         VALUES (@project_id, @workspace_id, @project_name, @config, @items)
+    `,
+    deleteProject: `
+        DELETE [app].[project]
+        WHERE project_id = @project_id
     `
 };

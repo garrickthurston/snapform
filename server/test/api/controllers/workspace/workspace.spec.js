@@ -1,11 +1,13 @@
 import sinon from 'sinon';
 import WorkspaceController from '../../../../api/controllers/workspace/workspace';
+import * as crypt from '../../../../utils/encryptionUtils';
 
 const { assert } = sinon;
 
 describe('User Workspace Controller', () => {
     let workspaceDbServiceGetStub;
     let workspaceDbServiceUpdateStub;
+    let isGuidStub;
     let resSpy;
     let resJsonSpy;
 
@@ -17,12 +19,55 @@ describe('User Workspace Controller', () => {
     afterEach(() => {
         workspaceDbServiceGetStub && workspaceDbServiceGetStub.restore();
         workspaceDbServiceUpdateStub && workspaceDbServiceUpdateStub.restore();
+        isGuidStub && isGuidStub.restore();
 
         resSpy && resSpy.restore();
         resJsonSpy && resJsonSpy.restore();
     });
 
     describe('updateWorkspaceConfig', () => {
+        it('should return 400 if workspace id not supplied or not valid guid', async () => {
+            const controller = new WorkspaceController();
+
+            workspaceDbServiceGetStub = sinon.stub(controller.workspaceDbService, 'getWorkspace');
+            workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateWorkspace');
+            resSpy = sinon.spy(res, 'status');
+            resJsonSpy = sinon.spy(res, 'json');
+            let req = {
+                params: { },
+                body: {
+                    activeProjectId: 'other_project_id',
+                    activeProjectTabs: ['active_project_id, other_project_id']
+                }
+            };
+
+            await controller.updateWorkspaceConfig(req, res);
+
+            assert.match(workspaceDbServiceGetStub.callCount, 0);
+            assert.match(workspaceDbServiceUpdateStub.callCount, 0);
+            assert.calledWith(resSpy, 400);
+            assert.calledWith(resJsonSpy, { error: 'Bad Request' });
+            
+            workspaceDbServiceGetStub.restore();
+            workspaceDbServiceUpdateStub.restore();
+            resSpy.restore();
+            resJsonSpy.restore();
+            req = {
+                params: { workspaceId: 'workspace_id' },
+                body: {
+                    activeProjectId: 'other_project_id',
+                    activeProjectTabs: ['active_project_id, other_project_id']
+                }
+            };
+
+            await controller.updateWorkspaceConfig(req, res);
+
+            assert.match(workspaceDbServiceGetStub.callCount, 0);
+            assert.match(workspaceDbServiceUpdateStub.callCount, 0);
+            assert.calledWith(resSpy, 400);
+            assert.calledWith(resJsonSpy, { error: 'Bad Request' });
+        });
+
         it('should update workspace config', async () => {
             const controller = new WorkspaceController();
 
@@ -44,6 +89,7 @@ describe('User Workspace Controller', () => {
                     activeProjectTabs: ['active_project_id, other_project_id']
                 }
             });
+            isGuidStub = sinon.stub(crypt, 'isGuid').returns(true);
             resSpy = sinon.spy(res, 'status');
             resJsonSpy = sinon.spy(res, 'json');
             const req = {
@@ -70,6 +116,7 @@ describe('User Workspace Controller', () => {
                     activeProjectTabs: ['active_project_id, other_project_id']
                 }
             });
+            assert.match(isGuidStub.callCount, 1);
             assert.calledWith(resSpy, 200);
             assert.calledWith(resJsonSpy, {
                 workspaceId: 'workspace_id',
@@ -95,6 +142,7 @@ describe('User Workspace Controller', () => {
                 }
             });
             workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateWorkspace').throws();
+            isGuidStub = sinon.stub(crypt, 'isGuid').returns(true);
             resSpy = sinon.spy(res, 'status');
             const req = {
                 params: {
@@ -120,6 +168,7 @@ describe('User Workspace Controller', () => {
                     activeProjectTabs: ['active_project_id, other_project_id']
                 }
             });
+            assert.match(isGuidStub.callCount, 1);
             assert.calledWith(resSpy, 500);
         });
     });
@@ -294,12 +343,50 @@ describe('User Workspace Controller', () => {
     });
 
     describe('updateUserWorkspaceConfig', () => {
+        it('should return 400 if active workspace id not supplied or is not valid guid', async () => {
+            const controller = new WorkspaceController();
+
+            workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateUserWorkspaceConfig');
+            resSpy = sinon.spy(res, 'status');
+            resJsonSpy = sinon.spy(res, 'json');
+            let req = {
+                payload: {
+                    sub: 'user_id'
+                },
+                body: { }
+            };
+
+            await controller.updateUserWorkspaceConfig(req, res);
+
+            assert.match(workspaceDbServiceUpdateStub.callCount, 0);
+            assert.calledWith(resSpy, 400);
+            assert.calledWith(resJsonSpy, { error: 'Bad Request' });
+
+            workspaceDbServiceUpdateStub.restore();
+            resSpy.restore();
+            resJsonSpy.restore();req = {
+                payload: {
+                    sub: 'user_id'
+                },
+                body: {
+                    activeWorkspaceId: 'workspace_id'
+                }
+            };
+
+            await controller.updateUserWorkspaceConfig(req, res);
+
+            assert.match(workspaceDbServiceUpdateStub.callCount, 0);
+            assert.calledWith(resSpy, 400);
+            assert.calledWith(resJsonSpy, { error: 'Bad Request' });
+        });
+
         it('should update user workspace config', async () => {
             const controller = new WorkspaceController();
 
             workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateUserWorkspaceConfig').resolves({
                 activeWorkspaceId: 'workspace_id'
             });
+            isGuidStub = sinon.stub(crypt, 'isGuid').returns(true);
             resSpy = sinon.spy(res, 'status');
             resJsonSpy = sinon.spy(res, 'json');
             const req = {
@@ -316,6 +403,7 @@ describe('User Workspace Controller', () => {
             assert.match(workspaceDbServiceUpdateStub.callCount, 1);
             assert.match(workspaceDbServiceUpdateStub.args[0][0], 'user_id');
             assert.match(workspaceDbServiceUpdateStub.args[0][1], 'workspace_id');
+            assert.match(isGuidStub.callCount, 1);
             assert.calledWith(resSpy, 200);
             assert.calledWith(resJsonSpy, {
                 activeWorkspaceId: 'workspace_id'
@@ -326,6 +414,7 @@ describe('User Workspace Controller', () => {
             const controller = new WorkspaceController();
 
             workspaceDbServiceUpdateStub = sinon.stub(controller.workspaceDbService, 'updateUserWorkspaceConfig').throws();
+            isGuidStub = sinon.stub(crypt, 'isGuid').returns(true);
             resSpy = sinon.spy(res, 'status');
             const req = {
                 payload: {
@@ -341,6 +430,7 @@ describe('User Workspace Controller', () => {
             assert.match(workspaceDbServiceUpdateStub.callCount, 1);
             assert.match(workspaceDbServiceUpdateStub.args[0][0], 'user_id');
             assert.match(workspaceDbServiceUpdateStub.args[0][1], 'workspace_id');
+            assert.match(isGuidStub.callCount, 1);
             assert.calledWith(resSpy, 500);
         });
     });

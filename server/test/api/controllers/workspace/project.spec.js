@@ -413,6 +413,9 @@ describe('Project Controller', () => {
             resSpy = sinon.spy(res, 'status');
             resJsonSpy = sinon.spy(res, 'json');
             let req = {
+                payload: {
+                    sub: 'user_id'
+                },
                 params: { }
             };
 
@@ -430,6 +433,9 @@ describe('Project Controller', () => {
             resSpy.restore();
             resJsonSpy.restore();
             req = {
+                payload: {
+                    sub: 'user_id'
+                },
                 params: { workspaceId: 'workspace_id' }
             };
 
@@ -447,6 +453,9 @@ describe('Project Controller', () => {
             resSpy.restore();
             resJsonSpy.restore();
             req = {
+                payload: {
+                    sub: 'user_id'
+                },
                 params: { projectId: 'project_id' }
             };
 
@@ -464,6 +473,9 @@ describe('Project Controller', () => {
             resSpy.restore();
             resJsonSpy.restore();
             req = {
+                payload: {
+                    sub: 'user_id'
+                },
                 params: { workspaceId: 'workspace_id', projectId: 'project_id' }
             };
 
@@ -502,6 +514,9 @@ describe('Project Controller', () => {
             resSpy = sinon.spy(res, 'status');
             resJsonSpy = sinon.spy(res, 'json');
             const req = {
+                payload: {
+                    sub: 'user_id'
+                },
                 params: {
                     workspaceId: 'workspace_id',
                     projectId: 'project_id'
@@ -511,7 +526,9 @@ describe('Project Controller', () => {
             await controller.deleteProject(req, res);
 
             assert.match(projectDbServiceStub.callCount, 1);
-            assert.match(projectDbServiceStub.args[0][0], 'project_id'); 
+            assert.match(projectDbServiceStub.args[0][0], 'user_id');
+            assert.match(projectDbServiceStub.args[0][1], 'workspace_id');
+            assert.match(projectDbServiceStub.args[0][2], 'project_id');
             assert.match(workspaceDbServiceGetStub.callCount, 2);
             assert.match(workspaceDbServiceGetStub.args[0][0], 'workspace_id');
             assert.match(workspaceDbServiceGetStub.args[1][0], 'workspace_id');
@@ -545,6 +562,9 @@ describe('Project Controller', () => {
             isGuidStub = sinon.stub(crypt, 'isGuid').returns(true);
             resSpy = sinon.spy(res, 'status');
             const req = {
+                payload: {
+                    sub: 'user_id'
+                },
                 params: {
                     workspaceId: 'workspace_id',
                     projectId: 'project_id'
@@ -554,7 +574,9 @@ describe('Project Controller', () => {
             await controller.deleteProject(req, res);
 
             assert.match(projectDbServiceStub.callCount, 1);
-            assert.match(projectDbServiceStub.args[0][0], 'project_id'); 
+            assert.match(projectDbServiceStub.args[0][0], 'user_id');
+            assert.match(projectDbServiceStub.args[0][1], 'workspace_id');
+            assert.match(projectDbServiceStub.args[0][2], 'project_id');
             assert.match(workspaceDbServiceGetStub.callCount, 0);
             assert.match(workspaceDbServiceUpdateStub.callCount, 0);
             assert.match(isGuidStub.callCount, 2);

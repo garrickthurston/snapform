@@ -57,8 +57,10 @@ export default function ProjectDbService() {
         return this.getProject(project.project_id);
     };
 
-    this.deleteProject = async (projectId) => {
+    this.deleteProject = async (userId, workspaceId, projectId) => {
         const params = [
+            { name: 'user_id', type: dataTypes.UniqueIdentifier, value: userId },
+            { name: 'workspace_id', type: dataTypes.UniqueIdentifier, value: workspaceId },
             { name: 'project_id', type: dataTypes.UniqueIdentifier, value: projectId }
         ];
 
@@ -88,5 +90,34 @@ const _queries = {
     deleteProject: `
         DELETE [app].[project]
         WHERE project_id = @project_id
+
+        DECLARE @project_count int = (SELECT count(*) FROM [app].[project] WHERE workspace_id = @workspace_id)
+        IF (@project_count = 0)
+        BEGIN
+            DECLARE @active_workspace_id uniqueidentifier = (SELECT active_workspace_id FROM [app].[user_workspace_config] WHERE user_id = @user_id)
+            IF @active_workspace_id = @workspace_id
+            BEGIN
+                DECLARE @workspace_count int = (SELECT count(*) FROM [app].[workspace] WHERE user_id = @user_id)
+                IF @workspace_count > 1
+                BEGIN
+                    UPDATE [app].[user_workspace_config]
+                    SET active_workspace_id = (
+                        SELECT TOP 1 workspace_id
+                        FROM [app].[workspace]
+                        WHERE user_id = @user_id AND workspace_id <> @workspace_id
+                    )
+                    WHERE user_id = @user_id
+                END
+                ELSE
+                BEGIN
+                    DELETE [app].[user_workspace_config]
+                    WHERE user_id = @user_id
+                END
+
+            END
+
+            DELETE [app].[workspace]
+            WHERE workspace_id = @workspace_id
+        END
     `
 };

@@ -161,22 +161,43 @@ function deleteProject(dispatch, state) {
     return async (workspaceId, projectId) => {
         dispatch({ type: workspaceActionTypes.setProjectLoading, payload: true });
 
-        let payload = state.workspaces;
+        let payload = state;
         try {
-            const workspace = payload.find((item) => item.workspaceId.toLowerCase() === workspaceId.toLowerCase());
+            const workspace = payload.workspaces.find((item) => item.workspaceId.toLowerCase() === workspaceId.toLowerCase());
             let updatedWorkspace = await workspaceApi.deleteWorkspaceProject(workspaceId, projectId);
 
             const project = workspace.projects.find((item) => item.projectId.toLowerCase() === projectId.toLowerCase());
             const updatedProjects = [...workspace.projects];
             updatedProjects.splice(workspace.projects.indexOf(project), 1);
-            updatedWorkspace = {
-                ...updatedWorkspace,
-                projects: updatedProjects
+            const { config } = state;
+            const updatedConfig = { ...config };
+            if (config.activeWorkspaceId && config.activeWorkspaceId.toLowerCase() === workspaceId.toLowerCase()) {
+                if (workspace.projects.length > 1) {
+                    updatedConfig.activeWorkspaceId = config.activeWorkspaceId;
+                } else if (state.workspaces.length > 1) {
+                    const newWorkspace = state.workspaces.find((item) => item.workspaceId.toLowerCase() !== workspaceId.toLowerCase());
+                    updatedConfig.activeWorkspaceId = newWorkspace ? newWorkspace.workspaceId : null;
+                } else {
+                    updatedConfig.activeWorkspaceId = null;
+                }
+            }
+            if (updatedWorkspace) {
+                updatedWorkspace = {
+                    ...updatedWorkspace,
+                    projects: updatedProjects
+                };
+            }
+            payload = {
+                workspaces: [
+                    ...state.workspaces
+                ],
+                config: updatedConfig
             };
-            payload = [
-                ...state.workspaces
-            ];
-            payload.splice(payload.indexOf(workspace), 1, updatedWorkspace);
+            if (updatedWorkspace) {
+                payload.workspaces.splice(payload.workspaces.indexOf(workspace), 1, updatedWorkspace);
+            } else {
+                payload.workspaces.splice(payload.workspaces.indexOf(workspace), 1);
+            }
         } finally {
             dispatch({ type: workspaceActionTypes.deleteProject, payload });
         }
@@ -261,9 +282,9 @@ function workspaceReducer(state, action) {
         case workspaceActionTypes.deleteProject:
             return {
                 ...state,
+                ...action.payload,
                 projectLoading: false,
-                projectLoaded: true,
-                workspaces: action.payload
+                projectLoaded: true
             };
         case workspaceActionTypes.collapseAll:
             return {

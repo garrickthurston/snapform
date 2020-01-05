@@ -84,6 +84,7 @@ export default function ProjectController() {
 
     this.deleteProject = async (req, res) => {
         try {
+            const { sub } = req.payload;
             const { workspaceId, projectId } = req.params;
             if (!workspaceId || !projectId || (workspaceId && !isGuid(workspaceId)) || (projectId && !isGuid(projectId))) {
                 return res.status(400).json({
@@ -91,29 +92,33 @@ export default function ProjectController() {
                 });
             }
             
-            await this.projectDbService.deleteProject(projectId);
+            await this.projectDbService.deleteProject(sub, workspaceId, projectId);
             const workspace = await this.workspaceDbService.getWorkspace(workspaceId);
-            const { activeProjectId, activeProjectTabs } = workspace.config;
-            let newActiveProjectId = activeProjectId;
-            const lowerProjectTabs = activeProjectTabs.map(item => item.toLowerCase());
-            const idx = lowerProjectTabs.indexOf(projectId.toLowerCase());
-            if (idx > -1) {
-                activeProjectTabs.splice(idx, 1);
-            }
-            if (activeProjectId && activeProjectId.toLowerCase() === projectId.toLowerCase()) {
-                newActiveProjectId = activeProjectTabs.length ? activeProjectTabs[activeProjectTabs.length - 1] : null;
-            }
-            await this.workspaceDbService.updateWorkspace({
-                ...workspace,
-                config: {
-                    ...workspace.config,
-                    activeProjectId: newActiveProjectId,
-                    activeProjectTabs: [
-                        ...activeProjectTabs
-                    ]
+            
+            let result = null;
+            if (workspace) {
+                const { activeProjectId, activeProjectTabs } = workspace.config;
+                let newActiveProjectId = activeProjectId;
+                const lowerProjectTabs = activeProjectTabs.map(item => item.toLowerCase());
+                const idx = lowerProjectTabs.indexOf(projectId.toLowerCase());
+                if (idx > -1) {
+                    activeProjectTabs.splice(idx, 1);
                 }
-            });
-            const result = await this.workspaceDbService.getWorkspace(workspaceId);
+                if (activeProjectId && activeProjectId.toLowerCase() === projectId.toLowerCase()) {
+                    newActiveProjectId = activeProjectTabs.length ? activeProjectTabs[activeProjectTabs.length - 1] : null;
+                }
+                await this.workspaceDbService.updateWorkspace({
+                    ...workspace,
+                    config: {
+                        ...workspace.config,
+                        activeProjectId: newActiveProjectId,
+                        activeProjectTabs: [
+                            ...activeProjectTabs
+                        ]
+                    }
+                });
+                result = await this.workspaceDbService.getWorkspace(workspaceId);
+            }
 
             res.status(200).json(result);
         } catch (e) {

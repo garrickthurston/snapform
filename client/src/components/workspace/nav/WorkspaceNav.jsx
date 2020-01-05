@@ -12,7 +12,12 @@ import WorkspaceNavList from './WorkspaceNavList';
 import WorkspaceNavHeader from './WorkspaceNavHeader';
 
 export default function WorkspaceNav() {
-    const { workspaces, config } = useWorkspace();
+    const {
+        workspaces,
+        config,
+        collapseAll,
+        ...workspace
+    } = useWorkspace();
     const [openWorkspaces, setOpenWorkspaces] = useState([]);
     const [openWorkspacesLoaded, setOpenWorkspacesLoaded] = useState(false);
 
@@ -21,23 +26,22 @@ export default function WorkspaceNav() {
             return;
         }
 
-        const ws = [
-            ...openWorkspaces
-        ];
-
-        workspaces.forEach((item) => {
-            if (ws.indexOf(item.workspaceId) === -1) { ws.push(item.workspaceId); }
-        });
-
-        setOpenWorkspaces(ws);
+        setOpenWorkspaces(workspaces.map((item) => item.workspaceId));
         setOpenWorkspacesLoaded(true);
     }, [
         workspaces,
-        openWorkspaces,
         setOpenWorkspaces,
         openWorkspacesLoaded,
         setOpenWorkspacesLoaded
     ]);
+
+    useEffect(() => {
+        if (!workspaces.length || !collapseAll) {
+            return;
+        }
+
+        setOpenWorkspaces([]);
+    }, [workspaces, collapseAll, setOpenWorkspaces]);
 
     const handleWorkspaceHeaderClick = useCallback((evt) => {
         const { wsid } = evt.target.dataset;
@@ -52,8 +56,9 @@ export default function WorkspaceNav() {
             ws.push(wsid);
         }
 
+        workspace.actions.collapseAll(false);
         setOpenWorkspaces(ws);
-    }, [openWorkspaces, setOpenWorkspaces]);
+    }, [openWorkspaces, setOpenWorkspaces, workspace.actions]);
 
     const renderWorkspaces = useMemo(() => {
         if (!workspaces.length) {

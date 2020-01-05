@@ -26,8 +26,8 @@ export default function Prompt({
             <h2>{title}</h2>
             <p>{message}</p>
             <div className="button-container">
-                {!singleButton && <Button id="tp-dialog-prompt-cancel-btn" secondary onClick={() => onClose(null)}>{cancelText}</Button>}
-                <Button id="tp-dialog-prompt-success-btn" onClick={handleSuccessClick} className={successBtnClassName}>{successText}</Button>
+                {!singleButton && <Button id="sf-dialog-prompt-cancel-btn" secondary onClick={() => onClose(null)}>{cancelText}</Button>}
+                <Button id="sf-dialog-prompt-success-btn" onClick={handleSuccessClick} className={successBtnClassName}>{successText}</Button>
             </div>
         </React.Fragment>
     );

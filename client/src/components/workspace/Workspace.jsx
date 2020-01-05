@@ -5,7 +5,6 @@ import React, {
     useState,
     useRef
 } from 'react';
-// import { useParams } from 'react-router-dom';
 import { useWorkspace } from '../../contexts/providers/WorkspaceContextProvider';
 import { useUser } from '../../contexts/providers/UserContextProvider';
 import WorkspaceHeader from './WorkspaceHeader';
@@ -18,7 +17,6 @@ import LoadingPulse from '../core/LoadingPulse';
 import './Workspace.scss';
 
 export default function Workspace() {
-    // const params = useParams();
     const user = useUser();
     const { workspaces, ...workspace } = useWorkspace();
     const [navStyle, setNavStyle] = useState({});

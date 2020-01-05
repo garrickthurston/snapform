@@ -4,19 +4,19 @@ import workspaceApi from '../../services/workspace.api.service';
 
 export const workspaceActionTypes = {
     setWorkspacesLoading: 'SET_WORKSPACES_LOADING',
-    setWorkspaceInitiating: 'SET_WORKSPACE_INITIATING',
     initiateWorkspace: 'INITIATE_WORKSPACE',
     getWorkspaces: 'GET_WORKSPACES',
     setProjectLoading: 'SET_PROJECT_LOADING',
     getProject: 'GET_PROJECT',
     initiateProject: 'INITIATE_PROJECT',
     updateWorkspaceConfig: 'UPDATE_WORKSPACE_CONFIG',
-    deleteProject: 'DELETE_PROJECT'
+    deleteProject: 'DELETE_PROJECT',
+    collapseAll: 'COLLAPSE_ALL'
 };
 
 function initiateWorkspace(dispatch, state) {
     return async () => {
-        dispatch({ type: workspaceActionTypes.setWorkspaceInitiating, payload: true });
+        dispatch({ type: workspaceActionTypes.setWorkspacesLoading, payload: true });
 
         let payload = state.workspaces;
         try {
@@ -42,7 +42,7 @@ function getWorkspaces(dispatch) {
 
 function getProject(dispatch, state) {
     return async (workspaceId, projectId) => {
-        dispatch({ type: workspaceActionTypes.setWorkspaceInitiating, payload: true });
+        dispatch({ type: workspaceActionTypes.setProjectLoading, payload: true });
 
         let payload = state.workspaces;
         try {
@@ -173,17 +173,18 @@ function deleteProject(dispatch, state) {
     };
 }
 
+function collapseAll(dispatch) {
+    return (collapse) => {
+        dispatch({ type: workspaceActionTypes.collapseAll, payload: collapse });
+    };
+}
+
 function workspaceReducer(state, action) {
     switch (action.type) {
         case workspaceActionTypes.setWorkspacesLoading:
             return {
                 ...state,
                 workspacesLoading: action.payload
-            };
-        case workspaceActionTypes.setWorkspaceInitiating:
-            return {
-                ...state,
-                workspaceInitiating: action.payload
             };
         case workspaceActionTypes.getWorkspaces:
             return {
@@ -198,8 +199,8 @@ function workspaceReducer(state, action) {
                 ...state,
                 config: action.payload.config,
                 workspaces: action.payload.workspaces,
-                workspaceInitiating: false,
-                workspaceInitiated: true
+                setWorkspacesLoading: false,
+                setWorkspacesLoaded: true
             };
         case workspaceActionTypes.getProject:
             return {
@@ -233,6 +234,11 @@ function workspaceReducer(state, action) {
                 projectLoaded: true,
                 workspaces: action.payload
             };
+        case workspaceActionTypes.collapseAll:
+            return {
+                ...state,
+                collapseAll: action.payload
+            };
         default:
             return state;
     }
@@ -242,11 +248,11 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
     const [state, dispatch] = useReducer(workspaceReducer, {
         workspacesLoading: false,
         workspacesLoaded: false,
-        workspaceInitiating: false,
-        workspaceInitiated: false,
         workspaces: [],
         projectLoading: false,
+        projectLoaded: false,
         config: undefined,
+        collapseAll: false,
         ...initialState
     });
 
@@ -258,7 +264,8 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
             getProject: getProject(dispatch, state),
             initiateProject: initiateProject(dispatch, state),
             updateWorkspaceConfig: updateWorkspaceConfig(dispatch, state),
-            deleteProject: deleteProject(dispatch, state)
+            deleteProject: deleteProject(dispatch, state),
+            collapseAll: collapseAll(dispatch, state)
         }
     };
 

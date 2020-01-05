@@ -1,8 +1,14 @@
+@import './core/variables.scss';
+
 nav {
     z-index: 50;
-    border-bottom: 1px solid #EEE;
+    border-bottom: 1px solid $semi-dark-border-color;
 
     .home-anchor {
-        color: #007BFF !important;
+        color: $blue !important;
+    }
+
+    .navbar-toggler {
+        border-color: $semi-dark-border-color !important;
     }
 }

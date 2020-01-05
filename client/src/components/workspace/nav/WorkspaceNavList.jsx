@@ -5,11 +5,11 @@ import { useWorkspace } from '../../../contexts/providers/WorkspaceContextProvid
 import useModal from '../../../hooks/useModal';
 import './WorkspaceNavList.scss';
 
-export default function WorkspaceNavList({ activeWorkspace }) {
+export default function WorkspaceNavList({ currentWorkspace, active }) {
     const workspace = useWorkspace();
     const { ModalRoot, promptDelete } = useModal();
     const loading = workspace.workspaceLoading || workspace.projectLoading;
-    const { workspaceId, projects, config } = activeWorkspace;
+    const { workspaceId, projects, config } = currentWorkspace;
     const { activeProjectId, activeProjectTabs } = config;
     const [hovering, setHovering] = useState(null);
 
@@ -25,7 +25,7 @@ export default function WorkspaceNavList({ activeWorkspace }) {
             activeProjectId: pid,
             activeProjectTabs: [
                 ...activeProjectTabs,
-                ...(activeProjectTabs.indexOf(pid) === -1 ? [pid] : [])
+                ...(active && activeProjectTabs.map((item) => item.toLowerCase()).indexOf(pid.toLowerCase()) === -1 ? [pid] : [])
             ]
         };
 
@@ -35,7 +35,8 @@ export default function WorkspaceNavList({ activeWorkspace }) {
         config,
         activeProjectTabs,
         workspace.actions,
-        loading
+        loading,
+        active
     ]);
 
     const handleMouseEnter = useCallback((evt) => {
@@ -53,13 +54,13 @@ export default function WorkspaceNavList({ activeWorkspace }) {
     }, [setHovering]);
 
     const renderProjects = useMemo(() => {
-        if (!activeWorkspace || !projects.length) {
+        if (!currentWorkspace || !projects.length) {
             return (<li className="ws-project-item" />);
         }
 
         return projects.map((project) => {
-            const tabOpen = activeProjectTabs && activeProjectTabs.find((x) => x.toLowerCase() === project.projectId.toLowerCase());
-            const active = activeProjectId && activeProjectId.toLowerCase() === project.projectId.toLowerCase();
+            const tabOpen = active && activeProjectTabs && activeProjectTabs.find((x) => x.toLowerCase() === project.projectId.toLowerCase());
+            const tabActive = active && activeProjectId && activeProjectId.toLowerCase() === project.projectId.toLowerCase();
 
             const removeProject = (evt) => {
                 evt.stopPropagation();
@@ -71,8 +72,8 @@ export default function WorkspaceNavList({ activeWorkspace }) {
 
                 const { projectId } = project;
 
-                if (activeWorkspace.workspaceId && projectId) {
-                    promptDelete().then(() => workspace.actions.deleteProject(activeWorkspace.workspaceId, projectId));
+                if (currentWorkspace.workspaceId && projectId) {
+                    promptDelete().then(() => workspace.actions.deleteProject(currentWorkspace.workspaceId, projectId));
                 }
             };
 
@@ -90,7 +91,7 @@ export default function WorkspaceNavList({ activeWorkspace }) {
 
             return (
                 <li
-                    className={`ws-project-item ${active ? 'tab-active' : ''}`}
+                    className={`ws-project-item ${tabActive ? 'tab-active' : ''}`}
                     key={project.projectId}
                     data-pid={project.projectId}
                     onClick={handleProjectClick}
@@ -107,7 +108,7 @@ export default function WorkspaceNavList({ activeWorkspace }) {
             );
         });
     }, [
-        activeWorkspace,
+        currentWorkspace,
         projects,
         activeProjectId,
         activeProjectTabs,
@@ -117,7 +118,8 @@ export default function WorkspaceNavList({ activeWorkspace }) {
         hovering,
         promptDelete,
         loading,
-        workspace.actions
+        workspace.actions,
+        active
     ]);
 
     return (

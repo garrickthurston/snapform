@@ -11,7 +11,8 @@ export const workspaceActionTypes = {
     initiateProject: 'INITIATE_PROJECT',
     updateWorkspaceConfig: 'UPDATE_WORKSPACE_CONFIG',
     deleteProject: 'DELETE_PROJECT',
-    collapseAll: 'COLLAPSE_ALL'
+    collapseAll: 'COLLAPSE_ALL',
+    updateWorkspaceCollapsed: 'UPDATE_WORKSPACE_COLLAPSE'
 };
 
 function initiateWorkspace(dispatch, state) {
@@ -33,7 +34,16 @@ function getWorkspaces(dispatch) {
 
         let payload = [];
         try {
-            payload = await workspaceApi.getWorkspaces();
+            const data = await workspaceApi.getWorkspaces();
+            payload = {
+                ...data,
+                results: [
+                    ...data.results.map((item) => ({
+                        ...item,
+                        collapsed: false
+                    }))
+                ]
+            };
         } finally {
             dispatch({ type: workspaceActionTypes.getWorkspaces, payload });
         }
@@ -153,14 +163,14 @@ function deleteProject(dispatch, state) {
 
         let payload = state.workspaces;
         try {
-            const workspace = await workspaceApi.deleteWorkspaceProject(workspaceId, projectId);
+            const workspace = payload.find((item) => item.workspaceId.toLowerCase() === workspaceId.toLowerCase());
+            let updatedWorkspace = await workspaceApi.deleteWorkspaceProject(workspaceId, projectId);
 
-            const { projects } = payload.find((item) => item.workspaceId.toLowerCase() === workspaceId.toLowerCase());
-            const project = projects.find((item) => item.projectId.toLowerCase() === projectId.toLowerCase());
-            const updatedProjects = [...projects];
-            updatedProjects.splice(projects.indexOf(project), 1);
-            const updatedWorkspace = {
-                ...workspace,
+            const project = workspace.projects.find((item) => item.projectId.toLowerCase() === projectId.toLowerCase());
+            const updatedProjects = [...workspace.projects];
+            updatedProjects.splice(workspace.projects.indexOf(project), 1);
+            updatedWorkspace = {
+                ...updatedWorkspace,
                 projects: updatedProjects
             };
             payload = [
@@ -173,9 +183,30 @@ function deleteProject(dispatch, state) {
     };
 }
 
-function collapseAll(dispatch) {
-    return (collapse) => {
-        dispatch({ type: workspaceActionTypes.collapseAll, payload: collapse });
+function collapseAll(dispatch, state) {
+    return () => {
+        const payload = [
+            ...state.workspaces.map((item) => ({
+                ...item,
+                collapsed: true
+            }))
+        ];
+        dispatch({ type: workspaceActionTypes.collapseAll, payload });
+    };
+}
+
+function updateWorkspaceCollapsed(dispatch, state) {
+    return (workspaceId, collapsed) => {
+        const workspace = state.workspaces.find((item) => item.workspaceId.toLowerCase() === workspaceId.toLowerCase());
+        const updatedWorkspace = {
+            ...workspace,
+            collapsed
+        };
+        const payload = [
+            ...state.workspaces
+        ];
+        payload.splice(payload.indexOf(workspace), 1, updatedWorkspace);
+        dispatch({ type: workspaceActionTypes.updateWorkspaceCollapsed, payload });
     };
 }
 
@@ -198,7 +229,7 @@ function workspaceReducer(state, action) {
             return {
                 ...state,
                 config: action.payload.config,
-                workspaces: action.payload.workspaces,
+                workspaces: action.payload.results,
                 setWorkspacesLoading: false,
                 setWorkspacesLoaded: true
             };
@@ -237,7 +268,12 @@ function workspaceReducer(state, action) {
         case workspaceActionTypes.collapseAll:
             return {
                 ...state,
-                collapseAll: action.payload
+                workspaces: action.payload
+            };
+        case workspaceActionTypes.updateWorkspaceCollapsed:
+            return {
+                ...state,
+                workspaces: action.payload
             };
         default:
             return state;
@@ -252,7 +288,6 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
         projectLoading: false,
         projectLoaded: false,
         config: undefined,
-        collapseAll: false,
         ...initialState
     });
 
@@ -265,7 +300,8 @@ function WorkspaceContextProvider({ children, initialState = {} }) {
             initiateProject: initiateProject(dispatch, state),
             updateWorkspaceConfig: updateWorkspaceConfig(dispatch, state),
             deleteProject: deleteProject(dispatch, state),
-            collapseAll: collapseAll(dispatch, state)
+            collapseAll: collapseAll(dispatch, state),
+            updateWorkspaceCollapsed: updateWorkspaceCollapsed(dispatch, state)
         }
     };
 

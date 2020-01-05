@@ -8,7 +8,9 @@ import './WorkspaceNavHeader.scss';
 export default function WorkspaceNavHeader() {
     const workspace = useWorkspace();
 
-    const handleCollapseAllClick = useCallback(() => workspace.actions.collapseAll(true), [workspace.actions]);
+    const handleCollapseAllClick = useCallback(() => workspace.actions.collapseAll(), [workspace.actions]);
+
+    const handleAddWorkspaceClick = useCallback(() => workspace.actions.initiateWorkspace(), [workspace.actions]);
 
     return (
         <div className="workspace-nav-header">
@@ -16,7 +18,7 @@ export default function WorkspaceNavHeader() {
                 <span className="header-text">{uiStrings.workspaces}</span>
             </div>
             <div className="header-actions">
-                <button className="add-workspace">
+                <button className="add-workspace" onClick={handleAddWorkspaceClick}>
                     <FontAwesomeIcon icon={faPlus} />
                 </button>
                 <button className="collapse-workspaces" onClick={handleCollapseAllClick}>

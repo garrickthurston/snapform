@@ -67,7 +67,12 @@ export default function Tab({ project, active, add }) {
 
         const { activeWorkspaceId } = workspace.config;
         if (add && !workspace.projectLoading) {
-            workspace.actions.initiateProject(activeWorkspaceId);
+            if (workspace.workspaces.length) {
+                workspace.actions.initiateProject(activeWorkspaceId);
+            } else {
+                workspace.actions.initiateWorkspace();
+            }
+
             return;
         }
 
